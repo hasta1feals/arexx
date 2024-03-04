@@ -1,14 +1,13 @@
-
 function getHomepage() {
     api("/", "GET").then((res) => {
-      if (res.message === "success") {
-       
+      console.log("API Response:", res); // Log the actual response
   
-    console.log("success");
+      if (res.message === "success") {
+        console.log("success");
       }
     });
   }
-
+  
 
 
 

@@ -9,7 +9,7 @@ app.use(cors());
 
 
 app.get('/', (req, res) => {
-  res.send('app is running!!');
+
   res.json({ message: 'success' });
 });
 
