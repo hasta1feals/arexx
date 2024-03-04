@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //api function to get infro from the server to frontend
 function api(endpoint, method = "GET", data = {}) {
-    const API = "https://arexx-a9d58d6027d0.herokuapp.com/";
+    const API = "https://arexx-a9d58d6027d0.herokuapp.com";
     return fetch(API + endpoint, {
       method: method,
       mode: "cors",
