@@ -102,13 +102,3 @@ function api(endpoint, method = "GET", data = {}) {
     document.cookie =
       cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
-  const logoutLink = document.getElementById("logoutLink");
-  logoutLink.addEventListener("click", function (event) {
-    event.preventDefault();
-  
-    x = getCookie("token");
-    console.log(x);
-    deleteCookie("token");
-    console.log("Token cookie deleted " + x);
-    window.location.href = "login.html";
-  });
