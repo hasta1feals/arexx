@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  </head>
+
+  <body>
+    <!-- Navbar Import -->
+    <div id="nav-placeholder"></div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script>
+      $(function () {
+        // Load the HTML content into the "nav-placeholder" element
+        $("#nav-placeholder").load("navbar.html");
+      });
+    </script>
+    <script src="main.js"></script> // Add this line for main.js
+    
+  </body>
+</html>
