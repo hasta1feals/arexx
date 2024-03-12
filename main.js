@@ -15,30 +15,27 @@ function getHomepage() {
     // Trigger the click event of the hidden file input
     $("#databaseInput").click();
   }
-
+  
   $(document).ready(function () {
     // Add a click event listener to the "Dashboard" link
     $("#uploadDatabaseBtn").click(uploadDatabase);
-
+  
     // Add change event listener to the file input to handle file selection
     $("#databaseInput").change(function () {
       // Handle file upload logic here (e.g., send the file to the server)
       var selectedFile = $(this).prop("files")[0];
       console.log("Selected file:", selectedFile);
-
+  
       // Create a FormData object to send the file
       var formData = new FormData();
       formData.append("file", selectedFile);
-
-      api("upload", formData, "POST").then((res) => {
+  
+      // Use "POST" as the method for file upload
+      apiDiffType("upload", "POST", formData).then((res) => {
         console.log("API Response:", res); // Log the actual response
-      }
-      
-
-      
+      });
     });
   });
-
 
   new Chart(ctx, {
     type: 'bar',
@@ -99,6 +96,27 @@ function api(endpoint, method = "GET", data = {}) {
       body: method == "GET" ? null : JSON.stringify(data),
     }).then((res) => res.json());
   }
+  function apiDiffType(endpoint, method = "GET", data = {}) {
+    const API = "https://arexx-a9d58d6027d0.herokuapp.com";
+    const headers = {
+        Authorization: "Bearer " + getCookie("token"),
+    };
+
+    if (method !== "GET") {
+        // For non-GET requests, include the Content-Type header
+        headers["Content-Type"] = "application/json";
+    }
+
+    // Properly concatenate the URL with a "/" between API and endpoint
+    const url = `${API}/${endpoint}`;
+
+    return fetch(url, {
+        method: method,
+        mode: "cors",
+        headers: headers,
+        body: method === "GET" ? null : method === "POST" ? JSON.stringify(data) : data,
+    }).then((res) => res.json());
+}
   
 
   // Cookie functions stolen from w3schools (https://www.w3schools.com/js/js_cookies.asp)

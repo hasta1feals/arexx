@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 3000;
 
 const upload = multer({ storage: storage });
 
+const corsOptions = {
+  origin: 'http://127.0.0.1:5500',
+};
 
 app.use(cors());
 
