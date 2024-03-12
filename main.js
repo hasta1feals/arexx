@@ -8,6 +8,56 @@ function getHomepage() {
     });
   }
   
+  const ctx = document.getElementById('myChart');
+
+
+  function uploadDatabase() {
+    // Trigger the click event of the hidden file input
+    $("#databaseInput").click();
+  }
+
+  $(document).ready(function () {
+    // Add a click event listener to the "Dashboard" link
+    $("#uploadDatabaseBtn").click(uploadDatabase);
+
+    // Add change event listener to the file input to handle file selection
+    $("#databaseInput").change(function () {
+      // Handle file upload logic here (e.g., send the file to the server)
+      var selectedFile = $(this).prop("files")[0];
+      console.log("Selected file:", selectedFile);
+
+      // Create a FormData object to send the file
+      var formData = new FormData();
+      formData.append("file", selectedFile);
+
+      api("upload", formData, "POST").then((res) => {
+        console.log("API Response:", res); // Log the actual response
+      }
+      
+
+      
+    });
+  });
+
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 
 
 

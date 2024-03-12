@@ -1,27 +1,50 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="navbar.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-  </head>
 
-  <body>
-    <!-- Navbar Import -->
-    <div id="nav-placeholder"></div>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="homepage.css" />
 
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-    <script>
-      $(function () {
-        // Load the HTML content into the "nav-placeholder" element
-        $("#nav-placeholder").load("navbar.html");
-      });
-    </script>
-    <script src="main.js"></script> // Add this line for main.js
-    
-  </body>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <!-- Navbar Import -->
+  <div id="nav-placeholder"></div>
+ <!-- Main Content -->
+ <div class="maincontent">
+  <div class="container">
+    <!-- Graph Card -->
+    <div class="card">
+      <div class="card-content">
+        <div class="card-title">Graph Title</div>
+        <div class="graph-placeholder">
+          <!-- Replace this div with your actual graph or content -->
+          <canvas id="myChart"></canvas>
+        </div>
+        <!-- Optional: Add title or additional information -->
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    $(function () {
+      // Load the HTML content into the "nav-placeholder" element
+      $("#nav-placeholder").load("navbar.html");
+    });
+  </script>
+  <script src="main.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
 </html>

@@ -48,7 +48,7 @@
 .sidebar .logo-details #btn {
   position: absolute;
   top: 50%;
-  right: 0;
+  right: -6.2px;
   transform: translateY(-50%);
   transition: all 0.4s ease;
 
@@ -338,12 +338,14 @@ display: active;
     font-size: 14px;
   }
 }
+/* When sidebar is open */
 .sidebar.open ~ .maincontent {
-  left: 15vw;
-  width: calc(100% - 15vw);
+  margin-left: 15vw; /* Adjust based on your open sidebar width */
+  width: calc(100% - 15vw); /* Adjust based on your open sidebar width */
 }
 
-.maincontent {
+
+/* .maincontent {
   position: relative;
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -353,6 +355,19 @@ display: active;
   width: calc(100% - 5.4vw);
   height: 100%;
   padding-bottom: 20px
+} */
+
+.maincontent {
+  transition: margin-left 0.5s;
+  margin-left: 5.4vw; /* Adjust based on your closed sidebar width */
+  width: calc(100% - 5.4vw); /* Adjust based on your closed sidebar width */
+}
+
+
+/* When sidebar is open */
+.sidebar.open ~ .maincontent {
+  margin-left: 15vw; /* Adjust based on your open sidebar width */
+  width: calc(100% - 15vw); /* Adjust based on your open sidebar width */
 }
 .topbar {
   height: 75px;

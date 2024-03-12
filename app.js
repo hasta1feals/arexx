@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 
+const upload = multer({ storage: storage });
 
 
 app.use(cors());
@@ -14,8 +15,12 @@ app.get('/', (req, res) => {
 });
 
 
-
-
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  res.send('File uploaded successfully.');
+});
 
 
 
