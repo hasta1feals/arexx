@@ -102,11 +102,6 @@ function api(endpoint, method = "GET", data = {}) {
         Authorization: "Bearer " + getCookie("token"),
     };
 
-    if (method !== "GET") {
-        // For non-GET requests, include the Content-Type header
-        headers["Content-Type"] = "application/json";
-    }
-
     // Properly concatenate the URL with a "/" between API and endpoint
     const url = `${API}/${endpoint}`;
 
@@ -114,9 +109,10 @@ function api(endpoint, method = "GET", data = {}) {
         method: method,
         mode: "cors",
         headers: headers,
-        body: method === "GET" ? null : method === "POST" ? JSON.stringify(data) : data,
+        body: method === "GET" ? null : data,  // Don't stringify data for POST requests
     }).then((res) => res.json());
 }
+
   
 
   // Cookie functions stolen from w3schools (https://www.w3schools.com/js/js_cookies.asp)
