@@ -3,8 +3,9 @@ const app = express();
 const multer = require('multer'); // Import multer
 const fs = require('fs');
 const cors = require('cors');
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT || 3000;
 const path = require('path');
+const mqtt = require('mqtt');
 const folderPath = 'imported_data';
 
 
@@ -71,6 +72,46 @@ app.post('/upload', upload.single('file'), (req, res) => {
 });
 
 
+app.get('/infoSensor', (req, res) => {
+  const brokerUrl = 'mqtt://public:public@public.cloud.shiftr.io';
+  const username = 'public';
+  const password = 'public';
+  const topic = '000001'; // Specify your desired topic
+  
+  // Create a client instance
+  const client = mqtt.connect(brokerUrl, {
+      username: username,
+      password: password
+  });
+  
+  // When the client is connected
+  client.on('connect', function () {
+      console.log('Connected to MQTT broker');
+  
+      // Subscribe to the topic
+      client.subscribe(topic, function (err) {
+          if (err) {
+              console.error('Error subscribing to topic:', err);
+          } else {
+              console.log('Subscribed to topic:', topic);
+          }
+      });
+  });
+  
+  // When a message is received
+  client.on('message', function (topic, message) {
+      console.log('Received message on topic:', topic, 'message:', message.toString());
+      res.json({ message: message.toString() });
+  });
+  
+  // Handle errors
+  client.on('error', function (error) {
+      console.error('MQTT client error:', error);
+  });
+
+
+ 
+});
 
 
 
