@@ -1,4 +1,42 @@
+
+function check1() {
+  api("/checkFolder", "GET").then((res) => {
+
+
+
+    if(res.message == 'empty') { 
+      
+      hideMainContent();}
+      else { showMainContent(); }
+    console.log(res.message); // Log the actual response
+     
+    
+  });
+}
+
+function showMainContent() {
+  const mainContent = document.querySelector('.container');
+  mainContent.style.display = 'block';
+
+  // If you want to show the chart, call your existing showChart function
+  showChart();
+}
+
+
+function hideMainContent() {
+  const mainContent = document.querySelector('.container ');
+  mainContent.style.display = 'none';
+}
+
+
+
+window.onload = function() {
+  // Your code here will run when the page has completely loaded.
+  check1(); // Example: Call the check1 function on every page reload
+};
+
 function getHomepage() {
+  
     api("/", "GET").then((res) => {
       console.log("API Response:", res); // Log the actual response
   
@@ -8,7 +46,53 @@ function getHomepage() {
     });
   }
   
-  const ctx = document.getElementById('myChart');
+
+
+  const test = {
+    label: '# of Votes',
+    data: [12, 19, 3, 5, 2, 3],
+    borderWidth: 1,
+    backgroundColor: 'red',
+    borderColor: 'red'
+  };
+  
+
+  function showChart() {
+    const ctx = document.getElementById('myChart');
+  
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [
+          test,
+          {
+            label: '# of Another Votes',
+            data: [5, 8, 10, 15, 7, 9],
+            borderWidth: 1,
+            backgroundColor: 'green',
+            borderColor: 'green'
+          },
+          // Add more datasets as needed
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+  
+  
+
+    
+    // Your chart creation code goes here
+    // For example, you might use a chart library like Chart.js
+    // to create and render your chart in the 'myChart' canvas element
+
 
 
   function uploadDatabase() {
@@ -37,30 +121,14 @@ function getHomepage() {
     });
   });
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-
+  
 
 
 //you can add all the buttons you want to connect to the api or button functions
 document.addEventListener("DOMContentLoaded", function () {
     connectButton("myButton", getHomepage);
+    connectButton("test23", check1);
+
   });
 
 
@@ -85,19 +153,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //api function to get infro from the server to frontend
 function api(endpoint, method = "GET", data = {}) {
-    const API = "https://arexx-a9d58d6027d0.herokuapp.com";
-    return fetch(API + endpoint, {
-      method: method,
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("token"),
-      },
-      body: method == "GET" ? null : JSON.stringify(data),
-    }).then((res) => res.json());
+  const API = "http://127.0.0.1:5500";
+  
+  const requestOptions = {
+    method: method,
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + getCookie("token"),
+    },
+  };
+
+  if (method !== "GET") {
+    requestOptions.body = JSON.stringify(data);
   }
+
+  return fetch(API + endpoint, requestOptions).then((res) => res.json());
+}
+
   function apiDiffType(endpoint, method = "GET", data = {}) {
-    const API = "https://arexx-a9d58d6027d0.herokuapp.com";
+    const API = "http://127.0.0.1:5500";
     const headers = {
         Authorization: "Bearer " + getCookie("token"),
     };

@@ -1,10 +1,14 @@
 const express = require('express');
 const app = express();
 const multer = require('multer'); // Import multer
-
+const fs = require('fs');
 const cors = require('cors');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5500;
 const path = require('path');
+const folderPath = 'imported_data';
+
+
+
 
 
 const storage = multer.diskStorage({
@@ -32,6 +36,26 @@ app.get('/', (req, res) => {
 
   res.json({ message: 'success' });
 });
+
+app.get('/checkFolder', (req, res) => {
+  // Check if a file exists in the folder
+  fs.readdir(folderPath, (err, files) => {
+    if (err) {
+      console.error('Error reading folder:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    if (files.length > 0) {
+      console.log('Files exist in the "imported_data" folder:', files);
+      res.status(200).json({ message: 'here' });
+    } else {
+      console.log('No files found in the "imported_data" folder.');
+      res.status(200).json({ message: 'empty' });
+    }
+  });
+});
+
 
 app.post('/upload', upload.single('file'), (req, res) => {
   try {
