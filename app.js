@@ -1,120 +1,94 @@
 const express = require('express');
-const app = express();
-const multer = require('multer'); // Import multer
-const fs = require('fs');
-const cors = require('cors');
-const PORT = process.env.PORT || 3000;
-const path = require('path');
 const mqtt = require('mqtt');
-const folderPath = 'imported_data';
+const sqlite3 = require('sqlite3').verbose(); // Import SQLite
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+const brokerUrl = 'mqtt://public:public@public.cloud.shiftr.io';
+const username = 'public';
+const password = 'public';
+const topic = '000001';
 
+// Connect to SQLite database
+const db = new sqlite3.Database('database.db'); // Change ':memory:' to your database file path if you want to persist data
 
-
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Specify the target folder for uploaded files
-    cb(null, 'imported_data/');
-  },
-  filename: function (req, file, cb) {
-    // Set the file name to "database"
-    const fixedFileName = 'database' + path.extname(file.originalname);
-    cb(null, fixedFileName);
-  }
+// Create table to store MQTT messages
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS mqtt_messages (
+    Id INTEGER,
+    Value REAL,
+    Unit TEXT,
+    Type TEXT,
+    TimeStamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
 });
 
-const upload = multer({ storage: storage });
-
-const corsOptions = {
-  origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501'],
-};
-
-app.use(cors(corsOptions));
-
-
-app.get('/', (req, res) => {
-
-  res.json({ message: 'success' });
+// Create a client instance
+const client = mqtt.connect(brokerUrl, {
+  username: username,
+  password: password
 });
 
-app.get('/checkFolder', (req, res) => {
-  // Check if a file exists in the folder
-  fs.readdir(folderPath, (err, files) => {
+// When the client is connected
+client.on('connect', function () {
+  console.log('Connected to MQTT broker');
+
+  // Subscribe to the topic
+  client.subscribe(topic, function (err) {
     if (err) {
-      console.error('Error reading folder:', err);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
-
-    if (files.length > 0) {
-      console.log('Files exist in the "imported_data" folder:', files);
-      res.status(200).json({ message: 'here' });
+      console.error('Error subscribing to topic:', err);
     } else {
-      console.log('No files found in the "imported_data" folder.');
-      res.status(200).json({ message: 'empty' });
+      console.log('Subscribed to topic:', topic);
     }
   });
 });
 
+// When a message is received
+client.on('message', function (receivedTopic, message) {
+  if (receivedTopic === topic) {
+    console.log('Received message on topic:', receivedTopic, 'message:', message.toString());
 
-app.post('/upload', upload.single('file'), (req, res) => {
-  try {
-    if (!req.file) {
-      throw new Error('No file uploaded.');
+    try {
+      // Extract the JSON string from the message using a regular expression
+      const jsonString = message.toString().match(/\{.*\}/)[0];
+
+      // Parse the extracted JSON string
+      const data = JSON.parse(jsonString);
+
+      // Insert all properties of the received message into the database as a single row
+      const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
+      stmt.run(data.Id.toString(), data.Value.toString(), data.Unit.toString(), data.Type.toString(), data.TimeStamp.toString());
+      stmt.finalize();
+    } catch (error) {
+      console.error('Error parsing message:', error);
+      // Handle the error gracefully, e.g., log it and continue processing other messages
     }
-    // Process the file, save it, etc.
-    res.json({ message: 'File uploaded successfully.' });
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(400).json({ error: error.message });
   }
 });
 
 
 app.get('/infoSensor', (req, res) => {
-  const brokerUrl = 'mqtt://public:public@public.cloud.shiftr.io';
-  const username = 'public';
-  const password = 'public';
-  const topic = '000001'; // Specify your desired topic
-  
-  // Create a client instance
-  const client = mqtt.connect(brokerUrl, {
-      username: username,
-      password: password
+  // Set headers for Server-Sent Events
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  // When a message is received, send it to the client
+  db.each("SELECT * FROM mqtt_messages", function(err, row) {
+    res.write(`data: ${JSON.stringify(row)}\n\n`);
   });
-  
-  // When the client is connected
-  client.on('connect', function () {
-      console.log('Connected to MQTT broker');
-  
-      // Subscribe to the topic
-      client.subscribe(topic, function (err) {
-          if (err) {
-              console.error('Error subscribing to topic:', err);
-          } else {
-              console.log('Subscribed to topic:', topic);
-          }
-      });
-  });
-  
-  // When a message is received
-  client.on('message', function (topic, message) {
-      console.log('Received message on topic:', topic, 'message:', message.toString());
-      res.json({ message: message.toString() });
-  });
-  
+
   // Handle errors
-  client.on('error', function (error) {
-      console.error('MQTT client error:', error);
+  db.on('error', function (error) {
+    console.error('SQLite error:', error);
+    res.status(500).end();
   });
 
-
- 
+  // When the client closes the connection
+  req.on('close', function () {
+    console.log('Client closed the connection');
+  });
 });
-
-
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
