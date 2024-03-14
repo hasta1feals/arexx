@@ -4,6 +4,14 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500"); // Allow requests from this origin
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
+  next();
+});
+
+
 const brokerUrl = 'mqtt://public:public@public.cloud.shiftr.io';
 const username = 'public';
 const password = 'public';
@@ -64,6 +72,26 @@ client.on('message', function (receivedTopic, message) {
       // Handle the error gracefully, e.g., log it and continue processing other messages
     }
   }
+});
+app.get('/getRH', (req, res) => {
+  db.all('SELECT * FROM mqtt_messages where type = "RH"', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching users' });
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+
+app.get('/getVOLT', (req, res) => {
+  db.all('SELECT * FROM mqtt_messages where type = "Volt"', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching users' });
+    } else {
+      res.send(rows);
+    }
+  });
 });
 
 

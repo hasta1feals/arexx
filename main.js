@@ -21,27 +21,40 @@ function getHomepage() {
   });
 }
 
-const test = {
-  label: '# of Votes',
-  data: [12, 19, 3, 5, 2, 3],
-  borderWidth: 1,
-  backgroundColor: 'red',
-  borderColor: 'red'
-};
+// Function to fetch RH data from the API
+function getRH() {
+  api("/getRH", "GET").then((res) => {
+    console.log("API Response:", res); // Log the actual response
+    const labels = res.map(data => data.TimeStamp);
+    const values = res.map(data => data.Value);
+    updateChart(labels, values);
+  });
+}
+
+// Function to update the chart with new data
+function updateChart(labels, values) {
+  myChart.data.labels = labels;
+  myChart.data.datasets[0].data = values;
+  myChart.update();
+}
+
+// Call the getRH function initially to fetch RH data and update the chart
+getRH();
+
+// Call the getRH function every 1 minute to fetch new RH data and update the chart
+setInterval(getRH, 60000); // 60000 milliseconds = 1 minute
+
 
 // Initialize empty data arrays
 let labels = [];
 let data = [];
 
 
-// Get the canvas element
+// Get the canvas elements
 const ctx = document.getElementById('myChart').getContext('2d');
 
 // Check if there's already a chart associated with the canvas
-if (typeof myChart !== 'undefined') {
-    // If a chart exists, destroy it
-    myChart.destroy();
-}
+
 
 // Create the chart with initial empty data
 const myChart = new Chart(ctx, {
@@ -49,8 +62,8 @@ const myChart = new Chart(ctx, {
     data: {
         labels: labels,
         datasets: [{
-            label: 'Voltage',
-            data: data,
+            label: 'RH',
+            data: [],
             borderColor: 'blue',
             backgroundColor: 'rgba(0, 0, 255, 0.1)',
             borderWidth: 1
@@ -59,46 +72,31 @@ const myChart = new Chart(ctx, {
     options: {
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                  // Set the steps for the y-axis
+                  stepSize: 2, // Adjust this value according to your data
+                  max: 30 // Set the maximum value for the y-axis
+              }
             }
         }
     }
 });
-// Function to add new data to the chart
-function addDataToChart(message) {
-  // Parse the received message
-  const value = message.Value;
-  const timestamp = new Date(message.TimeStamp);
 
-  // Convert timestamp to a readable format (e.g., "HH:mm:ss")
-  const formattedTimestamp = timestamp.toLocaleTimeString();
 
-  // Add new data point to the chart
-  myChart.data.labels.push(formattedTimestamp);
-  myChart.data.datasets[0].data.push(value);
-
-  // Limit the number of data points to display
-  const maxDataPoints = 10;
-  if (myChart.data.labels.length > maxDataPoints) {
-    myChart.data.labels.shift();
-    myChart.data.datasets[0].data.shift();
-  }
+// Function to update the chart with new data
+function updateChart(labels, newData) {
+  // Update the chart data
+  myChart.data.labels = labels;
+  myChart.data.datasets[0].data = newData;
 
   // Update the chart
   myChart.update();
 }
 
-// Fetch data from the endpoint
-function fetchData() {
-  api("/infoSensor", "GET").then((res) => {
-    console.log("API Response:", res); // Log the actual response
-    addDataToChart(res);
-  });
+// Example usage: Call this function whenever you want to update the chart with new data
+updateChart([]);
 
-}
-
-// Example: Fetch data every 5 seconds
-setInterval(fetchData, 5000);
 
 // Function to trigger file upload
 function uploadDatabase() {
