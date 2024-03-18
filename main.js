@@ -70,17 +70,19 @@ const myChart = new Chart(ctx, {
         }]
     },
     options: {
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
+      scales: {
+          y: {
+              beginAtZero: false,
+              ticks: {
+                min: 15, // Set the minimum value for the y-axis
+
                   // Set the steps for the y-axis
-                  stepSize: 2, // Adjust this value according to your data
+                  stepSize: 0.20, // Set the step size to 0.20
                   max: 30 // Set the maximum value for the y-axis
               }
-            }
-        }
-    }
+          }
+      }
+  }
 });
 
 

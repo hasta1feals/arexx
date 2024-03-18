@@ -2,10 +2,15 @@ const express = require('express');
 const mqtt = require('mqtt');
 const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
+const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
+const portPath = '/dev/tty.usbserial-110'; // path to serial port
+const port = new SerialPort({ path: portPath, baudRate: 115200 });
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500"); // Allow requests from this origin
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -117,6 +122,67 @@ app.get('/infoSensor', (req, res) => {
     console.log('Client closed the connection');
   });
 });
+
+// Variable to store incomplete JSON data
+let incompleteData = '';
+
+// Function to handle incoming data
+function onData(data) {
+  try {
+    // Convert the incoming data to a string
+    const rawData = data.toString();
+
+    console.log('Raw data:', rawData);
+
+    // Concatenate the incoming data with any previously incomplete data
+    const combinedData = incompleteData + rawData;
+
+    // Regular expression to match JSON-like substrings
+    const jsonRegex = /{[^{}]*}/g;
+
+    // Extract JSON-like substrings from the combined data
+    const jsonMatches = combinedData.match(jsonRegex);
+
+    if (jsonMatches) {
+      // Iterate over each matched substring
+      jsonMatches.forEach((jsonString) => {
+        try {
+          // Parse the JSON substring
+          const parsedData = JSON.parse(jsonString);
+
+          // Insert the parsed data into the database
+          const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
+          stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp);
+          stmt.finalize();
+
+          console.log('Data inserted into the database:', parsedData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      });
+
+      // Update incomplete data with any remaining unmatched substring
+      incompleteData = combinedData.slice(jsonMatches[jsonMatches.length - 1].length);
+    } else {
+      // Update incomplete data with combined data if no JSON-like substrings found
+      incompleteData = combinedData;
+    }
+  } catch (error) {
+    console.error('Error handling data:', error);
+  }
+}
+
+
+
+
+port.on('open', () => {
+  console.log('Port opened successfully.');
+
+  // Set up a listener for incoming data
+  port.on('data', onData);
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
