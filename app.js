@@ -43,41 +43,41 @@ const client = mqtt.connect(brokerUrl, {
 });
 
 // When the client is connected
-client.on('connect', function () {
-  console.log('Connected to MQTT broker');
+// client.on('connect', function () {
+//   console.log('Connected to MQTT broker');
 
-  // Subscribe to the topic
-  client.subscribe(topic, function (err) {
-    if (err) {
-      console.error('Error subscribing to topic:', err);
-    } else {
-      console.log('Subscribed to topic:', topic);
-    }
-  });
-});
+//   // Subscribe to the topic
+//   client.subscribe(topic, function (err) {
+//     if (err) {
+//       console.error('Error subscribing to topic:', err);
+//     } else {
+//       console.log('Subscribed to topic:', topic);
+//     }
+//   });
+// });
 
 // When a message is received
-client.on('message', function (receivedTopic, message) {
-  if (receivedTopic === topic) {
-    console.log('Received message on topic:', receivedTopic, 'message:', message.toString());
+// client.on('message', function (receivedTopic, message) {
+//   if (receivedTopic === topic) {
+//     console.log('Received message on topic:', receivedTopic, 'message:', message.toString());
 
-    try {
-      // Extract the JSON string from the message using a regular expression
-      const jsonString = message.toString().match(/\{.*\}/)[0];
+//     try {
+//       // Extract the JSON string from the message using a regular expression
+//       const jsonString = message.toString().match(/\{.*\}/)[0];
 
-      // Parse the extracted JSON string
-      const data = JSON.parse(jsonString);
+//       // Parse the extracted JSON string
+//       const data = JSON.parse(jsonString);
 
-      // Insert all properties of the received message into the database as a single row
-      const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
-      stmt.run(data.Id.toString(), data.Value.toString(), data.Unit.toString(), data.Type.toString(), data.TimeStamp.toString());
-      stmt.finalize();
-    } catch (error) {
-      console.error('Error parsing message:', error);
-      // Handle the error gracefully, e.g., log it and continue processing other messages
-    }
-  }
-});
+//       // Insert all properties of the received message into the database as a single row
+//       const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
+//       stmt.run(data.Id.toString(), data.Value.toString(), data.Unit.toString(), data.Type.toString(), data.TimeStamp.toString());
+//       stmt.finalize();
+//     } catch (error) {
+//       console.error('Error parsing message:', error);
+//       // Handle the error gracefully, e.g., log it and continue processing other messages
+//     }
+//   }
+// });
 app.get('/getRH', (req, res) => {
   db.all('SELECT * FROM mqtt_messages where type = "RH"', (err, rows) => {
     if (err) {
@@ -150,6 +150,8 @@ function onData(data) {
           // Parse the JSON substring
           const parsedData = JSON.parse(jsonString);
 
+          console.log('Parsed data:', parsedData); // Log parsed data
+
           // Insert the parsed data into the database
           const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
           stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp);
@@ -171,6 +173,7 @@ function onData(data) {
     console.error('Error handling data:', error);
   }
 }
+
 
 
 

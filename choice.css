@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    padding-top: 15%;
+    align-items: center;
+
+  }
+  .item {
+    width: 300px;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+    margin: 10px;
+  }
+
+  .item:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .larger-icon {
+    font-size: 32px; /* Adjust the font size as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertically center the icon */
+    width: 100%; /* Ensure the icon takes up the full width of its parent */
+    height: 100%; /* Ensure the icon takes up the full height of its parent */
+    
+  }
+
+  .bx-usb{
+    font-size: 32px; /* Adjust the font size as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertically center the icon */
+    width: 100%; /* Ensure the icon takes up the full width of its parent */
+    height: 100%; /* Ensure the icon takes up the full height of its parent */
+
+    
+  }
