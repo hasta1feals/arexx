@@ -4,7 +4,7 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = '/dev/tty.usbserial-110'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 

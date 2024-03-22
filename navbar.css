@@ -48,7 +48,7 @@
 .sidebar .logo-details #btn {
   position: absolute;
   top: 50%;
-  right: -6.2px;
+  right: 0px;
   transform: translateY(-50%);
   transition: all 0.4s ease;
 
@@ -170,9 +170,7 @@
 .sidebar li a.active i{
   color: #fff;
 }
-.active:hover{
-  
-}
+
 .sidebar li a .links_name {
   color: #5d6679;
   font-weight: 400;
