@@ -6,6 +6,73 @@ function showMainContent() {
   showChart();
 }
 
+let currentTablePage = 1;
+let originalRows = []; 
+
+function itemsLoad() {
+  api("/getAllitems", "GET")
+    .then((res) => {
+      console.log("API Response:", res.rows); // Log the API response for debugging
+      
+      const tableBody = document.querySelector("#myTable tbody");
+      tableBody.innerHTML = "";
+
+      // Loop through the items and add them to the table
+      // Store the original rows for filtering
+      originalRows = res.rows;
+
+      // Example: Populate the table with data
+      res.rows.forEach((row) => {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+          <td>${row.Id}</td>
+          <td>${row.Value}</td>
+          <td>${row.Type}</td>
+          <td>${row.TimeStamp}</td>
+          <!-- Add more table cells as needed -->
+        `;
+        tableBody.appendChild(newRow);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching items:", error);
+    });
+
+
+  }function searchTable() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those that don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td");
+    for (var j = 0; j < td.length; j++) {
+      if (td[j]) {
+        txtValue = td[j].textContent || td[j].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+          break; // Break the inner loop if a match is found
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+ 
+
+          itemsLoad(currentTablePage);
+          showMainContent();
+          getRH();
+});
+    
 function hideMainContent() {
   const mainContent = document.querySelector('.container ');
   mainContent.style.display = 'none';

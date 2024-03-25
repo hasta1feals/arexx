@@ -4,13 +4,13 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const portPath = 'COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500"); // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+ // Allow requests from this origin
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -43,18 +43,18 @@ const client = mqtt.connect(brokerUrl, {
 });
 
 // When the client is connected
-// client.on('connect', function () {
-//   console.log('Connected to MQTT broker');
+client.on('connect', function () {
+  console.log('Connected to MQTT broker');
 
-//   // Subscribe to the topic
-//   client.subscribe(topic, function (err) {
-//     if (err) {
-//       console.error('Error subscribing to topic:', err);
-//     } else {
-//       console.log('Subscribed to topic:', topic);
-//     }
-//   });
-// });
+  // Subscribe to the topic
+  client.subscribe(topic, function (err) {
+    if (err) {
+      console.error('Error subscribing to topic:', err);
+    } else {
+      console.log('Subscribed to topic:', topic);
+    }
+  });
+});
 
 // When a message is received
 // client.on('message', function (receivedTopic, message) {
@@ -98,6 +98,53 @@ app.get('/getVOLT', (req, res) => {
     }
   });
 });
+
+
+
+
+// Define a function to fetch and send the latest items
+function fetchAndSendLatestItems(req, res) {
+  db.all(`
+  WITH RankedMessages AS (
+    SELECT 
+      Id, 
+      Type, 
+      Value, 
+      TimeStamp,
+      ROW_NUMBER() OVER (PARTITION BY Id, Type ORDER BY TimeStamp DESC) AS RowNum
+    FROM mqtt_messages
+  )
+  SELECT Id, Type, Value, TimeStamp
+  FROM RankedMessages
+  WHERE RowNum = 1;
+  `, (err, rows) => {
+    if (err) { 
+      if (res) {
+        res.status(500).send({ error: 'Error fetching items' });
+      } else {
+        console.error('Error fetching items:', err);
+      }
+    } else {
+      if (res) {
+        res.send({ rows: rows });
+      } else {
+        
+      }
+    }
+  });
+}
+
+
+
+// Route for /getAllitems
+app.get('/getAllitems', (req, res) => {
+  fetchAndSendLatestItems(req, res);
+});
+
+// Set an interval to call fetchAndSendLatestItems every 5 minutes (300,000 milliseconds)
+setInterval(() => {
+  fetchAndSendLatestItems(null, null); // Pass null as req and res since they are not used in the function
+}, 3000);
 
 
 app.get('/infoSensor', (req, res) => {
