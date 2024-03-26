@@ -6,6 +6,143 @@ function showMainContent() {
   showChart();
 }
 
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Fetch unique combinations of ID and Type
+  api("/getUniqueIDsFromDatabase", "GET")
+    .then((res) => {
+      res.forEach((entry) => {
+        const id = entry.Id;
+        // Fetch unique types for the current ID
+        api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
+          .then((typesRes) => {
+            typesRes.forEach((typeEntry) => {
+              const type = typeEntry.Type;
+              // Fetch data for the current ID and Type
+              api(`/getDataFromDatabase?id=${id}&type=${type}`, "GET")
+                .then((dataRes) => {
+                  // Create a container and chart for the current ID and Type
+                  createContainerAndChart(id, type, dataRes);
+                })
+                .catch((error) => {
+                  console.error("Error fetching data:", error);
+                });
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching types:", error);
+          });
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching IDs:", error);
+    });
+});
+
+function createContainerAndChart(id, type, data) {
+  // Create a container for the chart
+  const container = document.createElement('div');
+  container.classList.add('card');
+
+  // Create card content
+  const cardContent = document.createElement('div');
+  cardContent.classList.add('card-content');
+
+  // Create card title
+  const cardTitle = document.createElement('div');
+  cardTitle.classList.add('card-title');
+  cardTitle.textContent = `${id} ${type}`;
+
+  // Create graph placeholder
+  const graphPlaceholder = document.createElement('div');
+  graphPlaceholder.classList.add('graph-placeholder');
+
+  // Create canvas for the chart
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('id', `chart-${id}-${type}`);
+  canvas.setAttribute('class', 'dynamic-chart');
+  canvas.setAttribute('width', '600');
+  canvas.setAttribute('height', '300');
+
+  // Append elements
+  graphPlaceholder.appendChild(canvas);
+  cardContent.appendChild(cardTitle);
+  cardContent.appendChild(graphPlaceholder);
+  container.appendChild(cardContent);
+
+  // Append container to charts-container
+  document.getElementById('cont').appendChild(container);
+
+  // Prepare labels and values for the chart
+  const labels = data.map((entry) => entry.TimeStamp);
+  const values = data.map((entry) => entry.Value);
+
+  // Create a new chart instance
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `${id} ${type}`,
+        data: values,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            min: Math.min(...values), // Set the minimum value for the y-axis
+            // Set the steps for the y-axis
+            stepSize: 0.20, // Set the step size to 0.20
+            max: Math.max(...values) // Set the maximum value for the y-axis
+          }
+        }
+      }
+    }
+  });
+}
+
+// Inside main.js
+
+
+// Function to filter dynamically created containers/cards based on search input
+function searchContainers() {
+  // Declare variables
+  var input, filter, containers, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  containers = document.querySelectorAll('.card');
+
+  // Loop through all containers/cards, and hide those that don't match the search query
+  containers.forEach(function(container) {
+    cardTitle = container.querySelector('.card-title');
+    txtValue = cardTitle.textContent || cardTitle.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      container.style.display = "";
+    } else {
+      container.style.display = "none";
+    }
+  });
+}
+
+
+// Check if the element exists before adding the event listener
+const searchInput = document.getElementById("searchInput");
+if (searchInput) {
+    searchInput.addEventListener("input", searchContainers);
+}
+
+
+
+
+
+
+
 let currentTablePage = 1;
 let originalRows = []; 
 
@@ -139,34 +276,7 @@ const ctx = document.getElementById('myChart').getContext('2d');
 // Check if there's already a chart associated with the canvas
 
 
-// Create the chart with initial empty data
-const myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'RH',
-            data: [],
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 0.1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-      scales: {
-          y: {
-              beginAtZero: false,
-              ticks: {
-                min: 15, // Set the minimum value for the y-axis
 
-                  // Set the steps for the y-axis
-                  stepSize: 0.20, // Set the step size to 0.20
-                  max: 30 // Set the maximum value for the y-axis
-              }
-          }
-      }
-  }
-});
 
 
 // Function to update the chart with new data

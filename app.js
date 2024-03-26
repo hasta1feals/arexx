@@ -89,14 +89,49 @@ app.get('/getRH', (req, res) => {
 });
 
 
-
-app.get('getUniqueIDsFromDatabase', (req, res) => {
+app.get('/getUniqueIDsFromDatabase', (req, res) => {
   db.all('SELECT DISTINCT Id FROM mqtt_messages', (err, rows) => {
     if (err) {
-      res.status(500).send({ error: 'Error fetching IDs' });
+      res.status(500).send({ error: 'Error fetching users' });
     } else {
       res.send(rows);
     }
+  });
+});
+
+app.get('/getDataFromDatabase', (req, res) => {
+  const { id, type } = req.query; // Get the ID and type from the query parameters
+
+  // Check if both ID and type are provided
+  if (!id || !type) {
+    return res.status(400).send({ error: 'ID and type parameters are required' });
+  }
+
+  // Fetch data from the database for the provided ID and type
+  db.all('SELECT * FROM mqtt_messages WHERE Id = ? AND Type = ?', [id, type], (err, rows) => {
+    if (err) {
+      return res.status(500).send({ error: 'Error fetching data from the database' });
+    }
+    res.send(rows);
+  });
+});
+
+
+
+app.get('/getUniqueTypesForIDFromDatabase', (req, res) => {
+  const id = req.query.id; // Get the ID from the query parameters
+
+  // Check if the ID is provided
+  if (!id) {
+    return res.status(400).send({ error: 'ID parameter is required' });
+  }
+
+  // Fetch unique types for the provided ID from the database
+  db.all('SELECT DISTINCT Type FROM mqtt_messages WHERE Id = ?', id, (err, rows) => {
+    if (err) {
+      return res.status(500).send({ error: 'Error fetching unique types' });
+    }
+    res.send(rows);
   });
 });
 

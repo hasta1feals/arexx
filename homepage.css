@@ -1,50 +1,33 @@
-.container {
-    max-width: 600px;
-    width: 100%;
-    padding: 20px;
-  
-  }
-  
+.container1 {
+  display: flex;
+  justify-content: flex-start; /* Change from center to flex-start */
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-  .card {
-    width: 100%;
-    height: 320px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-  }
+.card {
+  width: 550px;
+  height: 550px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  margin: 10px;
+  text-decoration: none;
+  color: inherit;
+}
 
-  .card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
+.graph-placeholder {
+  width: 550px;
+  height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .card-content {
-    padding: 20px;
-    text-align: center;
-  }
-
-  /* Placeholder content styling (replace with your graph content) */
-  .graph-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-  }
-
-  /* Optional: Add styling for title or additional information */
-  .card-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  #closeChart {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000; /* Ensure it's above the canvas */
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
