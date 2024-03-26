@@ -13,12 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
   api("/getUniqueIDsFromDatabase", "GET")
     .then((res) => {
       res.forEach((entry) => {
-        const id = entry.Id;
+        const id = entry.Id; // get the ID from the response object
         // Fetch unique types for the current ID
         api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
           .then((typesRes) => {
             typesRes.forEach((typeEntry) => {
-              const type = typeEntry.Type;
+              const type = typeEntry.Type;// get all types for the current ID from the response object
+             
               // Fetch data for the current ID and Type
               api(`/getDataFromDatabase?id=${id}&type=${type}`, "GET")
                 .then((dataRes) => {
@@ -137,12 +138,6 @@ if (searchInput) {
     searchInput.addEventListener("input", searchContainers);
 }
 
-
-
-
-
-
-
 let currentTablePage = 1;
 let originalRows = []; 
 
@@ -185,10 +180,6 @@ function itemsLoad() {
       console.error("Error fetching items:", error);
     });
 }
-
-
-
-  
 
  
   function searchTable() {
