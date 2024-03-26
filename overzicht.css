@@ -63,3 +63,24 @@ tr:not(:last-child) td::after {
     height: 2px; /* Height of the bar */
     background-color: #d0d3d9; /* Color of the bar */
 }
+
+
+
+
+.btn-get-id {
+    background-color: #5D5FEF;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .btn-get-id:hover {
+    background-color: darkblue;
+  }
+  
+  .btn-get-id:active {
+    background-color: navy;
+  }
+  

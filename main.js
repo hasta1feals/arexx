@@ -12,8 +12,7 @@ let originalRows = [];
 function itemsLoad() {
   api("/getAllitems", "GET")
     .then((res) => {
-      console.log("API Response:", res.rows); // Log the API response for debugging
-      
+  
       const tableBody = document.querySelector("#myTable tbody");
       tableBody.innerHTML = "";
 
@@ -29,17 +28,33 @@ function itemsLoad() {
           <td>${row.Value}</td>
           <td>${row.Type}</td>
           <td>${row.TimeStamp}</td>
+          <td><button class="btn-get-id" data-id="${row.Id}">Graph</button></td>
           <!-- Add more table cells as needed -->
         `;
         tableBody.appendChild(newRow);
       });
+
+      // Add event listener to all buttons in the table body
+      tableBody.addEventListener('click', (event) => {
+        if (event.target.classList.contains('btn-get-id')) {
+          const id = event.target.dataset.id; // Get the ID from the button's data attribute
+          console.log('Clicked button for ID:', id);
+          // Call a function or perform any action with the ID
+        }
+      });
+
     })
     .catch((error) => {
       console.error("Error fetching items:", error);
     });
+}
 
 
-  }function searchTable() {
+
+  
+
+ 
+  function searchTable() {
   // Declare variables
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("searchInput");
@@ -117,6 +132,7 @@ let labels = [];
 let data = [];
 
 
+
 // Get the canvas elements
 const ctx = document.getElementById('myChart').getContext('2d');
 
@@ -167,32 +183,6 @@ function updateChart(labels, newData) {
 updateChart([]);
 
 
-// Function to trigger file upload
-function uploadDatabase() {
-  // Trigger the click event of the hidden file input
-  $("#databaseInput").click();
-}
-
-$(document).ready(function () {
-  // Add a click event listener to the "Dashboard" link
-  $("#uploadDatabaseBtn").click(uploadDatabase);
-
-  // Add change event listener to the file input to handle file selection
-  $("#databaseInput").change(function () {
-    // Handle file upload logic here (e.g., send the file to the server)
-    var selectedFile = $(this).prop("files")[0];
-    console.log("Selected file:", selectedFile);
-
-    // Create a FormData object to send the file
-    var formData = new FormData();
-    formData.append("file", selectedFile);
-
-    // Use "POST" as the method for file upload
-    apiDiffType("upload", "POST", formData).then((res) => {
-      console.log("API Response:", res); // Log the actual response
-    });
-  });
-});
 
 // You can add all the buttons you want to connect to the API or button functions
 document.addEventListener("DOMContentLoaded", function () {

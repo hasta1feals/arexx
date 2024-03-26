@@ -4,13 +4,13 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = 'COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -89,6 +89,19 @@ app.get('/getRH', (req, res) => {
 });
 
 
+
+app.get('getUniqueIDsFromDatabase', (req, res) => {
+  db.all('SELECT DISTINCT Id FROM mqtt_messages', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching IDs' });
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+
+
 app.get('/getVOLT', (req, res) => {
   db.all('SELECT * FROM mqtt_messages where type = "Volt"', (err, rows) => {
     if (err) {
@@ -157,6 +170,7 @@ app.get('/infoSensor', (req, res) => {
   db.each("SELECT * FROM mqtt_messages", function(err, row) {
     res.write(`data: ${JSON.stringify(row)}\n\n`);
   });
+
 
   // Handle errors
   db.on('error', function (error) {
