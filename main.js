@@ -1,9 +1,128 @@
+
 function showMainContent() {
   const mainContent = document.querySelector('.container');
   mainContent.style.display = 'block';
 
   // If you want to show the chart, call your existing showChart function
   showChart();
+}
+document.addEventListener("DOMContentLoaded", function () {
+  // Load the HTML content into the "nav-placeholder" element
+  $("#nav-placeholder").load("navbar.html");
+
+  // Get the modal and the button that opens the modal
+  var modal = document.getElementById("addProductModal");
+  var btn = document.getElementById("myBtn3");
+  var span5 = document.getElementsByClassName("close5")[0];
+
+  btn.onclick = function () {
+    modal.style.display = "block";
+  };
+
+  span5.onclick = function () {
+    modal.style.display = "none";
+  };
+
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // Event listener for clickable items inside the modal
+  function addClickListenersToItems() {
+    var clickableItems = document.querySelectorAll('.clickable-item');
+    clickableItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        // Toggle clicked class to change background color
+        this.classList.toggle('clicked');
+      });
+    });
+  }
+
+  // Initially add event listeners to existing clickable items
+  addClickListenersToItems();
+
+  // Function to dynamically add clickable items
+  function addClickableItem(itemName) {
+    var formGroup = document.querySelector('.form-group');
+    var newItem = document.createElement('div');
+    newItem.classList.add('clickable-item');
+    newItem.textContent = itemName;
+    newItem.dataset.item = itemName;
+    formGroup.appendChild(newItem);
+    // Add event listener to the newly added item
+    newItem.addEventListener('click', function () {
+      this.classList.toggle('clicked');
+    });
+  }
+
+  // Example: Dynamically add a clickable item
+  // Replace 'item2' with the actual item name
+
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Load the HTML content into the "nav-placeholder" element
+  $("#nav-placeholder").load("navbar.html");
+
+  // Fetch unique combinations of ID and Type
+  api("/getUniqueIDsFromDatabase", "GET")
+    .then((res) => {
+      res.forEach((entry) => {
+        const id = entry.Id; // get the ID from the response object
+        // Fetch unique types for the current ID
+        api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
+          .then((typesRes) => {
+            typesRes.forEach((typeEntry) => {
+              const type = typeEntry.Type; // get all types for the current ID from the response object
+
+              // Create a container and chart for the current ID and Type
+              const label = `${id} - ${type}`; // Create label with ID and Type
+              createClickableLabel(id, type, label); // Create clickable label with ID and Type
+            });
+
+            // After dynamically adding clickable items, add event listeners to them
+            addClickListenersToItems();
+          })
+          .catch((error) => {
+            console.error("Error fetching types:", error);
+          });
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching IDs:", error);
+    });
+
+  // Function to add event listeners to clickable items
+  function addClickListenersToItems() {
+    var clickableItems = document.querySelectorAll('.clickable-item');
+    clickableItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        // Toggle clicked class to change background color
+        this.classList.toggle('clicked');
+      });
+    });
+  }
+});
+
+
+function createClickableLabel(id, type, label) {
+  // Create a new clickable label element
+  const clickableLabel = document.createElement("div");
+  clickableLabel.classList.add("clickable-item");
+  clickableLabel.textContent = label; // Set label text
+  clickableLabel.dataset.id = id; // Set data-id attribute to ID
+  clickableLabel.dataset.type = type; // Set data-type attribute to Type
+
+  // Append the label to the form group
+  const formGroup = document.querySelector(".form-group");
+  if (formGroup) {
+    formGroup.appendChild(clickableLabel);
+  } else {
+    console.error("Form group not found.");
+  }
 }
 
 
@@ -384,3 +503,5 @@ function deleteCookie(cookieName) {
   document.cookie =
     cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
+
+
