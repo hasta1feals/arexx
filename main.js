@@ -1,4 +1,5 @@
 
+
 function showMainContent() {
   const mainContent = document.querySelector('.container');
   mainContent.style.display = 'block';
@@ -6,6 +7,7 @@ function showMainContent() {
   // If you want to show the chart, call your existing showChart function
   showChart();
 }
+
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
@@ -29,39 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Event listener for clickable items inside the modal
-  function addClickListenersToItems() {
-    var clickableItems = document.querySelectorAll('.clickable-item');
-    clickableItems.forEach(function (item) {
-      item.addEventListener('click', function () {
-        // Toggle clicked class to change background color
-        this.classList.toggle('clicked');
-      });
-    });
-  }
-
-  // Initially add event listeners to existing clickable items
-  addClickListenersToItems();
-
-  // Function to dynamically add clickable items
-  function addClickableItem(itemName) {
-    var formGroup = document.querySelector('.form-group');
-    var newItem = document.createElement('div');
-    newItem.classList.add('clickable-item');
-    newItem.textContent = itemName;
-    newItem.dataset.item = itemName;
-    formGroup.appendChild(newItem);
-    // Add event listener to the newly added item
-    newItem.addEventListener('click', function () {
-      this.classList.toggle('clicked');
-    });
-  }
-
-  // Example: Dynamically add a clickable item
-  // Replace 'item2' with the actual item name
+  
+ 
 
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
@@ -503,5 +476,3 @@ function deleteCookie(cookieName) {
   document.cookie =
     cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
-
-
