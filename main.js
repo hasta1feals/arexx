@@ -1,3 +1,4 @@
+// Inside main.js
 // Wait for the DOM content to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
@@ -561,7 +562,6 @@ function removeCombinedChart() {
 }
 
 
-// Function to generate a combined graph based on selected items
 function generateCombinedGraph(selectedItems) {
   // Fetch data for selected items from database or elsewhere
   const promises = selectedItems.map(item => {
@@ -571,85 +571,126 @@ function generateCombinedGraph(selectedItems) {
   // Wait for all data fetch requests to complete
   Promise.all(promises)
     .then(datasets => {
+      console.log('Datasets:', datasets); // Log datasets to check their structure
+      
       // Combine data from multiple datasets into one dataset for the combined graph
-      const combinedData = datasets.reduce((combined, data, index) => {
-        // Check if data is defined before processing
-        if (data) {
-          data.forEach(entry => {
-            if (index === 0) {
-              // For the first dataset, directly add entries to combined dataset
-              combined.labels.push(entry.labels);
-              combined.values.push(entry.values);
+ const combinedData = datasets.reduce((combined, data, index) => {
+  console.log('Index:', index);
+  console.log('Data:', data);
+  // Check if data is defined and is an array before processing
+  if (Array.isArray(data)) {
+    data.forEach(entry => {
+      console.log('Entry:', entry);
+      // Check if entry has both 'labels' and 'values' properties
+      if (entry.labels && entry.values) {
+        if (index === 0) {
+          // For the first dataset, directly add entries to combined dataset
+          combined.labels.push(...entry.labels); // Use spread operator to concatenate arrays
+          combined.values.push(...entry.values); // Use spread operator to concatenate arrays
+        } else {
+          // For subsequent datasets, add values to existing labels or add new labels and values
+          entry.labels.forEach((label, i) => {
+            const existingIndex = combined.labels.indexOf(label);
+            if (existingIndex !== -1) {
+              // If label already exists, add value to corresponding index
+              combined.values[existingIndex] += entry.values[i];
             } else {
-              // For subsequent datasets, add values to existing labels or add new labels and values
-              entry.labels.forEach((label, i) => {
-                const existingIndex = combined.labels.indexOf(label);
-                if (existingIndex !== -1) {
-                  // If label already exists, add value to corresponding index
-                  combined.values[existingIndex].push(entry.values[i]);
-                } else {
-                  // If label doesn't exist, add new label and corresponding value
-                  combined.labels.push(label);
-                  combined.values.push([entry.values[i]]);
-                }
-              });
+              // If label doesn't exist, add new label and value
+              combined.labels.push(label);
+              combined.values.push(entry.values[i]);
             }
           });
         }
-        return combined;
-      }, { labels: [], values: [] });
+      } else {
+        // Handle entries that do not have the expected structure
+        // Here, you can extract relevant information from the entry and transform it into the expected format
+        console.warn('Entry does not have expected structure:', entry);
+        // For example, you could extract 'Value' and 'TimeStamp' properties and use them as 'values' and 'labels'
+        combined.labels.push(entry.TimeStamp);
+        combined.values.push(entry.Value);
+      }
+    });
+  } else {
+    console.error('Invalid data format for index:', index, 'Data:', data);
+  }
+  return combined;
+}, { labels: [], values: [] });
+
       
-      // Use combinedData to generate the combined graph
-      createCombinedChartCustomName('cont', combinedData);
+      // Create a container for the combined chart
+      const container = document.createElement('div');
+      container.classList.add('card');
+  
+      // Create card content
+      const cardContent = document.createElement('div');
+      cardContent.classList.add('card-content');
+  
+      // Create card title
+      const cardTitle = document.createElement('div');
+      cardTitle.classList.add('card-title');
+      cardTitle.textContent = `Combined Graph`;
+  
+      // Create graph placeholder
+      const graphPlaceholder = document.createElement('div');
+      graphPlaceholder.classList.add('graph-placeholder');
+  
+      // Create canvas for the combined chart
+      const canvas = document.createElement('canvas');
+      canvas.setAttribute('id', 'combined-chart');
+      canvas.setAttribute('class', 'dynamic-chart');
+      canvas.setAttribute('width', '600');
+      canvas.setAttribute('height', '300');
+  
+      // Append elements
+      graphPlaceholder.appendChild(canvas);
+      cardContent.appendChild(cardTitle);
+      cardContent.appendChild(graphPlaceholder);
+      container.appendChild(cardContent);
+  
+      // Append container to charts-container
+      const combinedChartContainer = document.getElementById('cont');
+      if (combinedChartContainer) {
+        // Remove any existing combined chart before appending the new one
+        combinedChartContainer.innerHTML = '';
+        combinedChartContainer.appendChild(container);
+  
+        // Create the combined chart using Chart.js
+        createCombinedChart(canvas, combinedData.labels, combinedData.values);
+      } else {
+        console.error("Container for combined chart not found.");
+      }
     })
     .catch(error => {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data for selected items:', error);
     });
 }
 
-
-// Function to create a combined chart
-function createCombinedChartCustomName(containerId, combinedData) {
-  // Remove existing combined chart if any
-  removeCombinedChart();
-  
-  // Create canvas for the chart
-  const canvas = document.createElement('canvas');
-  canvas.setAttribute('id', `combined-chart-${containerId}`);
-  canvas.setAttribute('class', 'dynamic-chart');
-  canvas.setAttribute('width', '600');
-  canvas.setAttribute('height', '300');
-
-  // Append canvas to the container
-  const container = document.getElementById(containerId);
-  if (container) {
-    container.appendChild(canvas);
-  } else {
-    console.error(`Container with ID '${containerId}' not found.`);
-    return;
-  }
-
-  // Prepare labels and datasets for the chart
-  const labels = combinedData.labels;
-  const datasets = combinedData.datasets;
-
-  // Create a new chart instance
+// Function to create the combined chart using Chart.js
+function createCombinedChart(canvas, labels, values) {
   new Chart(canvas, {
     type: 'line',
     data: {
       labels: labels,
-      datasets: datasets
+      datasets: [{
+        label: 'Combined Data',
+        data: values,
+        borderColor: 'green',
+        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+        borderWidth: 1
+      }]
     },
     options: {
       scales: {
         y: {
           beginAtZero: false,
-          // You can customize other options as needed
+          // Set the steps for the y-axis
+          stepSize: 0.20, // Set the step size to 0.20
+          // Set the minimum and maximum values for the y-axis
+          min: Math.min(...values),
+          max: Math.max(...values)
         }
       }
     }
   });
 }
-
-
 
