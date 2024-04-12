@@ -562,102 +562,68 @@ function removeCombinedChart() {
 }
 
 
+// Function to generate the combined graph
 function generateCombinedGraph(selectedItems) {
   // Fetch data for selected items from database or elsewhere
   const promises = selectedItems.map(item => {
     return api(`/getDataFromDatabase?id=${item.id}&type=${item.type}`, 'GET');
   });
-  
+
   // Wait for all data fetch requests to complete
   Promise.all(promises)
     .then(datasets => {
       console.log('Datasets:', datasets); // Log datasets to check their structure
-      
-      // Combine data from multiple datasets into one dataset for the combined graph
- const combinedData = datasets.reduce((combined, data, index) => {
-  console.log('Index:', index);
-  console.log('Data:', data);
-  // Check if data is defined and is an array before processing
-  if (Array.isArray(data)) {
-    data.forEach(entry => {
-      console.log('Entry:', entry);
-      // Check if entry has both 'labels' and 'values' properties
-      if (entry.labels && entry.values) {
-        if (index === 0) {
-          // For the first dataset, directly add entries to combined dataset
-          combined.labels.push(...entry.labels); // Use spread operator to concatenate arrays
-          combined.values.push(...entry.values); // Use spread operator to concatenate arrays
-        } else {
-          // For subsequent datasets, add values to existing labels or add new labels and values
-          entry.labels.forEach((label, i) => {
-            const existingIndex = combined.labels.indexOf(label);
-            if (existingIndex !== -1) {
-              // If label already exists, add value to corresponding index
-              combined.values[existingIndex] += entry.values[i];
-            } else {
-              // If label doesn't exist, add new label and value
-              combined.labels.push(label);
-              combined.values.push(entry.values[i]);
-            }
-          });
-        }
-      } else {
-        // Handle entries that do not have the expected structure
-        // Here, you can extract relevant information from the entry and transform it into the expected format
-        console.warn('Entry does not have expected structure:', entry);
-        // For example, you could extract 'Value' and 'TimeStamp' properties and use them as 'values' and 'labels'
-        combined.labels.push(entry.TimeStamp);
-        combined.values.push(entry.Value);
-      }
-    });
-  } else {
-    console.error('Invalid data format for index:', index, 'Data:', data);
-  }
-  return combined;
-}, { labels: [], values: [] });
 
-      
+      // Extracting labels and values for each dataset
+      const combinedData = datasets.map(data => ({
+        labels: data.map(entry => entry.TimeStamp),
+        values: data.map(entry => entry.Value),
+      }));
+
+      // Save combined data to local storage
+      localStorage.setItem('combinedData', JSON.stringify(combinedData));
+
       // Create a container for the combined chart
       const container = document.createElement('div');
       container.classList.add('card');
-  
-      // Create card content
+
+      // Create card content for the chart
       const cardContent = document.createElement('div');
       cardContent.classList.add('card-content');
-  
+
       // Create card title
       const cardTitle = document.createElement('div');
       cardTitle.classList.add('card-title');
       cardTitle.textContent = `Combined Graph`;
-  
+
       // Create graph placeholder
       const graphPlaceholder = document.createElement('div');
       graphPlaceholder.classList.add('graph-placeholder');
-  
-      // Create canvas for the combined chart
+
+      // Create canvas for the chart
       const canvas = document.createElement('canvas');
       canvas.setAttribute('id', 'combined-chart');
       canvas.setAttribute('class', 'dynamic-chart');
       canvas.setAttribute('width', '600');
       canvas.setAttribute('height', '300');
-  
+
       // Append elements
       graphPlaceholder.appendChild(canvas);
       cardContent.appendChild(cardTitle);
       cardContent.appendChild(graphPlaceholder);
       container.appendChild(cardContent);
-  
+
       // Append container to charts-container
       const combinedChartContainer = document.getElementById('cont');
       if (combinedChartContainer) {
-        // Remove any existing combined chart before appending the new one
+        // Remove any existing chart before appending the new one
         combinedChartContainer.innerHTML = '';
         combinedChartContainer.appendChild(container);
-  
-        // Create the combined chart using Chart.js
-        createCombinedChart(canvas, combinedData.labels, combinedData.values);
+
+        // Create the chart using Chart.js
+        createCombinedChart(canvas, combinedData);
       } else {
-        console.error("Container for combined chart not found.");
+        console.error("Container for chart not found.");
       }
     })
     .catch(error => {
@@ -666,18 +632,18 @@ function generateCombinedGraph(selectedItems) {
 }
 
 // Function to create the combined chart using Chart.js
-function createCombinedChart(canvas, labels, values) {
+function createCombinedChart(canvas, combinedData) {
   new Chart(canvas, {
     type: 'line',
     data: {
-      labels: labels,
-      datasets: [{
-        label: 'Combined Data',
-        data: values,
-        borderColor: 'green',
+      labels: combinedData[0].labels, // Using labels from the first dataset
+      datasets: combinedData.map((data, index) => ({
+        label: `Data for ID ${selectedItems[index].id}`, // Using ID as label
+        data: data.values,
+        borderColor: index === 0 ? 'green' : 'blue', // Different color for each line
         backgroundColor: 'rgba(0, 255, 0, 0.1)',
         borderWidth: 1
-      }]
+      }))
     },
     options: {
       scales: {
@@ -686,11 +652,13 @@ function createCombinedChart(canvas, labels, values) {
           // Set the steps for the y-axis
           stepSize: 0.20, // Set the step size to 0.20
           // Set the minimum and maximum values for the y-axis
-          min: Math.min(...values),
-          max: Math.max(...values)
+          min: Math.min(...combinedData.flatMap(data => data.values)),
+          max: Math.max(...combinedData.flatMap(data => data.values))
         }
       }
     }
   });
 }
+
+
 
