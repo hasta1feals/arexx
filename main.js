@@ -1,3 +1,4 @@
+// Wait for the DOM content to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
@@ -19,14 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(`Clicked item: ${itemName}, Data ID: ${dataId}, Data Type: ${dataType}`);
     });
   });
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Load the HTML content into the "nav-placeholder" element
-  $("#nav-placeholder").load("navbar.html");
 
   // Get the modal and the button that opens the modal
   var modal = document.getElementById("addProductModal");
@@ -46,15 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.style.display = "none";
     }
   };
-
-  
- 
-
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Load the HTML content into the "nav-placeholder" element
-  $("#nav-placeholder").load("navbar.html");
 
   // Fetch unique combinations of ID and Type
   api("/getUniqueIDsFromDatabase", "GET")
@@ -96,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
+// Function to create a clickable label
 function createClickableLabel(id, type, label) {
   // Create a new clickable label element
   const clickableLabel = document.createElement("div");
@@ -114,71 +98,40 @@ function createClickableLabel(id, type, label) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const tableBody = document.querySelector('#myTable tbody');
-  
-  // Add event listener to all buttons in the table body
-  tableBody.addEventListener('click', (event) => {
-    if (event.target.classList.contains('btn-get-id')) {
-      const id = event.target.dataset.id; // Get the ID from the button's data attribute
-      const type = event.target.dataset.type; // Get the Type from the button's data attribute
-      console.log('Clicked button for ID:', id);
-      console.log('Type:', type);
-      
-      // Store ID and Type in sessionStorage
-      sessionStorage.setItem('selectedId', id);
-      sessionStorage.setItem('selectedType', type);
-
-      // Navigate to the other page
-      window.location.href = 'homepage.html'; // Replace 'otherpage.html' with the path to your other page
-      
-      // Prevent default behavior of button click (optional)
-      event.preventDefault();
+// Add event listener to the form group for event delegation
+const formGroup = document.querySelector(".form-group");
+if (formGroup) {
+  formGroup.addEventListener("click", function(event) {
+    // Check if the clicked element is a clickable item
+    if (event.target.classList.contains("clickable-item")) {
+      // Retrieve data attributes from the clicked label
+      const id = event.target.dataset.id;
+      const type = event.target.dataset.type;
+      // Perform actions based on the clicked label
+      console.log(`Clicked item: ${id} - ${type}`);
     }
   });
-
-  // Check if the container element exists on the other page
-  const containerOnOtherPage = document.querySelector('.container1');
-  if (containerOnOtherPage) {
-    // Call createContainerAndChart function if the container exists
-    const id = sessionStorage.getItem('selectedId');
-    const type = sessionStorage.getItem('selectedType');
-    if (id && type) {
-      generateChart(id, type);
-    }
-  }
-});
-
-
-// Function to generate a chart based on the provided ID and Type
-function generateChart(id, type) {
-  // Fetch data corresponding to the ID and Type from your database or wherever it's stored
-  // Example API call
-  api(`/getDataFromDatabase?id=${id}&type=${type}`, 'GET')
-    .then(data => {
-      // Process the data and generate the chart
-      createContainerAndChart(id, type, data);
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-}
-
-// Retrieve selectedId and selectedType from sessionStorage
-const id = sessionStorage.getItem('selectedId');
-const type = sessionStorage.getItem('selectedType');
-
-// Check if selectedId and selectedType are present
-if (id && type) {
-  // Call the generateChart function with the retrieved ID and Type
-  generateChart(id, type);
 } else {
-  console.error('No selected ID or type found in sessionStorage.');
+  console.error("Form group not found.");
 }
 
 
 
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Retrieve stored data from local storage
+  const storedData = JSON.parse(localStorage.getItem('storedData'));
+
+  // Check if storedData is present
+  if (storedData && storedData.length > 0) {
+    // Loop through the stored data and generate charts for each ID and type
+    storedData.forEach(({ id, type }) => {
+      generateChart(id, type);
+    });
+  } else {
+    console.error('No stored data found in local storage.');
+  }
+}); 
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -195,6 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Retrieve selectedId and selectedType from sessionStorage
   const id = sessionStorage.getItem('selectedId');
   const type = sessionStorage.getItem('selectedType');
+  
+  console.log('Selected ID from sessionStorage:', id);
+  console.log('Selected Type from sessionStorage:', type);
 
   // Check if selectedId and selectedType are present
   if (id && type && !sessionStorage.getItem('chartGenerated')) {
@@ -208,52 +164,32 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Function to handle click events on buttons inside table rows
 function handleClick(event) {
   if (event.target.classList.contains('btn-get-id')) {
     const id = event.target.dataset.id; // Get the ID from the button's data attribute
     const type = event.target.dataset.type; // Get the Type from the button's data attribute
-    console.log('Clicked button for ID:', id);
-    console.log('Type:', type);
+    console.log('Clicked button for ID:', id, 'Type:', type);
     // Call the generateChart function with the ID and Type
     generateChart(id, type);
   }
 }
 
+// Function to generate a chart based on the provided ID and Type
+function generateChart(id, type) {
+  // Fetch data corresponding to the ID and Type from your database or wherever it's stored
+  // Example API call
+  api(`/getDataFromDatabase?id=${id}&type=${type}`, 'GET')
+    .then(data => {
+      // Process the data and generate the chart
+      createContainerAndChart(id, type, data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+}
 
-
-// document.addEventListener("DOMContentLoaded", function () {
-//   // Fetch unique combinations of ID and Type
-//   api("/getUniqueIDsFromDatabase", "GET")
-//     .then((res) => {
-//       res.forEach((entry) => {
-//         const id = entry.Id; // get the ID from the response object
-//         // Fetch unique types for the current ID
-//         api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
-//           .then((typesRes) => {
-//             typesRes.forEach((typeEntry) => {
-//               const type = typeEntry.Type;// get all types for the current ID from the response object
-             
-//               // Fetch data for the current ID and Type
-//               api(`/getDataFromDatabase?id=${id}&type=${type}`, "GET")
-//                 .then((dataRes) => {
-//                   // Create a container and chart for the current ID and Type
-//                   createContainerAndChart(id, type, dataRes);
-//                 })
-//                 .catch((error) => {
-//                   console.error("Error fetching data:", error);
-//                 });
-//             });
-//           })
-//           .catch((error) => {
-//             console.error("Error fetching types:", error);
-//           });
-//       });
-//     })
-//     .catch((error) => {
-//       console.error("Error fetching IDs:", error);
-//     });
-// });
-
+// Function to create a container and chart for the provided ID, Type, and data
 function createContainerAndChart(id, type, data) {
   // Create a container for the chart
   const container = document.createElement('div');
@@ -322,8 +258,6 @@ function createContainerAndChart(id, type, data) {
 }
 
 // Inside main.js
-
-
 // Function to filter dynamically created containers/cards based on search input
 function searchContainers() {
   // Declare variables
@@ -344,7 +278,6 @@ function searchContainers() {
   });
 }
 
-
 // Check if the element exists before adding the event listener
 const searchInput = document.getElementById("searchInput");
 if (searchInput) {
@@ -361,7 +294,7 @@ function itemsLoad() {
     .then((res) => {
 
       const tableBody = document.querySelector("#myTable tbody");
-      tableBody.innerHTML = "";
+
 
       // Check if new data is received
       const hasNewData = res.rows && res.rows.length > 0;
@@ -381,14 +314,29 @@ function itemsLoad() {
         tableBody.appendChild(newRow);
       });
 
-      // Add event listener to all buttons in the table body
-      tableBody.addEventListener('click', (event) => {
-        if (event.target.classList.contains('btn-get-id')) {
-          const id = event.target.dataset.id; // Get the ID from the button's data attribute
-          console.log('Clicked button for ID:', id);
-          // Call a function or perform any action with the ID
-        }
-      });
+   
+// Add event listener to all buttons in the table body
+tableBody.addEventListener('click', (event) => {
+  if (event.target.classList.contains('btn-get-id')) {
+    const id = event.target.dataset.id;
+    const type = event.target.dataset.type;
+    console.log('Clicked button for ID:', id, type);
+    
+    // Retrieve existing data from local storage or initialize an empty array
+    let storedData = JSON.parse(localStorage.getItem('storedData')) || [];
+
+    // Add the new ID and type to the array
+    storedData.push({ id, type });
+
+    // Store the updated array back into local storage
+    localStorage.setItem('storedData', JSON.stringify(storedData));
+
+    // Navigate to homepage.html
+    window.location.href = `homepage.html`;
+  }
+});
+
+
 
       // Update newDataReceived flag based on whether new data is received
       newDataReceived = hasNewData;
@@ -409,11 +357,7 @@ function itemsLoad() {
     });
 }
 
-
-
-
- 
-  function searchTable() {
+function searchTable() {
   // Declare variables
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("searchInput");
@@ -438,12 +382,9 @@ function itemsLoad() {
   }
 }
 
-
 document.addEventListener("DOMContentLoaded", function () {
- 
-
-          itemsLoad(currentTablePage);
-          getRH();
+  itemsLoad(currentTablePage);
+  getRH();
 });
     
 function hideMainContent() {
@@ -461,57 +402,9 @@ function getHomepage() {
   });
 }
 
-// Function to fetch RH data from the API
-function getRH() {
-  api("/getRH", "GET").then((res) => {
-    console.log("API Response:", res); // Log the actual response
-    const labels = res.map(data => data.TimeStamp);
-    const values = res.map(data => data.Value);
-    updateChart(labels, values);
-  });
-}
-
-// Function to update the chart with new data
-function updateChart(labels, values) {
-  myChart.data.labels = labels;
-  myChart.data.datasets[0].data = values;
-  myChart.update();
-}
-
-// Call the getRH function initially to fetch RH data and update the chart
-getRH();
-
-// Call the getRH function every 1 minute to fetch new RH data and update the chart
-setInterval(getRH, 60000); // 60000 milliseconds = 1 minute
-
-
-// Initialize empty data arrays
-let labels = [];
-let data = [];
 
 
 
-// Get the canvas elements
-const ctx = document.getElementById('myChart').getContext('2d');
-
-// Check if there's already a chart associated with the canvas
-
-
-
-
-
-// Function to update the chart with new data
-function updateChart(labels, newData) {
-  // Update the chart data
-  myChart.data.labels = labels;
-  myChart.data.datasets[0].data = newData;
-
-  // Update the chart
-  myChart.update();
-}
-
-// Example usage: Call this function whenever you want to update the chart with new data
-updateChart([]);
 
 
 
@@ -564,6 +457,8 @@ function apiDiffType(endpoint, method = "GET", data = {}) {
   }).then((res) => res.json());
 }
 
+
+
 // Cookie functions stolen from w3schools (https://www.w3schools.com/js/js_cookies.asp)
 function setCookie(cname, cvalue, exdays = 1) {
   let d = new Date();
@@ -614,3 +509,147 @@ function deleteCookie(cookieName) {
   document.cookie =
     cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
+
+
+
+
+
+let selectedItems = [];
+
+if (formGroup) {
+  formGroup.addEventListener("click", function(event) {
+    // Check if the clicked element is a clickable item
+    if (event.target.classList.contains("clickable-item")) {
+      // Retrieve data attributes from the clicked label
+      const id = event.target.dataset.id;
+      const type = event.target.dataset.type;
+      
+      // Toggle selection
+      const index = selectedItems.findIndex(item => item.id === id && item.type === type);
+      if (index === -1) {
+        // Add to selected items if not already selected
+        selectedItems.push({ id, type });
+      } else {
+        // Remove from selected items if already selected
+        selectedItems.splice(index, 1);
+      }
+      
+      // Perform actions based on the clicked label
+      console.log(`Selected items:`, selectedItems);
+      
+      // Generate combined graph based on selected items if at least two items are selected
+      if (selectedItems.length >= 2) {
+        generateCombinedGraph(selectedItems);
+      } else {
+        // If less than two items are selected, remove the existing combined chart
+        removeCombinedChart();
+      }
+    }
+  });
+} else {
+  console.error("Form group not found.");
+}
+
+// Function to remove the existing combined chart
+function removeCombinedChart() {
+  const combinedChartContainer = document.getElementById('cont');
+  if (combinedChartContainer) {
+    combinedChartContainer.innerHTML = ''; // Remove all child elements
+  } else {
+    console.error("Container for combined chart not found.");
+  }
+}
+
+
+// Function to generate a combined graph based on selected items
+function generateCombinedGraph(selectedItems) {
+  // Fetch data for selected items from database or elsewhere
+  const promises = selectedItems.map(item => {
+    return api(`/getDataFromDatabase?id=${item.id}&type=${item.type}`, 'GET');
+  });
+  
+  // Wait for all data fetch requests to complete
+  Promise.all(promises)
+    .then(datasets => {
+      // Combine data from multiple datasets into one dataset for the combined graph
+      const combinedData = datasets.reduce((combined, data, index) => {
+        // Check if data is defined before processing
+        if (data) {
+          data.forEach(entry => {
+            if (index === 0) {
+              // For the first dataset, directly add entries to combined dataset
+              combined.labels.push(entry.labels);
+              combined.values.push(entry.values);
+            } else {
+              // For subsequent datasets, add values to existing labels or add new labels and values
+              entry.labels.forEach((label, i) => {
+                const existingIndex = combined.labels.indexOf(label);
+                if (existingIndex !== -1) {
+                  // If label already exists, add value to corresponding index
+                  combined.values[existingIndex].push(entry.values[i]);
+                } else {
+                  // If label doesn't exist, add new label and corresponding value
+                  combined.labels.push(label);
+                  combined.values.push([entry.values[i]]);
+                }
+              });
+            }
+          });
+        }
+        return combined;
+      }, { labels: [], values: [] });
+      
+      // Use combinedData to generate the combined graph
+      createCombinedChartCustomName('cont', combinedData);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+}
+
+
+// Function to create a combined chart
+function createCombinedChartCustomName(containerId, combinedData) {
+  // Remove existing combined chart if any
+  removeCombinedChart();
+  
+  // Create canvas for the chart
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('id', `combined-chart-${containerId}`);
+  canvas.setAttribute('class', 'dynamic-chart');
+  canvas.setAttribute('width', '600');
+  canvas.setAttribute('height', '300');
+
+  // Append canvas to the container
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.appendChild(canvas);
+  } else {
+    console.error(`Container with ID '${containerId}' not found.`);
+    return;
+  }
+
+  // Prepare labels and datasets for the chart
+  const labels = combinedData.labels;
+  const datasets = combinedData.datasets;
+
+  // Create a new chart instance
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false,
+          // You can customize other options as needed
+        }
+      }
+    }
+  });
+}
+
+
+
