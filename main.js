@@ -1,12 +1,28 @@
+document.addEventListener("DOMContentLoaded", function () {
+  // Load the HTML content into the "nav-placeholder" element
+  $("#nav-placeholder").load("navbar.html");
+
+  // Add event listener to the modal's content after it's loaded
+  $(document).on('click', '#combine-graph', function () {
+    // Remove any existing click event handlers on clickable items
+    $('.modal-content .clickable-item').off('click');
+
+    // Add event listener to the document body for delegation
+    $('body').on('click', '.modal-content .clickable-item', function () {
+      // Toggle clicked class to change background color
+      $(this).toggleClass('clicked');
+
+      // Log data and name
+      const dataId = $(this).data('id');
+      const dataType = $(this).data('type');
+      const itemName = $(this).text();
+      console.log(`Clicked item: ${itemName}, Data ID: ${dataId}, Data Type: ${dataType}`);
+    });
+  });
+});
 
 
-function showMainContent() {
-  const mainContent = document.querySelector('.container');
-  mainContent.style.display = 'block';
 
-  // If you want to show the chart, call your existing showChart function
-  showChart();
-}
 
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
@@ -98,40 +114,145 @@ function createClickableLabel(id, type, label) {
   }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  const tableBody = document.querySelector('#myTable tbody');
+  
+  // Add event listener to all buttons in the table body
+  tableBody.addEventListener('click', (event) => {
+    if (event.target.classList.contains('btn-get-id')) {
+      const id = event.target.dataset.id; // Get the ID from the button's data attribute
+      const type = event.target.dataset.type; // Get the Type from the button's data attribute
+      console.log('Clicked button for ID:', id);
+      console.log('Type:', type);
+      
+      // Store ID and Type in sessionStorage
+      sessionStorage.setItem('selectedId', id);
+      sessionStorage.setItem('selectedType', type);
 
+      // Navigate to the other page
+      window.location.href = 'homepage.html'; // Replace 'otherpage.html' with the path to your other page
+      
+      // Prevent default behavior of button click (optional)
+      event.preventDefault();
+    }
+  });
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Fetch unique combinations of ID and Type
-  api("/getUniqueIDsFromDatabase", "GET")
-    .then((res) => {
-      res.forEach((entry) => {
-        const id = entry.Id; // get the ID from the response object
-        // Fetch unique types for the current ID
-        api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
-          .then((typesRes) => {
-            typesRes.forEach((typeEntry) => {
-              const type = typeEntry.Type;// get all types for the current ID from the response object
-             
-              // Fetch data for the current ID and Type
-              api(`/getDataFromDatabase?id=${id}&type=${type}`, "GET")
-                .then((dataRes) => {
-                  // Create a container and chart for the current ID and Type
-                  createContainerAndChart(id, type, dataRes);
-                })
-                .catch((error) => {
-                  console.error("Error fetching data:", error);
-                });
-            });
-          })
-          .catch((error) => {
-            console.error("Error fetching types:", error);
-          });
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching IDs:", error);
-    });
+  // Check if the container element exists on the other page
+  const containerOnOtherPage = document.querySelector('.container1');
+  if (containerOnOtherPage) {
+    // Call createContainerAndChart function if the container exists
+    const id = sessionStorage.getItem('selectedId');
+    const type = sessionStorage.getItem('selectedType');
+    if (id && type) {
+      generateChart(id, type);
+    }
+  }
 });
+
+
+// Function to generate a chart based on the provided ID and Type
+function generateChart(id, type) {
+  // Fetch data corresponding to the ID and Type from your database or wherever it's stored
+  // Example API call
+  api(`/getDataFromDatabase?id=${id}&type=${type}`, 'GET')
+    .then(data => {
+      // Process the data and generate the chart
+      createContainerAndChart(id, type, data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+}
+
+// Retrieve selectedId and selectedType from sessionStorage
+const id = sessionStorage.getItem('selectedId');
+const type = sessionStorage.getItem('selectedType');
+
+// Check if selectedId and selectedType are present
+if (id && type) {
+  // Call the generateChart function with the retrieved ID and Type
+  generateChart(id, type);
+} else {
+  console.error('No selected ID or type found in sessionStorage.');
+}
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if the event listener is already added
+  if (!sessionStorage.getItem('eventListenerAdded')) {
+    // Add event listener to the table body
+    const tableBody = document.querySelector('#myTable tbody');
+    tableBody.addEventListener('click', handleClick);
+    
+    // Set a flag in sessionStorage to indicate that the event listener is added
+    sessionStorage.setItem('eventListenerAdded', true);
+  }
+
+  // Retrieve selectedId and selectedType from sessionStorage
+  const id = sessionStorage.getItem('selectedId');
+  const type = sessionStorage.getItem('selectedType');
+
+  // Check if selectedId and selectedType are present
+  if (id && type && !sessionStorage.getItem('chartGenerated')) {
+    // Call the generateChart function with the retrieved ID and Type
+    generateChart(id, type);
+    
+    // Set a flag in sessionStorage to indicate that the chart is generated
+    sessionStorage.setItem('chartGenerated', true);
+  } else {
+    console.error('No selected ID or type found in sessionStorage.');
+  }
+});
+
+function handleClick(event) {
+  if (event.target.classList.contains('btn-get-id')) {
+    const id = event.target.dataset.id; // Get the ID from the button's data attribute
+    const type = event.target.dataset.type; // Get the Type from the button's data attribute
+    console.log('Clicked button for ID:', id);
+    console.log('Type:', type);
+    // Call the generateChart function with the ID and Type
+    generateChart(id, type);
+  }
+}
+
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   // Fetch unique combinations of ID and Type
+//   api("/getUniqueIDsFromDatabase", "GET")
+//     .then((res) => {
+//       res.forEach((entry) => {
+//         const id = entry.Id; // get the ID from the response object
+//         // Fetch unique types for the current ID
+//         api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET")
+//           .then((typesRes) => {
+//             typesRes.forEach((typeEntry) => {
+//               const type = typeEntry.Type;// get all types for the current ID from the response object
+             
+//               // Fetch data for the current ID and Type
+//               api(`/getDataFromDatabase?id=${id}&type=${type}`, "GET")
+//                 .then((dataRes) => {
+//                   // Create a container and chart for the current ID and Type
+//                   createContainerAndChart(id, type, dataRes);
+//                 })
+//                 .catch((error) => {
+//                   console.error("Error fetching data:", error);
+//                 });
+//             });
+//           })
+//           .catch((error) => {
+//             console.error("Error fetching types:", error);
+//           });
+//       });
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching IDs:", error);
+//     });
+// });
 
 function createContainerAndChart(id, type, data) {
   // Create a container for the chart
@@ -233,18 +354,19 @@ if (searchInput) {
 let currentTablePage = 1;
 let originalRows = []; 
 
+let newDataReceived = localStorage.getItem('newDataReceived') === 'true' ? true : false;
+
 function itemsLoad() {
   api("/getAllitems", "GET")
     .then((res) => {
-  
+
       const tableBody = document.querySelector("#myTable tbody");
       tableBody.innerHTML = "";
 
-      // Loop through the items and add them to the table
-      // Store the original rows for filtering
-      originalRows = res.rows;
+      // Check if new data is received
+      const hasNewData = res.rows && res.rows.length > 0;
 
-      // Example: Populate the table with data
+      // Loop through the items and add them to the table
       res.rows.forEach((row) => {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
@@ -252,7 +374,8 @@ function itemsLoad() {
           <td>${row.Value}</td>
           <td>${row.Type}</td>
           <td>${row.TimeStamp}</td>
-          <td><button class="btn-get-id" data-id="${row.Id}">Graph</button></td>
+          <td><button class="btn-get-id" data-id="${row.Id}" data-type="${row.Type}">Graph</button>
+          </td>
           <!-- Add more table cells as needed -->
         `;
         tableBody.appendChild(newRow);
@@ -267,11 +390,27 @@ function itemsLoad() {
         }
       });
 
+      // Update newDataReceived flag based on whether new data is received
+      newDataReceived = hasNewData;
+      localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
+
+      // Reset the newDataReceived flag after 10 seconds (adjust the time as needed)
+      setTimeout(() => {
+        newDataReceived = false;
+        localStorage.setItem('newDataReceived', 'false'); // Update localStorage
+      }, 10000); // 10 seconds in milliseconds
+
     })
     .catch((error) => {
       console.error("Error fetching items:", error);
+      // In case of an error, set newDataReceived to false
+      newDataReceived = false;
+      localStorage.setItem('newDataReceived', 'false');
     });
 }
+
+
+
 
  
   function searchTable() {
@@ -304,7 +443,6 @@ document.addEventListener("DOMContentLoaded", function () {
  
 
           itemsLoad(currentTablePage);
-          showMainContent();
           getRH();
 });
     

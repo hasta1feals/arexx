@@ -4,8 +4,8 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-// const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
-// const port = new SerialPort({ path: portPath, baudRate: 115200 });
+const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(function(req, res, next) {
@@ -264,63 +264,63 @@ app.get('/infoSensor', (req, res) => {
 let incompleteData = '';
 
 // Function to handle incoming data
-// function onData(data) {
-//   try {
-//     // Convert the incoming data to a string
-//     const rawData = data.toString();
+function onData(data) {
+  try {
+    // Convert the incoming data to a string
+    const rawData = data.toString();
 
-//     console.log('Raw data:', rawData);
+    console.log('Raw data:', rawData);
 
-//     // Concatenate the incoming data with any previously incomplete data
-//     const combinedData = incompleteData + rawData;
+    // Concatenate the incoming data with any previously incomplete data
+    const combinedData = incompleteData + rawData;
 
-//     // Regular expression to match JSON-like substrings
-//     const jsonRegex = /{[^{}]*}/g;
+    // Regular expression to match JSON-like substrings
+    const jsonRegex = /{[^{}]*}/g;
 
-//     // Extract JSON-like substrings from the combined data
-//     const jsonMatches = combinedData.match(jsonRegex);
+    // Extract JSON-like substrings from the combined data
+    const jsonMatches = combinedData.match(jsonRegex);
 
-//     if (jsonMatches) {
-//       // Iterate over each matched substring
-//       jsonMatches.forEach((jsonString) => {
-//         try {
-//           // Parse the JSON substring
-//           const parsedData = JSON.parse(jsonString);
+    if (jsonMatches) {
+      // Iterate over each matched substring
+      jsonMatches.forEach((jsonString) => {
+        try {
+          // Parse the JSON substring
+          const parsedData = JSON.parse(jsonString);
 
-//           console.log('Parsed data:', parsedData); // Log parsed data
+          console.log('Parsed data:', parsedData); // Log parsed data
 
-//           // Insert the parsed data into the database
-//           const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
-//           stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp);
-//           stmt.finalize();
+          // Insert the parsed data into the database
+          const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
+          stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp);
+          stmt.finalize();
 
-//           console.log('Data inserted into the database:', parsedData);
-//         } catch (error) {
-//           console.error('Error parsing JSON:', error);
-//         }
-//       });
+          console.log('Data inserted into the database:', parsedData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      });
 
-//       // Update incomplete data with any remaining unmatched substring
-//       incompleteData = combinedData.slice(jsonMatches[jsonMatches.length - 1].length);
-//     } else {
-//       // Update incomplete data with combined data if no JSON-like substrings found
-//       incompleteData = combinedData;
-//     }
-//   } catch (error) {
-//     console.error('Error handling data:', error);
-//   }
-// }
-
-
+      // Update incomplete data with any remaining unmatched substring
+      incompleteData = combinedData.slice(jsonMatches[jsonMatches.length - 1].length);
+    } else {
+      // Update incomplete data with combined data if no JSON-like substrings found
+      incompleteData = combinedData;
+    }
+  } catch (error) {
+    console.error('Error handling data:', error);
+  }
+}
 
 
 
-// port.on('open', () => {
-//   console.log('Port opened successfully.');
 
-//   // Set up a listener for incoming data
-//   port.on('data', onData);
-// });
+
+port.on('open', () => {
+  console.log('Port opened successfully.');
+
+  // Set up a listener for incoming data
+  port.on('data', onData);
+});
 
 
 

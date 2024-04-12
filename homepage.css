@@ -254,10 +254,11 @@ button:hover {
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 30%;
-  height: 30%;
+  width: 70%; /* Set to a percentage value */
+  /* Remove height property */
   border-radius: 3px;
 }
+
 .modal-monitor {
   background-color: #fefefe;
   margin: auto;
@@ -278,7 +279,7 @@ button:hover {
 }
 .form-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* Changed from space-between to column */
   margin: 20px 0;
   font-weight: 500;
 }
