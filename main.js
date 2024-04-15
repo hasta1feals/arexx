@@ -251,7 +251,6 @@ function createContainerAndChart(id, type, data) {
 
   // Make the container draggable
   $(container).draggable({
-    containment: "parent",
     stop: function(event, ui) {
       // Store the position in local storage when dragging stops
       const position = ui.position;
@@ -810,6 +809,10 @@ function generateCombinedGraph(selectedItems) {
       // Create a container for the combined chart
       const container = document.createElement('div');
       container.classList.add('card');
+      container.classList.add('dynamic-chart-container');
+      container.classList.add('drag'); // Add the 'drag' class to make it draggable
+      container.classList.add('ui-draggable');
+      container.classList.add('ui-draggable-handle');
 
       // Create card content for the chart
       const cardContent = document.createElement('div');
@@ -856,6 +859,9 @@ function generateCombinedGraph(selectedItems) {
         // Append the container for the combined chart
         combinedChartContainer.appendChild(container);
 
+        // Make the container draggable using jQuery UI
+        $(container).draggable();
+
         // Create the chart using Chart.js
         createCombinedChart(canvas, combinedData);
       } else {
@@ -866,6 +872,8 @@ function generateCombinedGraph(selectedItems) {
       console.error('Error fetching data for selected items:', error);
     });
 }
+
+
 
 
 // Function to create the combined chart using Chart.js
