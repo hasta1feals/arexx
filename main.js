@@ -159,6 +159,114 @@ console.log(combinedDataKeysAndValues);
 
 console.log('Contents of localStorage:', localStorage);
 
+function createContainerAndChart(id, type, data) {
+  // Create a container for the chart
+  const container = document.createElement('div');
+  container.classList.add('card');
+  container.classList.add('drag'); // Add 'drag' class to make it draggable
+
+  // Create card content
+  const cardContent = document.createElement('div');
+  cardContent.classList.add('card-content');
+
+  // Create card title
+  const cardTitle = document.createElement('div');
+  cardTitle.classList.add('card-title');
+  cardTitle.textContent = `${id} ${type}`;
+
+  // Create remove button with "x" icon
+  const removeButton = document.createElement('button');
+  removeButton.classList.add('remove-button');
+  removeButton.innerHTML = '<i class="fas fa-times"></i>'; // Font Awesome times icon
+  removeButton.addEventListener('click', function() {
+    // Remove container from the DOM
+    container.remove();
+
+    // Remove position and size data from local storage
+    localStorage.removeItem(`${id}-${type}-position`);
+    localStorage.removeItem(`${id}-${type}-size`);
+
+    // Remove the item from storedData if it exists
+    const storedData = JSON.parse(localStorage.getItem('storedData')) || [];
+    const indexToRemove = storedData.findIndex(item => item.id === id && item.type === type);
+    if (indexToRemove !== -1) {
+      storedData.splice(indexToRemove, 1);
+      localStorage.setItem('storedData', JSON.stringify(storedData));
+    }
+  });
+
+  // Append elements
+  cardContent.appendChild(cardTitle);
+  cardContent.appendChild(removeButton); // Add the remove button to the card content
+  container.appendChild(cardContent);
+
+  // Append container to charts-container
+  document.getElementById('cont').appendChild(container);
+
+  // Prepare labels and values for the chart
+  const labels = data.map((entry) => entry.TimeStamp);
+  const values = data.map((entry) => entry.Value);
+
+  // Create graph placeholder
+  const graphPlaceholder = document.createElement('div');
+  graphPlaceholder.classList.add('graph-placeholder');
+
+  // Create canvas for the chart
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('id', `chart-${id}-${type}`);
+  canvas.setAttribute('class', 'dynamic-chart');
+  canvas.setAttribute('width', '600');
+  canvas.setAttribute('height', '300');
+
+  // Append graph placeholder and canvas
+  graphPlaceholder.appendChild(canvas);
+  cardContent.appendChild(graphPlaceholder);
+
+  // Create a new chart instance
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `${id} ${type}`,
+        data: values,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            min: Math.min(...values),
+            stepSize: 0.20,
+            max: Math.max(...values)
+          }
+        }
+      }
+    }
+  });
+
+  // Make the container draggable
+  $(container).draggable({
+    containment: "parent",
+    stop: function(event, ui) {
+      // Store the position in local storage when dragging stops
+      const position = ui.position;
+      localStorage.setItem(`${id}-${type}-position`, JSON.stringify(position));
+    }
+  });
+
+  // Retrieve the position from local storage if available
+  const storedPosition = localStorage.getItem(`${id}-${type}-position`);
+  if (storedPosition) {
+    const position = JSON.parse(storedPosition);
+    container.style.left = position.left + 'px';
+    container.style.top = position.top + 'px';
+  }
+}
 
 
 function createCombinedChartFromLocalStorage() {
@@ -201,9 +309,6 @@ function createCombinedChartFromLocalStorage() {
           container.setAttribute('id', `${key}-container`);
           container.classList.add('drag'); // Add the 'drag' class to make it draggable
 
-
-   
-
           // Create card content
           const cardContent = document.createElement('div');
           cardContent.classList.add('card-content');
@@ -212,6 +317,18 @@ function createCombinedChartFromLocalStorage() {
           const cardTitle = document.createElement('div');
           cardTitle.classList.add('card-title');
           cardTitle.textContent = `Combined Chart - ${key}`;
+
+          // Create remove button with "x" icon
+          const removeButton = document.createElement('button');
+          removeButton.classList.add('remove-button');
+          removeButton.innerHTML = '<i class="fas fa-times"></i>'; // Font Awesome times icon
+          removeButton.addEventListener('click', function() {
+            // Remove container from the DOM
+            container.remove();
+
+            // Remove data from local storage
+            localStorage.removeItem(key);
+          });
 
           // Create graph placeholder
           const graphPlaceholder = document.createElement('div');
@@ -227,6 +344,7 @@ function createCombinedChartFromLocalStorage() {
           // Append elements
           graphPlaceholder.appendChild(canvas);
           cardContent.appendChild(cardTitle);
+          cardContent.appendChild(removeButton); // Add the remove button to the card content
           cardContent.appendChild(graphPlaceholder);
           container.appendChild(cardContent);
 
@@ -265,6 +383,7 @@ function createCombinedChartFromLocalStorage() {
     console.error("No combined graph data found in local storage.");
   }
 }
+
 $(document).ready(function() {
   // Initialize draggability for elements with the 'drag' class
   $(".drag").draggable();
@@ -350,112 +469,12 @@ function generateChart(id, type) {
       console.error('Error fetching data:', error);
     });
 }
-function createContainerAndChart(id, type, data) {
-  // Create a container for the chart
-  const container = document.createElement('div');
-  container.classList.add('card');
-  container.classList.add('drag'); // Add the 'drag' class to make it draggable
 
-  // Create card content
-  const cardContent = document.createElement('div');
-  cardContent.classList.add('card-content');
-
-  // Create card title
-  const cardTitle = document.createElement('div');
-  cardTitle.classList.add('card-title');
-  cardTitle.textContent = `${id} ${type}`;
-
-  // Create graph placeholder
-  const graphPlaceholder = document.createElement('div');
-  graphPlaceholder.classList.add('graph-placeholder');
-
-  // Create canvas for the chart
-  const canvas = document.createElement('canvas');
-  canvas.setAttribute('id', `chart-${id}-${type}`);
-  canvas.setAttribute('class', 'dynamic-chart');
-  canvas.setAttribute('width', '600');
-  canvas.setAttribute('height', '300');
-
-  // Append elements
-  graphPlaceholder.appendChild(canvas);
-  cardContent.appendChild(cardTitle);
-  cardContent.appendChild(graphPlaceholder);
-  container.appendChild(cardContent);
-
-  // Append container to charts-container
-  document.getElementById('cont').appendChild(container);
-
-  // Prepare labels and values for the chart
-  const labels = data.map((entry) => entry.TimeStamp);
-  const values = data.map((entry) => entry.Value);
-
-  // Create a new chart instance
-  new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: `${id} ${type}`,
-        data: values,
-        borderColor: 'blue',
-        backgroundColor: 'rgba(0, 0, 255, 0.1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: false,
-          ticks: {
-            min: Math.min(...values),
-            stepSize: 0.20,
-            max: Math.max(...values)
-          }
-        }
-      }
-    }
-  });
-
-  // Make the container draggable and resizable
-  $(container).draggable({
-    containment: "parent",
-    stop: function(event, ui) {
-      // Store the position in local storage when dragging stops
-      const position = ui.position;
-      localStorage.setItem(`${id}-${type}-position`, JSON.stringify(position));
-    }
-  }).resizable({
-    handles: "n, e, s, w, ne, se, sw, nw",
-    containment: "parent",
-    minWidth: 200,
-    minHeight: 200,
-    stop: function(event, ui) {
-      // Store the size in local storage when resizing stops
-      const size = { width: ui.size.width, height: ui.size.height };
-      localStorage.setItem(`${id}-${type}-size`, JSON.stringify(size));
-    }
-  });
-
-  // Retrieve the position from local storage if available
-  const storedPosition = localStorage.getItem(`${id}-${type}-position`);
-  if (storedPosition) {
-    const position = JSON.parse(storedPosition);
-    container.style.left = position.left + 'px';
-    container.style.top = position.top + 'px';
-  }
-
-  // Retrieve the size from local storage if available
-  const storedSize = localStorage.getItem(`${id}-${type}-size`);
-  if (storedSize) {
-    const size = JSON.parse(storedSize);
-    container.style.width = size.width + 'px';
-    container.style.height = size.height + 'px';
-  }
-}
 
 
 // Inside main.js
 // Function to filter dynamically created containers/cards based on search input
+// Function to handle the search functionality
 function searchContainers() {
   // Declare variables
   var input, filter, containers, i, txtValue;
@@ -465,7 +484,7 @@ function searchContainers() {
 
   // Loop through all containers/cards, and hide those that don't match the search query
   containers.forEach(function(container) {
-    cardTitle = container.querySelector('.card-title');
+    const cardTitle = container.querySelector('.card-title');
     txtValue = cardTitle.textContent || cardTitle.innerText;
     if (txtValue.toUpperCase().indexOf(filter) > -1) {
       container.style.display = "";
@@ -475,11 +494,13 @@ function searchContainers() {
   });
 }
 
-// Check if the element exists before adding the event listener
-const searchInput = document.getElementById("searchInput");
-if (searchInput) {
-    searchInput.addEventListener("input", searchContainers);
-}
+// Add event listener to the parent element of the dynamically generated .card elements
+document.addEventListener("input", function(event) {
+  if (event.target && event.target.id === "searchInput") {
+    searchContainers();
+  }
+});
+
 
 let currentTablePage = 1;
 let originalRows = []; 
@@ -799,6 +820,18 @@ function generateCombinedGraph(selectedItems) {
       cardTitle.classList.add('card-title');
       cardTitle.textContent = `Combined Graph`;
 
+      // Create remove button with "x" icon
+      const removeButton = document.createElement('button');
+      removeButton.classList.add('remove-button');
+      removeButton.innerHTML = '<i class="fas fa-times"></i>'; // Font Awesome times icon
+      removeButton.addEventListener('click', function() {
+        // Remove container from the DOM
+        container.remove();
+
+        // Remove data from local storage
+        localStorage.removeItem(`combinedData_${currentTimestamp}`);
+      });
+
       // Create graph placeholder
       const graphPlaceholder = document.createElement('div');
       graphPlaceholder.classList.add('graph-placeholder');
@@ -813,6 +846,7 @@ function generateCombinedGraph(selectedItems) {
       // Append elements
       graphPlaceholder.appendChild(canvas);
       cardContent.appendChild(cardTitle);
+      cardContent.appendChild(removeButton); // Add the remove button to the card content
       cardContent.appendChild(graphPlaceholder);
       container.appendChild(cardContent);
 
@@ -832,6 +866,7 @@ function generateCombinedGraph(selectedItems) {
       console.error('Error fetching data for selected items:', error);
     });
 }
+
 
 // Function to create the combined chart using Chart.js
 function createCombinedChart(canvas, combinedData) {
