@@ -729,8 +729,6 @@ function deleteCookie(cookieName) {
 
 
 
-
-
 let selectedItems = [];
 
 if (formGroup) {
@@ -753,37 +751,54 @@ if (formGroup) {
       
       // Perform actions based on the clicked label
       console.log(`Selected items:`, selectedItems);
-      
-      // Generate combined graph based on selected items if at least two items are selected
-      if (selectedItems.length >= 2) {
-        generateCombinedGraph(selectedItems);
-      } else {
-        // If less than two items are selected, remove the existing combined chart
-        removeCombinedChart();
-      }
     }
   });
-} else {
-  console.error("Form group not found.");
-}
+  
+  // Event listener for the combine-graph button
+  const combineGraphButton = document.getElementById("combine-graph");
+  if (combineGraphButton) {
+    combineGraphButton.addEventListener("click", function(event) {
+      // Prevent default form submission behavior
+      event.preventDefault();
+      event.stopPropagation(); // Stop event propagation
+      
+      // Generate combined graph based on selected items if at least one item is selected
+      if (selectedItems.length >= 1) {
+        generateCombinedGraph(selectedItems);
+  
+        const modalContent = document.querySelector('.modal-content');
+        if (modalContent) {
+          const modalContainer = modalContent.parentElement;
+          if (modalContainer) {
+            modalContainer.style.display = 'none';
+            // Add a 3-second delay before reloading the page
+            setTimeout(() => {
+              location.reload();
+            }, 100);
+          } else {
+            console.error("Modal container not found.");
+          }
+        } else {
+          console.error("Modal content not found.");
+        }
+      } else {
+        console.error("No items selected to generate combined graph.");
+      }
+    });
+  } else {
+    console.error("Combine-graph button not found.");
+  }
+}  
 
 // Function to remove the existing combined chart
 function removeCombinedChart() {
- 
+  const combinedChartContainer = document.getElementById('cont');
+  if (combinedChartContainer) {
+    combinedChartContainer.innerHTML = ''; // Remove all contents inside the container
+  } else {
+    console.error("Container for chart not found.");
+  }
 }
-
-// Append container to charts-container
-const combinedChartContainer = document.getElementById('cont');
-if (combinedChartContainer) {
-  // Append the container for the combined chart
-  combinedChartContainer.appendChild(container);
-
-  // Create the chart using Chart.js
-  createCombinedChart(canvas, combinedData);
-} else {
-  console.error("Container for chart not found.");
-}
-
 
 function generateCombinedGraph(selectedItems) {
   // Fetch data for selected items from the database or elsewhere
@@ -859,9 +874,6 @@ function generateCombinedGraph(selectedItems) {
         // Append the container for the combined chart
         combinedChartContainer.appendChild(container);
 
-        // Make the container draggable using jQuery UI
-        $(container).draggable();
-
         // Create the chart using Chart.js
         createCombinedChart(canvas, combinedData);
       } else {
@@ -872,8 +884,6 @@ function generateCombinedGraph(selectedItems) {
       console.error('Error fetching data for selected items:', error);
     });
 }
-
-
 
 
 // Function to create the combined chart using Chart.js
@@ -904,6 +914,3 @@ function createCombinedChart(canvas, combinedData) {
     }
   });
 }
-
-
-
