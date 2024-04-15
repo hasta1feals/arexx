@@ -5,18 +5,23 @@
   flex-wrap: wrap;
 }
 
+.drag{
+  cursor: grab;
+}
+
 .card {
-  width: 550px;
-  height: 550px;
+  width: 550px; /* Initial width */
+  height: 550px; /* Initial height */
+  /* overflow: auto; Enable scrolling if content overflows */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   transition: box-shadow 0.3s ease;
   margin: 10px;
   text-decoration: none;
   color: inherit;
 }
+
 
 .graph-placeholder {
   width: 550px;

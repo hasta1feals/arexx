@@ -4,8 +4,8 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
-const port = new SerialPort({ path: portPath, baudRate: 115200 });
+// const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+// const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(function(req, res, next) {
@@ -315,12 +315,12 @@ function onData(data) {
 
 
 
-port.on('open', () => {
-  console.log('Port opened successfully.');
+// port.on('open', () => {
+//   console.log('Port opened successfully.');
 
-  // Set up a listener for incoming data
-  port.on('data', onData);
-});
+//   // Set up a listener for incoming data
+//   port.on('data', onData);
+// });
 
 
 

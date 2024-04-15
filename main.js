@@ -132,7 +132,168 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.error('No stored data found in local storage.');
   }
-}); 
+
+// Retrieve combined graph data from local storage
+const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
+if (combinedDataKeys.length > 0) {
+  combinedDataKeys.forEach(key => {
+    const combinedData = JSON.parse(localStorage.getItem(key));
+    if (combinedData) {
+      // Generate combined graph using the retrieved data
+      createCombinedChartFromLocalStorage(combinedData);
+    } else {
+      console.error(`No combined graph data found in local storage for key: ${key}`);
+    }
+  });
+} else {
+  console.error('No combined graph data found in local storage.');
+}
+});
+
+
+const combinedDataKeysAndValues = Object.keys(localStorage)
+  .filter(key => key.startsWith('combinedData_'))
+  .map(key => ({ key: key, value: JSON.parse(localStorage.getItem(key)) }));
+
+console.log(combinedDataKeysAndValues);
+
+console.log('Contents of localStorage:', localStorage);
+
+
+
+function createCombinedChartFromLocalStorage() {
+  const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
+
+  if (combinedDataKeys.length > 0) {
+    combinedDataKeys.forEach(key => {
+      // Check if container already exists in the DOM
+      if (document.getElementById(`${key}-container`)) {
+        console.log(`Container for key ${key} already exists. Skipping...`);
+        return; // Skip iteration if container already exists
+      }
+
+      const combinedDataString = localStorage.getItem(key);
+      console.log(`Key: ${key}, Value: ${combinedDataString}`);
+      
+      // Attempt to parse JSON data
+      try {
+        const combinedData = JSON.parse(combinedDataString);
+        console.log(`Parsed data for key ${key}:`, combinedData);
+
+        // Check if combinedData is an array and not empty
+        if (Array.isArray(combinedData) && combinedData.length > 0) {
+          // Extract labels and values for each dataset
+          const labels = combinedData[0].labels;
+
+          // Create an array of datasets
+          const datasets = combinedData.map((data, index) => ({
+            label: `Data for ID ${index + 1}`,
+            data: data.values,
+            borderColor: index === 0 ? 'green' : 'blue',
+            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+            borderWidth: 1
+          }));
+
+          // Create a container for the chart
+          const container = document.createElement('div');
+          container.classList.add('card');
+          container.classList.add('dynamic-chart-container');
+          container.setAttribute('id', `${key}-container`);
+          container.classList.add('drag'); // Add the 'drag' class to make it draggable
+
+
+   
+
+          // Create card content
+          const cardContent = document.createElement('div');
+          cardContent.classList.add('card-content');
+
+          // Create card title
+          const cardTitle = document.createElement('div');
+          cardTitle.classList.add('card-title');
+          cardTitle.textContent = `Combined Chart - ${key}`;
+
+          // Create graph placeholder
+          const graphPlaceholder = document.createElement('div');
+          graphPlaceholder.classList.add('graph-placeholder');
+
+          // Create canvas for the chart
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('id', `${key}-chart`);
+          canvas.setAttribute('class', 'dynamic-chart');
+          canvas.setAttribute('width', '600');
+          canvas.setAttribute('height', '300');
+
+          // Append elements
+          graphPlaceholder.appendChild(canvas);
+          cardContent.appendChild(cardTitle);
+          cardContent.appendChild(graphPlaceholder);
+          container.appendChild(cardContent);
+
+          // Append container to the appropriate container in the DOM
+          const combinedChartContainer = document.getElementById('cont');
+          if (combinedChartContainer) {
+            combinedChartContainer.appendChild(container);
+
+            // Create the combined chart using Chart.js
+            new Chart(canvas, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: datasets
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: false,
+                    // Set other scale options as needed
+                  }
+                }
+              }
+            });
+          } else {
+            console.error("Container for chart not found.");
+          }
+        } else {
+          console.error(`Invalid combined graph data for key: ${key}`);
+        }
+      } catch (error) {
+        console.error(`Error parsing data for key ${key}:`, error);
+      }
+    });
+  } else {
+    console.error("No combined graph data found in local storage.");
+  }
+}
+$(document).ready(function() {
+  // Initialize draggability for elements with the 'drag' class
+  $(".drag").draggable();
+});
+
+
+
+
+$(document).ready(function() {
+  // Initialize draggability for elements with the 'drag' class
+  $(".drag").each(function() {
+    $(this).draggable({
+      // When dragging stops, save the position in local storage
+      stop: function(event, ui) {
+        localStorage.setItem($(this).attr('id') + '-position', JSON.stringify(ui.position));
+      }
+    });
+    
+    // Retrieve and apply the saved position
+    var savedPosition = localStorage.getItem($(this).attr('id') + '-position');
+    if (savedPosition) {
+      $(this).css({
+        left: JSON.parse(savedPosition).left + 'px',
+        top: JSON.parse(savedPosition).top + 'px'
+      });
+    }
+  });
+});
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -189,12 +350,11 @@ function generateChart(id, type) {
       console.error('Error fetching data:', error);
     });
 }
-
-// Function to create a container and chart for the provided ID, Type, and data
 function createContainerAndChart(id, type, data) {
   // Create a container for the chart
   const container = document.createElement('div');
   container.classList.add('card');
+  container.classList.add('drag'); // Add the 'drag' class to make it draggable
 
   // Create card content
   const cardContent = document.createElement('div');
@@ -247,16 +407,52 @@ function createContainerAndChart(id, type, data) {
         y: {
           beginAtZero: false,
           ticks: {
-            min: Math.min(...values), // Set the minimum value for the y-axis
-            // Set the steps for the y-axis
-            stepSize: 0.20, // Set the step size to 0.20
-            max: Math.max(...values) // Set the maximum value for the y-axis
+            min: Math.min(...values),
+            stepSize: 0.20,
+            max: Math.max(...values)
           }
         }
       }
     }
   });
+
+  // Make the container draggable and resizable
+  $(container).draggable({
+    containment: "parent",
+    stop: function(event, ui) {
+      // Store the position in local storage when dragging stops
+      const position = ui.position;
+      localStorage.setItem(`${id}-${type}-position`, JSON.stringify(position));
+    }
+  }).resizable({
+    handles: "n, e, s, w, ne, se, sw, nw",
+    containment: "parent",
+    minWidth: 200,
+    minHeight: 200,
+    stop: function(event, ui) {
+      // Store the size in local storage when resizing stops
+      const size = { width: ui.size.width, height: ui.size.height };
+      localStorage.setItem(`${id}-${type}-size`, JSON.stringify(size));
+    }
+  });
+
+  // Retrieve the position from local storage if available
+  const storedPosition = localStorage.getItem(`${id}-${type}-position`);
+  if (storedPosition) {
+    const position = JSON.parse(storedPosition);
+    container.style.left = position.left + 'px';
+    container.style.top = position.top + 'px';
+  }
+
+  // Retrieve the size from local storage if available
+  const storedSize = localStorage.getItem(`${id}-${type}-size`);
+  if (storedSize) {
+    const size = JSON.parse(storedSize);
+    container.style.width = size.width + 'px';
+    container.style.height = size.height + 'px';
+  }
 }
+
 
 // Inside main.js
 // Function to filter dynamically created containers/cards based on search input
@@ -553,18 +749,24 @@ if (formGroup) {
 
 // Function to remove the existing combined chart
 function removeCombinedChart() {
-  const combinedChartContainer = document.getElementById('cont');
-  if (combinedChartContainer) {
-    combinedChartContainer.innerHTML = ''; // Remove all child elements
-  } else {
-    console.error("Container for combined chart not found.");
-  }
+ 
+}
+
+// Append container to charts-container
+const combinedChartContainer = document.getElementById('cont');
+if (combinedChartContainer) {
+  // Append the container for the combined chart
+  combinedChartContainer.appendChild(container);
+
+  // Create the chart using Chart.js
+  createCombinedChart(canvas, combinedData);
+} else {
+  console.error("Container for chart not found.");
 }
 
 
-// Function to generate the combined graph
 function generateCombinedGraph(selectedItems) {
-  // Fetch data for selected items from database or elsewhere
+  // Fetch data for selected items from the database or elsewhere
   const promises = selectedItems.map(item => {
     return api(`/getDataFromDatabase?id=${item.id}&type=${item.type}`, 'GET');
   });
@@ -574,14 +776,15 @@ function generateCombinedGraph(selectedItems) {
     .then(datasets => {
       console.log('Datasets:', datasets); // Log datasets to check their structure
 
-      // Extracting labels and values for each dataset
+      // Extract labels and values for each dataset
       const combinedData = datasets.map(data => ({
         labels: data.map(entry => entry.TimeStamp),
         values: data.map(entry => entry.Value),
       }));
 
-      // Save combined data to local storage
-      localStorage.setItem('combinedData', JSON.stringify(combinedData));
+      // Save combined data to local storage with a unique key
+      const currentTimestamp = Date.now(); // Generate a unique timestamp
+      localStorage.setItem(`combinedData_${currentTimestamp}`, JSON.stringify(combinedData)); // Save combined graph data
 
       // Create a container for the combined chart
       const container = document.createElement('div');
@@ -602,7 +805,7 @@ function generateCombinedGraph(selectedItems) {
 
       // Create canvas for the chart
       const canvas = document.createElement('canvas');
-      canvas.setAttribute('id', 'combined-chart');
+      canvas.setAttribute('id', `combined-chart-${currentTimestamp}`);
       canvas.setAttribute('class', 'dynamic-chart');
       canvas.setAttribute('width', '600');
       canvas.setAttribute('height', '300');
@@ -616,8 +819,7 @@ function generateCombinedGraph(selectedItems) {
       // Append container to charts-container
       const combinedChartContainer = document.getElementById('cont');
       if (combinedChartContainer) {
-        // Remove any existing chart before appending the new one
-        combinedChartContainer.innerHTML = '';
+        // Append the container for the combined chart
         combinedChartContainer.appendChild(container);
 
         // Create the chart using Chart.js
