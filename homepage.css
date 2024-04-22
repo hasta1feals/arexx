@@ -348,4 +348,29 @@ ul.monitor-list li:nth-child(odd) {
   color: green;
 }
 
+/* Style the tab buttons */
+.tab button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  transition: 0.3s;
+}
+
+/* Change background color of active tab button */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+}
+
+/* Show the active tab */
+.tabcontent.active {
+  display: block;
+}
+
 

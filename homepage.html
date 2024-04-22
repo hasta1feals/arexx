@@ -26,6 +26,9 @@
       <div class="table-head">
         <div>
           <button class="table-button combine-graph" id="myBtn3">Combine Graph</button>
+          <button class="table-button combine-graph" id="myBtn4">Add Graph</button>
+          <button class="table-button combine-graph" id="myBtn5">Sensor List</button>
+
 
         </div>
       </div>
@@ -54,7 +57,7 @@
       <form class="formChangeRegion">
         <span class="close close5">&times;</span>
         <h2>Select The Graph To Combine</h2>
-        <div class="form-group">
+        <!-- <div class="form-group"> -->
 
         </div>
 
@@ -66,6 +69,54 @@
     </div>
   </div>
 
+
+
+
+
+  <div id="addProductModal1" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close close6">&times;</span>
+        <!-- Tab links -->
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'tab1')">Graph Properties</button>
+            <button class="tablinks" onclick="openTab(event, 'tab2')">Tab 2</button>
+            <button class="tablinks" onclick="openTab(event, 'tab3')">Graph Desigin</button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="tab1" class="tabcontent">
+            <h2>Tab 1 Content</h2>
+            <div class="form-group"></div>
+            <!-- Add content specific to tab 1 here -->
+        </div>
+
+        <div id="tab2" class="tabcontent">
+            <h2>Tab 2 Content</h2>
+            <!-- Add content specific to tab 2 here -->
+        </div>
+
+        <div id="tab3" class="tabcontent">
+            <h2>Tab 3 Content</h2>
+            <!-- Add content specific to tab 3 here -->
+        </div>
+
+        <!-- Form for combining graphs -->
+        <form class="formChangeRegion">
+            <div class="form-group">
+                <!-- Add form inputs or content here -->
+            </div>
+            <div class="modalbtn">
+                <button class="mbtn export">Discard</button>
+                <button id="" class="mbtn combine-graph">Combine</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

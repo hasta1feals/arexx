@@ -1,45 +1,71 @@
-// Inside main.js
 // Wait for the DOM content to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
 
-  // Add event listener to the modal's content after it's loaded
-  $(document).on('click', '#combine-graph', function () {
-    // Remove any existing click event handlers on clickable items
-    $('.modal-content .clickable-item').off('click');
+  // Get the modals and their respective buttons
+  var modal1 = document.getElementById("addProductModal");
+  var btn1 = document.getElementById("myBtn3");
+  var span5_1 = document.getElementsByClassName("close5")[0];
 
-    // Add event listener to the document body for delegation
-    $('body').on('click', '.modal-content .clickable-item', function () {
-      // Toggle clicked class to change background color
-      $(this).toggleClass('clicked');
+  var modal2 = document.getElementById("addProductModal1");
+  var btn2 = document.getElementById("myBtn4");
+  var span5_2 = document.getElementsByClassName("close5")[1];
 
-      // Log data and name
-      const dataId = $(this).data('id');
-      const dataType = $(this).data('type');
-      const itemName = $(this).text();
-      console.log(`Clicked item: ${itemName}, Data ID: ${dataId}, Data Type: ${dataType}`);
-    });
-  });
-
-  // Get the modal and the button that opens the modal
-  var modal = document.getElementById("addProductModal");
-  var btn = document.getElementById("myBtn3");
-  var span5 = document.getElementsByClassName("close5")[0];
-
-  btn.onclick = function () {
-    modal.style.display = "block";
+  // Open the first modal when btn1 is clicked
+  btn1.onclick = function () {
+    modal1.style.display = "block";
   };
 
-  span5.onclick = function () {
-    modal.style.display = "none";
+  // Close the first modal when span5_1 is clicked
+  span5_1.onclick = function () {
+    modal1.style.display = "none";
   };
 
+  // Open the second modal when btn2 is clicked
+  btn2.onclick = function () {
+    modal2.style.display = "block";
+  };
+
+  // Close the second modal when span5_2 is clicked
+  span5_2.onclick = function () {
+    modal2.style.display = "none";
+  };
+
+  // Close the modals when the user clicks outside of them
   window.onclick = function (event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
+    if (event.target == modal1) {
+      modal1.style.display = "none";
+    }
+    if (event.target == modal2) {
+      modal2.style.display = "none";
     }
   };
+});
+
+// Function to open a specific tab
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+
+  // Hide all tab content
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].classList.remove("active");
+  }
+
+  // Deactivate all tab buttons
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].classList.remove("active");
+  }
+
+  // Show the selected tab content
+  document.getElementById(tabName).classList.add("active");
+
+  // Activate the clicked tab button
+  evt.currentTarget.classList.add("active");
+}
+
 
   // Fetch unique combinations of ID and Type
   api("/getUniqueIDsFromDatabase", "GET")
@@ -79,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-});
+
 
 // Function to create a clickable label
 function createClickableLabel(id, type, label) {
