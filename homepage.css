@@ -22,6 +22,49 @@
   color: inherit;
 }
 
+.drag {
+  cursor: grab;
+}
+
+.graph-list {
+  width: 344px; /* Initial width */
+  height: 874px; /* Initial height */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin: 10px;
+  padding: 20px; /* Add some padding for content */
+  overflow: auto; /* Enable scrolling if content overflows */
+}
+
+.graph {
+  margin-bottom: 20px; /* Add some space between graphs */
+}
+
+.graph-name {
+  font-weight: bold;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.graph-name::before {
+  content: "\f114"; /* Folder icon */
+  font-family: "Font Awesome 5 Free";
+  margin-right: 10px;
+  color: #007bff;
+}
+
+.id-container {
+  margin-left: 20px; /* Indent IDs */
+}
+
+.id-container div::before {
+  content: "\f111"; /* Line icon */
+  font-family: "Font Awesome 5 Free";
+  margin-right: 10px;
+  color: #007bff;
+}
 
 .graph-placeholder {
   width: 550px;
@@ -252,6 +295,19 @@ button:hover {
   background-color: rgb(0, 0, 0); /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
+#graph-input {
+
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  width: 98%;
+  border-radius: 5px;
+  /* margin-bottom: 10px; */
+  margin-top: 20px;
+}
+
 
 /* Modal Content */
 .modal-content {

@@ -2,6 +2,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
+  // Open the first tab by default
+
 
   // Get the modals and their respective buttons
   var modal1 = document.getElementById("addProductModal");
@@ -105,6 +107,90 @@ function openTab(evt, tabName) {
       });
     });
   }
+
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    // Check if the key starts with "combinedData_"
+    if (key.startsWith("combinedData_")) {
+        const rawData = localStorage.getItem(key);
+        try {
+            const data = JSON.parse(rawData);
+            // Check if data is an array
+            if (Array.isArray(data)) {
+                // Loop through each object in the array
+                data.forEach(entry => {
+                    // Check if the "naam" property is an empty string
+                    if (entry.naam === "") {
+                        // Log the key and the associated IDs
+                        console.log(`Key: ${key}, First ID: ${entry.id[0]}`);
+                    }
+                });
+            } else {
+                
+            }
+        } catch (error) {
+            console.error(`Error parsing data for key: ${key}`, error);
+        }
+    }
+}
+
+
+// Retrieve data from local storag
+// Retrieve data from local storage
+const graphData = Object.entries(localStorage).filter(([key, value]) => key.startsWith("combinedData_"));
+
+// Create HTML elements for each graph
+const graphList = document.querySelector('.graph-list');
+graphData.forEach(([key, value]) => {
+  console.log(typeof value, value); // For debugging
+
+  const graphName = key.replace('combinedData_', '');
+  const graphElement = document.createElement('div');
+  graphElement.classList.add('graph');
+  
+  // Parse the JSON string to an array
+  let dataArray;
+  try {
+    dataArray = JSON.parse(value);
+  } catch (error) {
+    console.error(`Error parsing data for key ${key}:`, error);
+    return; // Skip this entry
+  }
+
+  if (Array.isArray(dataArray)) {
+    // Check if there is any entry with naam not empty
+    const hasNonEmptyNaam = dataArray.some(entry => entry.naam !== "");
+
+    const nameToShow = hasNonEmptyNaam ? dataArray.find(entry => entry.naam !== "").naam : graphName;
+    graphElement.innerHTML = `<div class="graph-name">${nameToShow}</div>`;
+
+    const idContainer = document.createElement('div');
+    idContainer.classList.add('id-container');
+
+    dataArray.forEach(entry => {
+      const idElement = document.createElement('div');
+      idElement.textContent = `ID: ${entry.id[0]}`;
+      idContainer.appendChild(idElement);
+    });
+
+    idContainer.style.display = 'none';
+    graphElement.appendChild(idContainer);
+
+    // Toggle display of IDs when graph name is clicked
+    graphElement.addEventListener('click', () => {
+      idContainer.style.display = idContainer.style.display === 'none' ? 'block' : 'none';
+    });
+
+    graphList.appendChild(graphElement);
+  } else {
+    console.error('Data is not an array:', dataArray);
+  }
+});
+
+
+
+  
 
 
 // Function to create a clickable label
@@ -294,6 +380,51 @@ function createContainerAndChart(id, type, data) {
 }
 
 
+// Simple example, see optional options for more configuration.
+// const pickr = Pickr.create({
+//   el: '.color-picker',
+//   theme: 'classic', // or 'monolith', or 'nano'
+
+//   swatches: [
+//       'rgba(244, 67, 54, 1)',
+//       'rgba(233, 30, 99, 0.95)',
+//       'rgba(156, 39, 176, 0.9)',
+//       'rgba(103, 58, 183, 0.85)',
+//       'rgba(63, 81, 181, 0.8)',
+//       'rgba(33, 150, 243, 0.75)',
+//       'rgba(3, 169, 244, 0.7)',
+//       'rgba(0, 188, 212, 0.7)',
+//       'rgba(0, 150, 136, 0.75)',
+//       'rgba(76, 175, 80, 0.8)',
+//       'rgba(139, 195, 74, 0.85)',
+//       'rgba(205, 220, 57, 0.9)',
+//       'rgba(255, 235, 59, 0.95)',
+//       'rgba(255, 193, 7, 1)'
+//   ],
+
+//   components: {
+
+//       // Main components
+//       preview: true,
+//       opacity: true,
+//       hue: true,
+
+//       // Input / output Options
+//       interaction: {
+//           hex: true,
+//           rgba: true,
+//           hsla: true,
+//           hsva: true,
+//           cmyk: true,
+//           input: true,
+//           clear: true,
+//           save: true
+//       }
+//   }
+// });
+
+
+
 function createCombinedChartFromLocalStorage() {
   const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
 
@@ -319,13 +450,18 @@ function createCombinedChartFromLocalStorage() {
           const labels = combinedData[0].labels;
 
           // Create an array of datasets
-          const datasets = combinedData.map((data, index) => ({
-            label: `Data for ID ${index + 1}`,
+          const datasets = combinedData.map((data, index, id) => ({
+            label: `Data for ID ${data.id[0]}`,
             data: data.values,
-            borderColor: index === 0 ? 'green' : 'blue',
+            //voor de toekomst hier moet je het veranderen en wss mappen door de index of id 
+            borderColor: index === 0 ? 'red' : 'blue',
             backgroundColor: 'rgba(0, 255, 0, 0.1)',
-            borderWidth: 1
+            borderWidth: 1,
+            naam:data.naam
           }));
+
+          const nam = datasets[0].naam; // For example, accessing 'nam' from the first dataset
+
 
           // Create a container for the chart
           const container = document.createElement('div');
@@ -341,7 +477,15 @@ function createCombinedChartFromLocalStorage() {
           // Create card title
           const cardTitle = document.createElement('div');
           cardTitle.classList.add('card-title');
-          cardTitle.textContent = `Combined Chart - ${key}`;
+
+          
+          if (nam === ""){
+            cardTitle.textContent = `Combined Chart - ${key}`;
+          }else {
+            cardTitle.textContent = nam;
+
+          }
+         
 
           // Create remove button with "x" icon
           const removeButton = document.createElement('button');
@@ -835,13 +979,17 @@ function generateCombinedGraph(selectedItems) {
   // Wait for all data fetch requests to complete
   Promise.all(promises)
     .then(datasets => {
+      console.log(promises);
       console.log('Datasets:', datasets); // Log datasets to check their structure
 
-      // Extract labels and values for each dataset
-      const combinedData = datasets.map(data => ({
-        labels: data.map(entry => entry.TimeStamp),
-        values: data.map(entry => entry.Value),
-      }));
+   // Extract labels and values for each dataset
+const combinedData = datasets.map(data => ({
+  labels: data.map(entry => entry.TimeStamp),
+  values: data.map(entry => entry.Value),
+  id: data.map(entry => entry.Id),
+  naam: document.getElementById('graph-input').value
+}));
+
 
       // Save combined data to local storage with a unique key
       const currentTimestamp = Date.now(); // Generate a unique timestamp
@@ -919,7 +1067,7 @@ function createCombinedChart(canvas, combinedData) {
     data: {
       labels: combinedData[0].labels, // Using labels from the first dataset
       datasets: combinedData.map((data, index) => ({
-        label: `Data for ID ${selectedItems[index].id}`, // Using ID as label
+        label: ` for ID ${selectedItems[0].id}`, // Using ID as label
         data: data.values,
         borderColor: index === 0 ? 'green' : 'blue', // Different color for each line
         backgroundColor: 'rgba(0, 255, 0, 0.1)',
