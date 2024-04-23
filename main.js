@@ -1,6 +1,48 @@
+document.addEventListener('DOMContentLoaded', function() {
+  // Retrieve position and display status from local storage
+  const graphListPosition = JSON.parse(localStorage.getItem('graphListPosition'));
+  const graphListDisplay = localStorage.getItem('graphListDisplay');
 
-$(function() {
-  $(".graph-list").draggable();
+  // Set position and display status
+  if (graphListPosition) {
+      document.querySelector('.graph-list').style.top = graphListPosition.top;
+      document.querySelector('.graph-list').style.left = graphListPosition.left;
+  }
+  if (graphListDisplay) {
+      document.querySelector('.graph-list').style.display = graphListDisplay;
+  }
+
+  // Make the graph list draggable
+  $(".graph-list").draggable({
+      stop: function(event, ui) {
+          // Store position in local storage when dragging stops
+          const position = {
+              top: ui.position.top + 'px',
+              left: ui.position.left + 'px'
+          };
+          localStorage.setItem('graphListPosition', JSON.stringify(position));
+      }
+  });
+
+  // Minimize button event listener
+  document.querySelector('.minimize-list-btn').addEventListener('click', function() {
+      const graphList = document.querySelector('.graph-list');
+      const currentDisplay = graphList.style.display;
+      graphList.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+
+      // Store display status in local storage
+      localStorage.setItem('graphListDisplay', graphList.style.display);
+  });
+
+  // Show/hide graph list when myBtn4 is clicked
+  document.getElementById('myBtn4').addEventListener('click', function() {
+      const graphList = document.querySelector('.graph-list');
+      const currentDisplay = graphList.style.display;
+      graphList.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+
+      // Store display status in local storage
+      localStorage.setItem('graphListDisplay', graphList.style.display);
+  });
 });
 
 
@@ -165,51 +207,53 @@ const graphData = Object.entries(localStorage).filter(([key, value]) => key.star
 
 // Create HTML elements for each graph
 const graphList = document.querySelector('.graph-list');
-graphData.forEach(([key, value]) => {
-  console.log(typeof value, value); // For debugging
+if (graphList) {
+  graphData.forEach(([key, value]) => {
+    console.log(typeof value, value); // For debugging
 
-  const graphName = key.replace('combinedData_', '');
-  const graphElement = document.createElement('div');
-  graphElement.classList.add('graph');
-  
-  // Parse the JSON string to an array
-  let dataArray;
-  try {
-    dataArray = JSON.parse(value);
-  } catch (error) {
-    console.error(`Error parsing data for key ${key}:`, error);
-    return; // Skip this entry
-  }
+    const graphName = key.replace('combinedData_', '');
+    const graphElement = document.createElement('div');
+    graphElement.classList.add('graph');
 
-  if (Array.isArray(dataArray)) {
-    // Check if there is any entry with naam not empty
-    const hasNonEmptyNaam = dataArray.some(entry => entry.naam !== "");
+    // Parse the JSON string to an array
+    let dataArray;
+    try {
+      dataArray = JSON.parse(value);
+    } catch (error) {
+      console.error(`Error parsing data for key ${key}:`, error);
+      return; // Skip this entry
+    }
 
-    const nameToShow = hasNonEmptyNaam ? dataArray.find(entry => entry.naam !== "").naam : graphName;
-    graphElement.innerHTML = `<div class="graph-name">${nameToShow}</div>`;
+    if (Array.isArray(dataArray)) {
+      // Check if there is any entry with naam not empty
+      const hasNonEmptyNaam = dataArray.some(entry => entry.naam !== "");
 
-    const idContainer = document.createElement('div');
-    idContainer.classList.add('id-container');
+      const nameToShow = hasNonEmptyNaam ? dataArray.find(entry => entry.naam !== "").naam : graphName;
+      graphElement.innerHTML = `<div class="graph-name">${nameToShow}</div>`;
 
-    dataArray.forEach(entry => {
-      const idElement = document.createElement('div');
-      idElement.textContent = `ID: ${entry.id[0]}`;
-      idContainer.appendChild(idElement);
-    });
+      const idContainer = document.createElement('div');
+      idContainer.classList.add('id-container');
 
-    idContainer.style.display = 'none';
-    graphElement.appendChild(idContainer);
+      dataArray.forEach(entry => {
+        const idElement = document.createElement('div');
+        idElement.textContent = `ID: ${entry.id[0]}`;
+        idContainer.appendChild(idElement);
+      });
 
-    // Toggle display of IDs when graph name is clicked
-    graphElement.addEventListener('click', () => {
-      idContainer.style.display = idContainer.style.display === 'none' ? 'block' : 'none';
-    });
+      idContainer.style.display = 'none';
+      graphElement.appendChild(idContainer);
 
-    graphList.appendChild(graphElement);
-  } else {
-    console.error('Data is not an array:', dataArray);
-  }
-});
+      // Toggle display of IDs when graph name is clicked
+      graphElement.addEventListener('click', () => {
+        idContainer.style.display = idContainer.style.display === 'none' ? 'block' : 'none';
+      });
+
+      graphList.appendChild(graphElement);
+    } 
+  });
+} else {
+  console.error('No element found with class name "graph-list"');
+}
 
 
 

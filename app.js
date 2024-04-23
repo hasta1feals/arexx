@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
