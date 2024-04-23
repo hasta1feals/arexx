@@ -1,3 +1,9 @@
+
+$(function() {
+  $(".graph-list").draggable();
+});
+
+
 // Wait for the DOM content to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Load the HTML content into the "nav-placeholder" element
@@ -134,6 +140,23 @@ function openTab(evt, tabName) {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const minimizeBtn = document.querySelector('.minimize-list-btn');
+  const graphList = document.querySelector('.graph-list');
+  const showGraphListBtn = document.querySelector('#myBtn4');
+
+  if (minimizeBtn && graphList && showGraphListBtn) {
+    minimizeBtn.addEventListener('click', function() {
+      graphList.style.display = 'none';
+    });
+
+    showGraphListBtn.addEventListener('click', function() {
+      graphList.style.display = 'block';
+    });
+  }
+});
+
 
 
 // Retrieve data from local storag
