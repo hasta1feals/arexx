@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = 'COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const nodemailer = require('nodemailer');
 const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
