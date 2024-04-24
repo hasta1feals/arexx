@@ -383,14 +383,14 @@ function onData(data) {
 
           // Check if the received data meets the specified conditions for email alerts
           // Retrieve the alert settings from the database based on the parsed ID
-          db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ?', parsedData.Id, (err, row) => {
+          db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ? AND type = ?', parsedData.Id, parsedData.Type, (err, row) => {
             if (err) {
               console.error('Error fetching alert settings from the database:', err);
               return;
             }
 
             if (!row) {
-              console.log('No alert settings found for the specified ID:', parsedData.Id);
+              console.log('No alert settings found for the specified ID and type:', parsedData.Id, parsedData.Type);
               return;
             }
 
@@ -401,7 +401,7 @@ function onData(data) {
             const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
             if (condition) {
               // Send an email
-              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
+              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
             }
           });
 
