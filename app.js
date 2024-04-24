@@ -2,11 +2,16 @@ const express = require('express');
 const mqtt = require('mqtt');
 const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
+const bodyParser = require('body-parser');
+
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-// const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
-// const port = new SerialPort({ path: portPath, baudRate: 115200 });
+const portPath = 'COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+const nodemailer = require('nodemailer');
+const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
+app.use(bodyParser.json()); // Parse JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
@@ -55,6 +60,18 @@ client.on('connect', function () {
     }
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
 
 // When a message is received
 // client.on('message', function (receivedTopic, message) {
@@ -260,6 +277,74 @@ app.get('/infoSensor', (req, res) => {
   });
 });
 
+
+// Route to set the ID, threshold, and comparison operator for email alerts
+app.post('/setAlert', (req, res) => {
+  const { id, threshold, comparison_operator: comparisonOperator } = req.body;
+
+  // Check if all required parameters are provided
+  if (!id || !threshold || !comparisonOperator) {
+    return res.status(400).send({ error: 'ID, threshold, and comparisonOperator parameters are required' });
+  }
+
+  // Save the ID, threshold, and comparison operator to use later for email alerts
+  // Here, you would typically insert or update these values in the database
+
+  // For simplicity, let's assume you have a table named 'alert_settings' with columns 'id', 'threshold', and 'comparison_operator'
+  // You can execute an SQL query to insert or update the values
+  db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator) VALUES (?, ?, ?)', [id, threshold, comparisonOperator], (err) => {
+    if (err) {
+      console.error('Error saving alert parameters:', err);
+      return res.status(500).send({ error: 'Error saving alert parameters' });
+    }
+    res.status(200).send({ message: 'Alert parameters set successfully' });
+  });
+});
+
+
+
+
+async function sendEmail(subject, text, authOptions, senderEmail, senderPassword) {
+  try {
+    // Create a transporter object using SMTP
+    let transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        type: 'OAuth2',
+        user: "denzelrustenberg@gmail.com", // Your email
+        clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
+        clientSecret: "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",
+        refreshToken: "1//04HE2dhwIh-fSCgYIARAAGAQSNwF-L9IrG259fUVT64FpMgWZXJHW6i5O7MEzEkB9x3_LWAhUrxGVxMEuWRhwrDpqa1wn_6x5LVc",
+        accessToken: "ya29.a0Ad52N39P0j-XhDNbXbifVyuu3Pwf4m0WAYKod9u-7KG3c5D_OMuFxEbUwMnn3tDP-NH48vfunvhJF2jZSP9geMoZ6vrWNT1jzkNFpa4g32GMMG4aJ4TdLxIQq_4SM80klGSKU8YmaFZ5ZOJH28-EUpHJC6ez0QsxvLe7aCgYKAQUSARASFQHGX2MikODTgkqEidzKJM3xCA7T-A0171",
+      }
+    });
+
+    // Define email options
+    let mailOptions = {
+      from: senderEmail, // Sender address
+      to: 'Debohughes15@gmail.com', // List of recipients
+      subject: subject, // Subject line
+      text: text // Plain text body
+    };
+
+    // Send email
+    let info = await transporter.sendMail(mailOptions);
+
+    console.log('Email sent: ' + info.response);
+  } catch (error) {
+    console.error('Error occurred while sending email:', error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 // Variable to store incomplete JSON data
 let incompleteData = '';
 
@@ -295,6 +380,31 @@ function onData(data) {
           stmt.finalize();
 
           console.log('Data inserted into the database:', parsedData);
+
+          // Check if the received data meets the specified conditions for email alerts
+          // Retrieve the alert settings from the database based on the parsed ID
+          db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ?', parsedData.Id, (err, row) => {
+            if (err) {
+              console.error('Error fetching alert settings from the database:', err);
+              return;
+            }
+
+            if (!row) {
+              console.log('No alert settings found for the specified ID:', parsedData.Id);
+              return;
+            }
+
+            const savedThreshold = row.threshold;
+            const comparisonOperator = row.comparison_operator;
+
+            // Now you have the saved threshold and comparison operator, you can use them for comparison
+            const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
+            if (condition) {
+              // Send an email
+              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
+            }
+          });
+
         } catch (error) {
           console.error('Error parsing JSON:', error);
         }
@@ -312,15 +422,35 @@ function onData(data) {
 }
 
 
+// Function to evaluate the condition dynamically
+function evaluateCondition(value, operator, threshold) {
+  switch (operator) {
+    case '<':
+      return value < threshold;
+    case '<=':
+      return value <= threshold;
+    case '>':
+      return value > threshold;
+    case '>=':
+      return value >= threshold;
+    case '=':
+      return value === threshold;
+    default:
+      console.error('Invalid comparison operator:', operator);
+      return false;
+  }
+}
 
 
 
-// port.on('open', () => {
-//   console.log('Port opened successfully.');
 
-//   // Set up a listener for incoming data
-//   port.on('data', onData);
-// });
+
+port.on('open', () => {
+  console.log('Port opened successfully.');
+
+  // Set up a listener for incoming data
+  port.on('data', onData);
+});
 
 
 
