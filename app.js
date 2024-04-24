@@ -292,7 +292,7 @@ app.post('/setAlert', (req, res) => {
 
   // For simplicity, let's assume you have a table named 'alert_settings' with columns 'id', 'threshold', and 'comparison_operator'
   // You can execute an SQL query to insert or update the values
-  db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator) VALUES (?, ?, ?)', [id, threshold, comparisonOperator], (err) => {
+  db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator, type) VALUES (?, ?, ?,?)', [id, threshold, comparisonOperator, type], (err) => {
     if (err) {
       console.error('Error saving alert parameters:', err);
       return res.status(500).send({ error: 'Error saving alert parameters' });
