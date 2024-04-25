@@ -4,11 +4,13 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const bodyParser = require('body-parser');
 
+
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
 const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const nodemailer = require('nodemailer');
 const port = new SerialPort({ path: portPath, baudRate: 115200 });
+
 
 app.use(bodyParser.json()); // Parse JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
@@ -20,6 +22,11 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
 });
+
+
+
+
+
 
 
 const brokerUrl = 'mqtt://public:public@public.cloud.shiftr.io';
@@ -445,12 +452,12 @@ function evaluateCondition(value, operator, threshold) {
 
 
 
-port.on('open', () => {
-  console.log('Port opened successfully.');
+// port.on('open', () => {
+//   console.log('Port opened successfully.');
 
-  // Set up a listener for incoming data
-  port.on('data', onData);
-});
+//   // Set up a listener for incoming data
+//   port.on('data', onData);
+// });
 
 
 
