@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -307,9 +307,24 @@ app.post('/setAlert', (req, res) => {
 
 
 
+// Define an object to store the last sent email timestamps for each condition
+const lastEmailTimestamps = {};
 
-async function sendEmail(subject, text, authOptions, senderEmail, senderPassword) {
+// Function to handle sending email alerts with frequency limit
+async function sendEmailWithLimit(conditionKey, subject, text, authOptions, senderEmail, senderPassword) {
   try {
+    // Get the current timestamp
+    const currentTimestamp = Date.now();
+
+    // Check if an email has been sent for this condition within the last hour
+    if (
+      lastEmailTimestamps[conditionKey] &&
+      currentTimestamp - lastEmailTimestamps[conditionKey] < 3600000 // 1 hour in milliseconds
+    ) {
+      console.log('Email not sent due to frequency limit');
+      return; // Exit function without sending email
+    }
+
     // Create a transporter object using SMTP
     let transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -319,7 +334,7 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
         refreshToken: "1//04HE2dhwIh-fSCgYIARAAGAQSNwF-L9IrG259fUVT64FpMgWZXJHW6i5O7MEzEkB9x3_LWAhUrxGVxMEuWRhwrDpqa1wn_6x5LVc",
-        accessToken: "ya29.a0Ad52N3_WAot2nl2cOdakxyn9YpTBBxcKFtPjBHAwWX2UEZR7FJhryiM1IduFOn6tAiEsoPbzE0i2c3Z4HtDn60fdYAVbaJyYTRlYHKL1TkDtQ3Y-Rk4Bfc031yj271WkofQu9YAtzaXtBUhX-H2Xy5X22VSgLvQ7YEa5aCgYKAdcSARASFQHGX2MiQG96mjLCUFwnefXi159OHA0171",
+        accessToken: "ya29.a0Ad52N39P0j-XhDNbXbifVyuu3Pwf4m0WAYKod9u-7KG3c5D_OMuFxEbUwMnn3tDP-NH48vfunvhJF2jZSP9geMoZ6vrWNT1jzkNFpa4g32GMMG4aJ4TdLxIQq_4SM80klGSKU8YmaFZ5ZOJH28-EUpHJC6ez0QsxvLe7aCgYKAQUSARASFQHGX2MikODTgkqEidzKJM3xCA7T-A0171",
       }
     });
 
@@ -335,16 +350,19 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
     let info = await transporter.sendMail(mailOptions);
 
     console.log('Email sent: ' + info.response);
+
+    // Update the last sent email timestamp for this condition
+    lastEmailTimestamps[conditionKey] = currentTimestamp;
   } catch (error) {
     console.error('Error occurred while sending email:', error);
   }
 }
 
+// Example usage:
+// Define a condition key based on the parsed data
+const conditionKey = `${parsedData.Id}_${parsedData.Type}`;
 
-
-
-
-
+// Send the email with frequency limit
 
 
 
@@ -405,7 +423,8 @@ function onData(data) {
             const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
             if (condition) {
               // Send an email
-              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
+              sendEmailWithLimit(conditionKey, 'Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
+
             }
           });
 
