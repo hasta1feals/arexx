@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -294,10 +294,7 @@ app.post('/setAlert', (req, res) => {
     return res.status(400).send({ error: 'ID, threshold, and comparisonOperator parameters are required' });
   }
 
-  // Save the ID, threshold, and comparison operator to use later for email alerts
-  // Here, you would typically insert or update these values in the database
 
-  // For simplicity, let's assume you have a table named 'alert_settings' with columns 'id', 'threshold', and 'comparison_operator'
   // You can execute an SQL query to insert or update the values
   db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator, type) VALUES (?, ?, ?,?)', [id, threshold, comparisonOperator, type], (err) => {
     if (err) {
@@ -322,7 +319,7 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
         refreshToken: "1//04HE2dhwIh-fSCgYIARAAGAQSNwF-L9IrG259fUVT64FpMgWZXJHW6i5O7MEzEkB9x3_LWAhUrxGVxMEuWRhwrDpqa1wn_6x5LVc",
-        accessToken: "ya29.a0Ad52N39P0j-XhDNbXbifVyuu3Pwf4m0WAYKod9u-7KG3c5D_OMuFxEbUwMnn3tDP-NH48vfunvhJF2jZSP9geMoZ6vrWNT1jzkNFpa4g32GMMG4aJ4TdLxIQq_4SM80klGSKU8YmaFZ5ZOJH28-EUpHJC6ez0QsxvLe7aCgYKAQUSARASFQHGX2MikODTgkqEidzKJM3xCA7T-A0171",
+        accessToken: "ya29.a0Ad52N3_WAot2nl2cOdakxyn9YpTBBxcKFtPjBHAwWX2UEZR7FJhryiM1IduFOn6tAiEsoPbzE0i2c3Z4HtDn60fdYAVbaJyYTRlYHKL1TkDtQ3Y-Rk4Bfc031yj271WkofQu9YAtzaXtBUhX-H2Xy5X22VSgLvQ7YEa5aCgYKAdcSARASFQHGX2MiQG96mjLCUFwnefXi159OHA0171",
       }
     });
 
@@ -452,12 +449,12 @@ function evaluateCondition(value, operator, threshold) {
 
 
 
-// port.on('open', () => {
-//   console.log('Port opened successfully.');
+port.on('open', () => {
+  console.log('Port opened successfully.');
 
-//   // Set up a listener for incoming data
-//   port.on('data', onData);
-// });
+  // Set up a listener for incoming data
+  port.on('data', onData);
+});
 
 
 
