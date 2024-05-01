@@ -7,9 +7,9 @@ const bodyParser = require('body-parser');
 
 const SerialPort = require('serialport').SerialPort;
 const PORT = process.env.PORT || 3000;
-const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+// const portPath = '/COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const nodemailer = require('nodemailer');
-const port = new SerialPort({ path: portPath, baudRate: 115200 });
+// const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(bodyParser.json()); // Parse JSON-encoded bodies
@@ -172,6 +172,40 @@ app.get('/getVOLT', (req, res) => {
 });
 
 
+
+app.get('/getAlarm', (req, res) => {
+  db.all('SELECT * FROM alert_settings', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching alarm settings' });
+    } else {
+      res.send({ message: 'Success', rows });
+    }
+  });
+});
+
+app.delete('/deleteAlarm/:id?', (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).send({ error: 'No ID provided' });
+    return;
+  }
+
+  db.run('DELETE  FROM alert_settings WHERE id_alert = ?', id, function(err) {
+    if (err) {
+      res.status(500).send({ error: 'Error deleting alarm settings' });
+    } else {
+      if (this.changes === 0) {
+        res.status(404).send({ error: 'Alarm settings not found' });
+      } else {
+        res.send({ message: 'Alarm settings deleted successfully' });
+      }
+    }
+  });
+});
+
+
+
 // Define the queryDatabaseForData function
 function queryDatabaseForData(id, type) {
   return new Promise((resolve, reject) => {
@@ -285,18 +319,16 @@ app.get('/infoSensor', (req, res) => {
 });
 
 
-// Route to set the ID, threshold, and comparison operator for email alerts
 app.post('/setAlert', (req, res) => {
-  const { id, threshold, comparison_operator: comparisonOperator } = req.body;
+  const { id, threshold, comparison_operator: comparisonOperator, type } = req.body;
 
   // Check if all required parameters are provided
-  if (!id || !threshold || !comparisonOperator) {
-    return res.status(400).send({ error: 'ID, threshold, and comparisonOperator parameters are required' });
+  if (!id || !threshold || !comparisonOperator || !type) {
+    return res.status(400).send({ error: 'ID, threshold, comparisonOperator, and type parameters are required' });
   }
 
-
   // You can execute an SQL query to insert or update the values
-  db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator, type) VALUES (?, ?, ?,?)', [id, threshold, comparisonOperator, type], (err) => {
+  db.run('INSERT OR REPLACE INTO alert_settings (id, threshold, comparison_operator, type) VALUES (?, ?, ?, ?)', [id, threshold, comparisonOperator, type], (err) => {
     if (err) {
       console.error('Error saving alert parameters:', err);
       return res.status(500).send({ error: 'Error saving alert parameters' });
@@ -307,24 +339,9 @@ app.post('/setAlert', (req, res) => {
 
 
 
-// Define an object to store the last sent email timestamps for each condition
-const lastEmailTimestamps = {};
 
-// Function to handle sending email alerts with frequency limit
-async function sendEmailWithLimit(conditionKey, subject, text, authOptions, senderEmail, senderPassword) {
+async function sendEmail(subject, text, authOptions, senderEmail, senderPassword) {
   try {
-    // Get the current timestamp
-    const currentTimestamp = Date.now();
-
-    // Check if an email has been sent for this condition within the last hour
-    if (
-      lastEmailTimestamps[conditionKey] &&
-      currentTimestamp - lastEmailTimestamps[conditionKey] < 3600000 // 1 hour in milliseconds
-    ) {
-      console.log('Email not sent due to frequency limit');
-      return; // Exit function without sending email
-    }
-
     // Create a transporter object using SMTP
     let transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -334,7 +351,7 @@ async function sendEmailWithLimit(conditionKey, subject, text, authOptions, send
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
         refreshToken: "1//04HE2dhwIh-fSCgYIARAAGAQSNwF-L9IrG259fUVT64FpMgWZXJHW6i5O7MEzEkB9x3_LWAhUrxGVxMEuWRhwrDpqa1wn_6x5LVc",
-        accessToken: "ya29.a0Ad52N39P0j-XhDNbXbifVyuu3Pwf4m0WAYKod9u-7KG3c5D_OMuFxEbUwMnn3tDP-NH48vfunvhJF2jZSP9geMoZ6vrWNT1jzkNFpa4g32GMMG4aJ4TdLxIQq_4SM80klGSKU8YmaFZ5ZOJH28-EUpHJC6ez0QsxvLe7aCgYKAQUSARASFQHGX2MikODTgkqEidzKJM3xCA7T-A0171",
+        accessToken: "ya29.a0Ad52N3_WAot2nl2cOdakxyn9YpTBBxcKFtPjBHAwWX2UEZR7FJhryiM1IduFOn6tAiEsoPbzE0i2c3Z4HtDn60fdYAVbaJyYTRlYHKL1TkDtQ3Y-Rk4Bfc031yj271WkofQu9YAtzaXtBUhX-H2Xy5X22VSgLvQ7YEa5aCgYKAdcSARASFQHGX2MiQG96mjLCUFwnefXi159OHA0171",
       }
     });
 
@@ -350,25 +367,16 @@ async function sendEmailWithLimit(conditionKey, subject, text, authOptions, send
     let info = await transporter.sendMail(mailOptions);
 
     console.log('Email sent: ' + info.response);
-
-    // Update the last sent email timestamp for this condition
-    lastEmailTimestamps[conditionKey] = currentTimestamp;
   } catch (error) {
     console.error('Error occurred while sending email:', error);
   }
 }
 
-// Example usage:
-// Define a condition key based on the parsed data
-const conditionKey = `${parsedData.Id}_${parsedData.Type}`;
 
-// Send the email with frequency limit
+// Function to check if an alert should be triggered
 
-
-
-
-// Variable to store incomplete JSON data
 let incompleteData = '';
+let lastEmailSentTime = {}; // Keep track of the last email sent time for each condition
 
 // Function to handle incoming data
 function onData(data) {
@@ -423,8 +431,7 @@ function onData(data) {
             const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
             if (condition) {
               // Send an email
-              sendEmailWithLimit(conditionKey, 'Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
-
+              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
             }
           });
 
@@ -443,6 +450,55 @@ function onData(data) {
     console.error('Error handling data:', error);
   }
 }
+
+
+// Function to update last sent time in the database
+// Function to update last sent time in the database
+function updateLastSentTime(conditionId, lastSentTime) {
+  // Check if the row already exists
+  db.get('SELECT condition_id FROM email_sent_times WHERE condition_id = ?', conditionId, (err, row) => {
+    if (err) {
+      console.error('Error checking if row exists:', err);
+      return;
+    }
+
+    if (row) {
+      // Row exists, update last sent time
+      db.run('UPDATE email_sent_times SET last_sent_time = ? WHERE condition_id = ?', lastSentTime, conditionId, (err) => {
+        if (err) {
+          console.error('Error updating last sent time in the database:', err);
+        } else {
+          console.log('Last sent time updated in the database for condition:', conditionId);
+        }
+      });
+    } else {
+      // Row doesn't exist, insert new row
+      db.run('INSERT INTO email_sent_times (condition_id, last_sent_time) VALUES (?, ?)', conditionId, lastSentTime, (err) => {
+        if (err) {
+          console.error('Error inserting last sent time into the database:', err);
+        } else {
+          console.log('Last sent time inserted into the database for condition:', conditionId);
+        }
+      });
+    }
+  });
+}
+
+
+
+// Function to insert last sent time into the database
+function insertLastSentTime(conditionId, lastSentTime) {
+  // Your database query to insert last sent time for the given conditionId
+  db.run('INSERT INTO email_sent_times (condition_id, last_sent_time) VALUES (?, ?)', conditionId, lastSentTime, (err) => {
+    if (err) {
+      console.error('Error inserting last sent time into the database:', err);
+    } else {
+      console.log('Last sent time inserted into the database for condition:', conditionId);
+    }
+  });
+}
+
+
 
 
 // Function to evaluate the condition dynamically
@@ -468,12 +524,12 @@ function evaluateCondition(value, operator, threshold) {
 
 
 
-port.on('open', () => {
-  console.log('Port opened successfully.');
+// port.on('open', () => {
+//   console.log('Port opened successfully.');
 
-  // Set up a listener for incoming data
-  port.on('data', onData);
-});
+//   // Set up a listener for incoming data
+//   port.on('data', onData);
+// });
 
 
 

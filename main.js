@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Get the modals and their respective buttons
   var modal1 = document.getElementById("addProductModal");
+  
   var btn1 = document.getElementById("myBtn3");
   var span5_1 = document.getElementsByClassName("close5")[0];
 
@@ -62,6 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
   var btn2 = document.getElementById("myBtn4");
   var span5_2 = document.getElementsByClassName("close5")[1];
 
+
+
+
+
+  var modal3 = document.getElementById("addProductModal3");
+  var btn3 = document.getElementById("myBtn6");
+  var span5_3 = document.getElementsByClassName("close5")[2];
   // Open the first modal when btn1 is clicked
   btn1.onclick = function () {
     modal1.style.display = "block";
@@ -81,6 +89,16 @@ document.addEventListener("DOMContentLoaded", function () {
   span5_2.onclick = function () {
     modal2.style.display = "none";
   };
+
+  span5_2.onclick = function () {
+    modal3.style.display = "none";
+  };
+
+
+  btn3.onclick = function () {
+    modal3.style.display = "block";
+  };
+
 
   // Close the modals when the user clicks outside of them
   window.onclick = function (event) {
@@ -117,6 +135,81 @@ function openTab(evt, tabName) {
 }
 
 
+// Define a variable to store the selected choice
+var selectedChoice = null;
+
+// Function to populate the dropdown and attach event listener
+function populateDropdown1() {
+  api("/getUniqueIDsFromDatabase", "GET")
+    .then(function(data) {
+      var select = document.getElementById("dropdown1");
+      
+      // Iterate over the data and add options to the dropdown
+      data.forEach(function(row) {
+        var option = document.createElement("option");
+        option.value = row.Id;
+        option.textContent = row.Id;
+        select.appendChild(option);
+      });
+
+      // Attach event listener to the dropdown
+      select.addEventListener("change", function(event) {
+        var selectedValue = event.target.value;
+        selectedChoice = selectedValue; // Assign selected value to the variable
+        console.log("Selected choice:", selectedChoice); // Log the selected value
+      });
+    })
+    .catch(function(error) {
+      console.error("Error fetching unique IDs:", error);
+    });
+}
+
+
+// Define a global variable to hold the selected value
+var selectedValueDropdown2;
+
+function populateDropdown2(selectedId) {
+  id = selectedId;
+  // Make an API request to fetch unique types for the selected ID
+  api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET", {})
+    .then(function(data) {
+      var select = document.getElementById("dropdown2");
+
+      // Clear previous options
+
+      // Check if the response is an array
+      if (Array.isArray(data)) {
+        // Iterate over the data and add options to the dropdown
+        data.forEach(function(row) {
+          var option = document.createElement("option");
+          option.value = row.Type;
+          option.textContent = row.Type;
+          select.appendChild(option);
+        });
+      } else {
+        console.error("Response is not an array:", data);
+      }
+
+      // Attach event listener to the dropdown
+      select.addEventListener("change", function(event) {
+        // Update the selected value variable
+        selectedValueDropdown2 = event.target.value;
+        console.log("Selected choice in dropdown 2:", selectedValueDropdown2); // Log the selected value
+      });
+    })
+    .catch(function(error) {
+      console.error("Error fetching unique types:", error);
+    });
+}
+
+// Array of options
+
+// Event listener for dropdown1 change event
+$('#dropdown1').on('change', function() {
+  var selectedId = $(this).val(); // Get the selected ID from dropdown1
+  populateDropdown2(selectedId); // Populate dropdown2 based on the selected ID
+});
+
   // Fetch unique combinations of ID and Type
   api("/getUniqueIDsFromDatabase", "GET")
     .then((res) => {
@@ -145,6 +238,117 @@ function openTab(evt, tabName) {
       console.error("Error fetching IDs:", error);
     });
 
+
+
+
+// Define the options array
+const options = ["", ">", "<", "="];
+
+// Define a global variable to store the selected value
+let selectedOption = "";
+
+// Function to populate options in the select element and store the selected value
+function populateOptions(selectId, options) {
+  // Get the select element
+  const select = document.getElementById(selectId);
+  
+  // Clear existing options
+  select.innerHTML = "";
+
+  // Create and append options
+  options.forEach(option => {
+    const optionElement = document.createElement("option");
+    optionElement.value = option; // Set value
+    optionElement.textContent = option; // Set text content
+    select.appendChild(optionElement);
+  });
+
+  // Attach event listener to the select element
+  select.addEventListener("change", function(event) {
+    // Update the global variable with the selected value
+    selectedOption = event.target.value;
+    console.log("Selected option:", selectedOption); // Log the selected value
+  });
+}
+
+// Populate the select element with options
+populateOptions("dropdown3", options);
+
+
+
+// Define a global variable to store the input value
+let inputValue = "";
+
+// Function to update the global variable with the input value
+function updateInputValue(event) {
+  inputValue = event.target.value;
+  console.log("Input value:", inputValue); // Log the input value
+}
+
+// Get the input box element
+const inputBox = document.getElementById("inputBox1");
+
+// Attach event listener to the input box for input event
+inputBox.addEventListener("input", updateInputValue);
+
+
+
+
+
+// Function to make a POST request to set alert parameters
+function setAlertParameters() {
+  // Get values from global variables
+  const id = selectedChoice;
+  const threshold = inputValue;
+  const comparisonOperator = selectedOption;
+  const type = selectedValueDropdown2;
+
+  // Check if all required parameters are available
+  if (!id || !threshold || !comparisonOperator || !type) {
+    console.error('Missing required parameters');
+    return;
+  }
+
+  // Log the values before making the API call
+  console.log('ID:', id);
+  console.log('Threshold:', threshold);
+  console.log('Comparison Operator:', comparisonOperator);
+  console.log('Type:', type);
+
+  // Prepare data for the POST request
+  const data = {
+    id: id,
+    threshold: threshold,
+    comparison_operator: comparisonOperator,
+    type: type
+  };
+
+  // Make the POST request using the api function
+  api('/setAlert', 'POST', data)
+    .then(response => {
+      console.log('Alert parameters set successfully:', response);
+    })
+    .catch(error => {
+      console.error('Error setting alert parameters:', error);
+    });
+}
+
+// Call the function to set alert parameters when needed
+// For example, when a button is clicked
+document.getElementById('send-Alert').addEventListener('click', function(event) {
+  event.preventDefault(); // Prevent the default behavior
+  
+  // Call the setAlertParameters function
+  setAlertParameters();
+});
+
+
+
+
+
+
+
+    
   // Function to add event listeners to clickable items
   function addClickListenersToItems() {
     var clickableItems = document.querySelectorAll('.clickable-item');
@@ -171,7 +375,7 @@ function openTab(evt, tabName) {
                     // Check if the "naam" property is an empty string
                     if (entry.naam === "") {
                         // Log the key and the associated IDs
-                        console.log(`Key: ${key}, First ID: ${entry.id[0]}`);
+                        // console.log(`Key: ${key}, First ID: ${entry.id[0]}`);
                     }
                 });
             } else {
@@ -187,7 +391,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const minimizeBtn = document.querySelector('.minimize-list-btn');
   const graphList = document.querySelector('.graph-list');
   const showGraphListBtn = document.querySelector('#myBtn4');
-
+  populateDropdown1();
+  populateDropdown2();
   if (minimizeBtn && graphList && showGraphListBtn) {
     minimizeBtn.addEventListener('click', function() {
       graphList.style.display = 'none';
@@ -209,7 +414,7 @@ const graphData = Object.entries(localStorage).filter(([key, value]) => key.star
 const graphList = document.querySelector('.graph-list');
 if (graphList) {
   graphData.forEach(([key, value]) => {
-    console.log(typeof value, value); // For debugging
+    // console.log(typeof value, value); // For debugging
 
     const graphName = key.replace('combinedData_', '');
     const graphElement = document.createElement('div');
@@ -334,9 +539,9 @@ const combinedDataKeysAndValues = Object.keys(localStorage)
   .filter(key => key.startsWith('combinedData_'))
   .map(key => ({ key: key, value: JSON.parse(localStorage.getItem(key)) }));
 
-console.log(combinedDataKeysAndValues);
+// console.log(combinedDataKeysAndValues);
 
-console.log('Contents of localStorage:', localStorage);
+// console.log('Contents of localStorage:', localStorage);
 
 function createContainerAndChart(id, type, data) {
   // Create a container for the chart
@@ -499,17 +704,17 @@ function createCombinedChartFromLocalStorage() {
     combinedDataKeys.forEach(key => {
       // Check if container already exists in the DOM
       if (document.getElementById(`${key}-container`)) {
-        console.log(`Container for key ${key} already exists. Skipping...`);
+        // console.log(`Container for key ${key} already exists. Skipping...`);
         return; // Skip iteration if container already exists
       }
 
       const combinedDataString = localStorage.getItem(key);
-      console.log(`Key: ${key}, Value: ${combinedDataString}`);
+      // console.log(`Key: ${key}, Value: ${combinedDataString}`);
       
       // Attempt to parse JSON data
       try {
         const combinedData = JSON.parse(combinedDataString);
-        console.log(`Parsed data for key ${key}:`, combinedData);
+        // console.log(`Parsed data for key ${key}:`, combinedData);
 
         // Check if combinedData is an array and not empty
         if (Array.isArray(combinedData) && combinedData.length > 0) {
@@ -609,7 +814,7 @@ function createCombinedChartFromLocalStorage() {
             console.error("Container for chart not found.");
           }
         } else {
-          console.error(`Invalid combined graph data for key: ${key}`);
+          // console.error(`Invalid combined graph data for key: ${key}`);
         }
       } catch (error) {
         console.error(`Error parsing data for key ${key}:`, error);
@@ -848,12 +1053,87 @@ function hideMainContent() {
 
 function getHomepage() {
   api("/", "GET").then((res) => {
-    console.log("API Response:", res); // Log the actual response
-
-    if (res.message === "success") {
-      console.log("success");
-    }
+    console.log("GANG GANG", res); // Log the actual response
   });
+}
+
+function createDynamicLabel(res) {
+  // Create label element
+  var label = document.createElement("label");
+
+  // Set label text based on response object
+  label.textContent = `Type: ${res.type}, Threshold: ${res.threshold}, Operator: ${res.comparison_operator}`;
+
+  // Create delete button
+  var deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.addEventListener("click", function(event) {
+    // Prevent the default behavior of the button (page reload)
+    event.preventDefault();
+    
+    // Function to delete this label
+    label.remove();
+  });
+
+  // Append delete button to label
+  label.appendChild(deleteButton);
+
+  // Append label to some container in your HTML
+  var container = document.getElementById("labelContainer");
+  container.appendChild(label);
+}
+
+function createDynamicLabel() {
+  api("/getAlarm", "GET")
+    .then((res) => {
+      console.log("Response from API:", res);
+      if (res.message === "Success" && Array.isArray(res.rows)) {
+        res.rows.forEach((alarm) => {
+          // Create label element
+          var label = document.createElement("label");
+          label.textContent = ` Sensor: ${alarm.id }  Type: ${alarm.type},  Value: ${alarm.threshold},  Operator: ${alarm.comparison_operator}`;
+          label.style.display = "block";
+          label.style.marginBottom = "10px";
+          label.style.padding = "10px";
+          label.style.border = "1px solid #ccc";
+          label.style.borderRadius = "5px";
+          label.style.backgroundColor = "#f9f9f9";
+
+          // Create delete button
+          var deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.style.backgroundColor = "#ff5252";
+          deleteButton.style.color = "white";
+          deleteButton.style.border = "none";
+          deleteButton.style.border = "none";
+          deleteButton.style.padding = "5px 10px";
+          deleteButton.style.marginRight = "200px"; // Increase the margin to shift the button more to the right
+
+          deleteButton.style.borderRadius = "5px";
+          deleteButton.style.cursor = "pointer";
+
+          // Add event listener to delete button
+          deleteButton.addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent default behavior
+            var alarmId = alarm.id_alert;
+            deleteAlarm(alarmId);
+            label.remove();
+          });
+
+          // Append delete button to label
+          label.appendChild(deleteButton);
+
+          // Append label to hallo101 div
+          var container = document.getElementById("hallo101");
+          container.appendChild(label);
+        });
+      } else {
+        console.error("Error: Invalid response format - expected a 'Success' message and an array of 'rows'.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching alarms:", error);
+    });
 }
 
 
@@ -861,10 +1141,29 @@ function getHomepage() {
 
 
 
+// Function to delete alarm
+function deleteAlarm(id) {
+  api(`/deleteAlarm/${id}`, "DELETE")
+    .then((res) => {
+      console.log("Response from delete API:", res);
+      if (res.message === "Alarm settings deleted successfully") {
+        console.log("Alarm deleted successfully");
+      } else {
+        console.error("Error deleting alarm:", res.error);
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting alarm:", error);
+    });
+}
+
+
+
 
 // You can add all the buttons you want to connect to the API or button functions
 document.addEventListener("DOMContentLoaded", function () {
   connectButton("myButton", getHomepage);
+  createDynamicLabel();
 });
 
 function connectButton(id, event) {
