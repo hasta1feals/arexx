@@ -730,6 +730,7 @@ function createCombinedChartFromLocalStorage() {
             backgroundColor: 'rgba(0, 255, 0, 0.1)',
             borderWidth: 1,
             naam:data.naam
+            
           }));
 
           const nam = datasets[0].naam; // For example, accessing 'nam' from the first dataset
@@ -770,6 +771,80 @@ function createCombinedChartFromLocalStorage() {
             // Remove data from local storage
             localStorage.removeItem(key);
           });
+
+         // Create open options button with gear icon
+         const openOptions = document.createElement('button');
+         openOptions.classList.add('open-options');
+         openOptions.id = 'open-options';
+         openOptions.innerHTML = '<i class="fas fa-cog"></i>'; // Font Awesome gear icon
+         
+         // Append the button to the DOM
+         document.body.appendChild(openOptions);
+         
+         // Add event listener to open the modal
+         openOptions.addEventListener('click', function() {
+          var modal6 = document.getElementById("addProductModal6");
+          modal6.style.display = "block";
+        
+          // Get the key for the chart data from local storage
+          const canvas = container.querySelector('.dynamic-chart');
+          const chartInstanceId = extractNumericPart(canvas.id);
+          console.log("Chart Data Key:", chartInstanceId);
+          const chartDataKey = 'combinedData_' + chartInstanceId; // Assuming you have a dataset attribute to store the chart data key
+       
+        
+          // Retrieve chart data from local storage using the key
+          const chartDataString = localStorage.getItem(chartDataKey);
+        
+          if (chartDataString) {
+            // Attempt to parse JSON data
+            try {
+              const chartData = JSON.parse(chartDataString);
+        
+              // Log the chart data to the console
+              console.log("Chart Data:", chartData);
+        
+            } catch (error) {
+              console.error("Error parsing chart data:", error);
+            }
+          } else {
+            console.error("Chart data not found in local storage for key:", chartDataKey);
+          }
+        });
+
+
+        
+         
+         // Close the modal when the close button is clicked
+         var closeButtons = document.getElementsByClassName("close5");
+         for (var i = 0; i < closeButtons.length; i++) {
+           closeButtons[i].addEventListener('click', function () {
+             var modal6 = document.getElementById("addProductModal6");
+             modal6.style.display = "none";
+           });
+         }
+         
+         // Close the modal when the user clicks outside of it
+         window.onclick = function (event) {
+           var modal6 = document.getElementById("addProductModal6");
+           if (event.target == modal6) {
+             modal6.style.display = "none";
+           }
+         };
+         
+         
+// Append open options button to the card content
+cardContent.appendChild(openOptions);
+
+
+
+
+
+function extractNumericPart(str) {
+  const numericPart = str.match(/\d+/);
+  return numericPart ? numericPart[0] : null;
+}
+
 
           // Create graph placeholder
           const graphPlaceholder = document.createElement('div');
@@ -1349,12 +1424,14 @@ function generateCombinedGraph(selectedItems) {
       console.log('Datasets:', datasets); // Log datasets to check their structure
 
    // Extract labels and values for each dataset
-const combinedData = datasets.map(data => ({
-  labels: data.map(entry => entry.TimeStamp),
-  values: data.map(entry => entry.Value),
-  id: data.map(entry => entry.Id),
-  naam: document.getElementById('graph-input').value
-}));
+   const combinedData = datasets.map(data => ({
+    labels: data.map(entry => entry.TimeStamp),
+    values: data.map(entry => entry.Value),
+    id: data.map(entry => entry.Id),
+    naam: document.getElementById('graph-input').value,
+    color: "" // Creates an array with empty strings for each dataset
+  }));
+  
 
 
       // Save combined data to local storage with a unique key

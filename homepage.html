@@ -67,6 +67,15 @@
       </div>
     </div>
 
+
+
+
+
+
+
+
+
+
     <div id="addProductModal" class="modal">
       <!-- Modal content -->
       <div class="modal-content">
@@ -170,6 +179,56 @@
       </div>
     </div>
 
+
+
+
+    <div id="addProductModal6" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close close5">&times;</span>
+        <!-- Tab links -->
+        <div class="tab">
+          <button class="tablinks" onclick="openTab(event, 'tab10')">
+            Graph Properties
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'tab11')">
+            Graph Desigin
+          </button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="tab10" class="tabcontent">
+          <input type="text" id="graph-input" placeholder="Enter graph name" />
+          <div class="form-group"></div>
+          <!-- Add content specific to tab 1 here -->
+        </div>
+
+        <div id="tab11" class="tabcontent">
+          <form id="form-color" class="formChangeRegion">
+            <div class="form-group">
+              <input type="text" id="input10" placeholder="Input 10" />
+              <input type="text" id="input11" placeholder="Input 11" />
+            </div>
+        
+      
+          </form>
+          <!-- Add content specific to tab 3 here -->
+        </div>
+
+        <!-- Form for combining graphs -->
+        <form class="formChangeRegion">
+          <div class="form-group">
+            <!-- Add form inputs or content here -->
+          </div>
+          <div class="modalbtn">
+            <button class="mbtn export">Discard</button>
+            <button id="combine-graph" class="mbtn combine-graph">
+              Create Graph
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
