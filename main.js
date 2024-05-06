@@ -652,48 +652,24 @@ function createContainerAndChart(id, type, data) {
 }
 
 
-// Simple example, see optional options for more configuration.
-// const pickr = Pickr.create({
-//   el: '.color-picker',
-//   theme: 'classic', // or 'monolith', or 'nano'
 
-//   swatches: [
-//       'rgba(244, 67, 54, 1)',
-//       'rgba(233, 30, 99, 0.95)',
-//       'rgba(156, 39, 176, 0.9)',
-//       'rgba(103, 58, 183, 0.85)',
-//       'rgba(63, 81, 181, 0.8)',
-//       'rgba(33, 150, 243, 0.75)',
-//       'rgba(3, 169, 244, 0.7)',
-//       'rgba(0, 188, 212, 0.7)',
-//       'rgba(0, 150, 136, 0.75)',
-//       'rgba(76, 175, 80, 0.8)',
-//       'rgba(139, 195, 74, 0.85)',
-//       'rgba(205, 220, 57, 0.9)',
-//       'rgba(255, 235, 59, 0.95)',
-//       'rgba(255, 193, 7, 1)'
-//   ],
+function hexToRGBA(hex, alpha) {
+  // Convert hex color to RGB
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
 
-//   components: {
+  // Return RGBA format
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
-//       // Main components
-//       preview: true,
-//       opacity: true,
-//       hue: true,
+function updateLocalStorage(key, value) {
+  localStorage.setItem(key, value);
+}
 
-//       // Input / output Options
-//       interaction: {
-//           hex: true,
-//           rgba: true,
-//           hsla: true,
-//           hsva: true,
-//           cmyk: true,
-//           input: true,
-//           clear: true,
-//           save: true
-//       }
-//   }
-// });
+
+
 
 
 
@@ -710,7 +686,7 @@ function createCombinedChartFromLocalStorage() {
 
       const combinedDataString = localStorage.getItem(key);
       // console.log(`Key: ${key}, Value: ${combinedDataString}`);
-      
+
       // Attempt to parse JSON data
       try {
         const combinedData = JSON.parse(combinedDataString);
@@ -722,19 +698,40 @@ function createCombinedChartFromLocalStorage() {
           const labels = combinedData[0].labels;
 
           // Create an array of datasets
-          const datasets = combinedData.map((data, index, id) => ({
-            label: `Data for ID ${data.id[0]}`,
-            data: data.values,
-            //voor de toekomst hier moet je het veranderen en wss mappen door de index of id 
-            borderColor: index === 0 ? 'red' : 'blue',
-            backgroundColor: 'rgba(0, 255, 0, 0.1)',
-            borderWidth: 1,
-            naam:data.naam
+          const datasets = combinedData.map((data, index) => {
+            // Dynamically create an input element for each dataset color
+            const colorInput = document.createElement('input');
+            colorInput.setAttribute('type', 'color');
+            colorInput.setAttribute('id', `form-color-${index}`); // Set a unique id for each input
+            colorInput.setAttribute('value', data.color); // Set the initial value of the input to the dataset color
             
-          }));
-
+            // Create a closure to capture the current value of `data`
+            colorInput.addEventListener('change', (function(data) {
+              return function(event) {
+                  // Update the dataset color when the input value changes
+                  data.borderColor = hexToRGBA(event.target.value, 0.1);
+                  data.color = event.target.value;
+                  data.backgroundColor = hexToRGBA(event.target.value, 0.1); // Assuming you have a function to convert hex to RGBA
+                  // Update the local storage with the new data
+                  updateLocalStorage(key, JSON.stringify(combinedData));
+              };
+          })(data));
+        
+            // Append the input element to the form
+            document.getElementById('form-color').appendChild(colorInput);
+        
+            // Return the dataset object with the updated color input
+            return {
+                label: `Data for ID ${data.id[0]}`,
+                data: data.values,
+                borderColor: data.color, // Set the initial border color from the dataset
+                backgroundColor: hexToRGBA(data.color, 0.1), // Assuming you have a function to convert hex to RGBA
+                naam: data.naam,
+                color: data.color // Retain the color property in the dataset
+            };
+        });
+        
           const nam = datasets[0].naam; // For example, accessing 'nam' from the first dataset
-
 
           // Create a container for the chart
           const container = document.createElement('div');
@@ -751,14 +748,11 @@ function createCombinedChartFromLocalStorage() {
           const cardTitle = document.createElement('div');
           cardTitle.classList.add('card-title');
 
-          
-          if (nam === ""){
+          if (nam === "") {
             cardTitle.textContent = `Combined Chart - ${key}`;
-          }else {
+          } else {
             cardTitle.textContent = nam;
-
           }
-         
 
           // Create remove button with "x" icon
           const removeButton = document.createElement('button');
@@ -767,84 +761,71 @@ function createCombinedChartFromLocalStorage() {
           removeButton.addEventListener('click', function() {
             // Remove container from the DOM
             container.remove();
-
             // Remove data from local storage
             localStorage.removeItem(key);
           });
 
-         // Create open options button with gear icon
-         const openOptions = document.createElement('button');
-         openOptions.classList.add('open-options');
-         openOptions.id = 'open-options';
-         openOptions.innerHTML = '<i class="fas fa-cog"></i>'; // Font Awesome gear icon
-         
-         // Append the button to the DOM
-         document.body.appendChild(openOptions);
-         
-         // Add event listener to open the modal
-         openOptions.addEventListener('click', function() {
-          var modal6 = document.getElementById("addProductModal6");
-          modal6.style.display = "block";
-        
-          // Get the key for the chart data from local storage
-          const canvas = container.querySelector('.dynamic-chart');
-          const chartInstanceId = extractNumericPart(canvas.id);
-          console.log("Chart Data Key:", chartInstanceId);
-          const chartDataKey = 'combinedData_' + chartInstanceId; // Assuming you have a dataset attribute to store the chart data key
-       
-        
-          // Retrieve chart data from local storage using the key
-          const chartDataString = localStorage.getItem(chartDataKey);
-        
-          if (chartDataString) {
-            // Attempt to parse JSON data
-            try {
-              const chartData = JSON.parse(chartDataString);
-        
-              // Log the chart data to the console
-              console.log("Chart Data:", chartData);
-        
-            } catch (error) {
-              console.error("Error parsing chart data:", error);
-            }
-          } else {
-            console.error("Chart data not found in local storage for key:", chartDataKey);
+          // Create open options button with gear icon
+          const openOptions = document.createElement('button');
+          openOptions.classList.add('open-options');
+          openOptions.id = 'open-options';
+          openOptions.innerHTML = '<i class="fas fa-cog"></i>'; // Font Awesome gear icon
+
+          // Append the button to the DOM
+          document.body.appendChild(openOptions);
+
+          // Add event listener to open the modal
+          // Add event listener to the open options button
+openOptions.addEventListener('click', function() {
+  var modal6 = document.getElementById("addProductModal6");
+  modal6.style.display = "block";
+
+  // Get the key for the chart data from local storage
+  const canvas = container.querySelector('.dynamic-chart');
+  const chartInstanceId = extractNumericPart(canvas.id);
+  console.log("Chart Data Key:", chartInstanceId);
+  currentChartDataKey = 'combinedData_' + chartInstanceId;
+  
+  // Assuming you have a dataset attribute to store the chart data key
+
+  // Retrieve chart data from local storage using the key
+  const chartDataString = localStorage.getItem(currentChartDataKey);
+
+  if (chartDataString) {
+    // Attempt to parse JSON data
+    try {
+      const chartData = JSON.parse(chartDataString);
+
+      // Log the chart data to the console
+      console.log("Chart Data:", chartData);
+
+    } catch (error) {
+      console.error("Error parsing chart data:", error);
+    }
+  } else {
+    console.error("Chart data not found in local storage for key:", currentChartDataKey);
+  }
+});
+
+          // Close the modal when the close button is clicked
+          var closeButtons = document.getElementsByClassName("close5");
+          for (var i = 0; i < closeButtons.length; i++) {
+            closeButtons[i].addEventListener('click', function() {
+              var modal6 = document.getElementById("addProductModal6");
+              modal6.style.display = "none";
+            });
           }
-        });
 
+          // Close the modal when the user clicks outside of it
+          window.onclick = function(event) {
+            var modal6 = document.getElementById("addProductModal6");
+            if (event.target == modal6) {
+              modal6.style.display = "none";
+            }
+          };
 
-        
-         
-         // Close the modal when the close button is clicked
-         var closeButtons = document.getElementsByClassName("close5");
-         for (var i = 0; i < closeButtons.length; i++) {
-           closeButtons[i].addEventListener('click', function () {
-             var modal6 = document.getElementById("addProductModal6");
-             modal6.style.display = "none";
-           });
-         }
-         
-         // Close the modal when the user clicks outside of it
-         window.onclick = function (event) {
-           var modal6 = document.getElementById("addProductModal6");
-           if (event.target == modal6) {
-             modal6.style.display = "none";
-           }
-         };
-         
-         
-// Append open options button to the card content
-cardContent.appendChild(openOptions);
-
-
-
-
-
-function extractNumericPart(str) {
-  const numericPart = str.match(/\d+/);
-  return numericPart ? numericPart[0] : null;
-}
-
+          // Append open options button to the card content
+          cardContent.appendChild(openOptions);
 
           // Create graph placeholder
           const graphPlaceholder = document.createElement('div');
@@ -899,6 +880,15 @@ function extractNumericPart(str) {
     console.error("No combined graph data found in local storage.");
   }
 }
+
+
+
+
+function extractNumericPart(str) {
+  const numericPart = str.match(/\d+/);
+  return numericPart ? numericPart[0] : null;
+}
+
 
 $(document).ready(function() {
   // Initialize draggability for elements with the 'drag' class
