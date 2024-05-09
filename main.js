@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelector('.graph-list').style.display = graphListDisplay;
   }
 
-  // Make the graph list draggable
+  // // Make the graph list draggable
   $(".graph-list").draggable({
       stop: function(event, ui) {
           // Store position in local storage when dragging stops
@@ -135,80 +135,80 @@ function openTab(evt, tabName) {
 }
 
 
-// Define a variable to store the selected choice
-var selectedChoice = null;
+try {
+  // Define a variable to store the selected choice
+  var selectedChoice = null;
 
-// Function to populate the dropdown and attach event listener
-function populateDropdown1() {
-  api("/getUniqueIDsFromDatabase", "GET")
-    .then(function(data) {
-      var select = document.getElementById("dropdown1");
-      
-      // Iterate over the data and add options to the dropdown
-      data.forEach(function(row) {
-        var option = document.createElement("option");
-        option.value = row.Id;
-        option.textContent = row.Id;
-        select.appendChild(option);
-      });
-
-      // Attach event listener to the dropdown
-      select.addEventListener("change", function(event) {
-        var selectedValue = event.target.value;
-        selectedChoice = selectedValue; // Assign selected value to the variable
-        console.log("Selected choice:", selectedChoice); // Log the selected value
-      });
-    })
-    .catch(function(error) {
-      console.error("Error fetching unique IDs:", error);
-    });
-}
-
-
-// Define a global variable to hold the selected value
-var selectedValueDropdown2;
-
-function populateDropdown2(selectedId) {
-  id = selectedId;
-  // Make an API request to fetch unique types for the selected ID
-  api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET", {})
-    .then(function(data) {
-      var select = document.getElementById("dropdown2");
-
-      // Clear previous options
-
-      // Check if the response is an array
-      if (Array.isArray(data)) {
+  // Function to populate the dropdown and attach event listener
+  function populateDropdown1() {
+    api("/getUniqueIDsFromDatabase", "GET")
+      .then(function(data) {
+        var select = document.getElementById("dropdown1");
+        
         // Iterate over the data and add options to the dropdown
         data.forEach(function(row) {
           var option = document.createElement("option");
-          option.value = row.Type;
-          option.textContent = row.Type;
+          option.value = row.Id;
+          option.textContent = row.Id;
           select.appendChild(option);
         });
-      } else {
-        console.error("Response is not an array:", data);
-      }
 
-      // Attach event listener to the dropdown
-      select.addEventListener("change", function(event) {
-        // Update the selected value variable
-        selectedValueDropdown2 = event.target.value;
-        console.log("Selected choice in dropdown 2:", selectedValueDropdown2); // Log the selected value
+        // Attach event listener to the dropdown
+        select.addEventListener("change", function(event) {
+          var selectedValue = event.target.value;
+          selectedChoice = selectedValue; // Assign selected value to the variable
+          console.log("Selected choice:", selectedChoice); // Log the selected value
+        });
+      })
+      .catch(function(error) {
+        console.error("Error fetching unique IDs:", error);
       });
-    })
-    .catch(function(error) {
-      console.error("Error fetching unique types:", error);
-    });
-}
+  }
 
-// Array of options
+  // Define a global variable to hold the selected value
+  var selectedValueDropdown2;
 
-// Event listener for dropdown1 change event
-$('#dropdown1').on('change', function() {
-  var selectedId = $(this).val(); // Get the selected ID from dropdown1
-  populateDropdown2(selectedId); // Populate dropdown2 based on the selected ID
-});
+  function populateDropdown2(selectedId) {
+    id = selectedId;
+    // Make an API request to fetch unique types for the selected ID
+    api(`/getUniqueTypesForIDFromDatabase?id=${id}`, "GET", {})
+      .then(function(data) {
+        var select = document.getElementById("dropdown2");
+
+        // Clear previous options
+
+        // Check if the response is an array
+        if (Array.isArray(data)) {
+          // Iterate over the data and add options to the dropdown
+          data.forEach(function(row) {
+            var option = document.createElement("option");
+            option.value = row.Type;
+            option.textContent = row.Type;
+            select.appendChild(option);
+          });
+        } else {
+          console.error("Response is not an array:", data);
+        }
+
+        // Attach event listener to the dropdown
+        select.addEventListener("change", function(event) {
+          // Update the selected value variable
+          selectedValueDropdown2 = event.target.value;
+          console.log("Selected choice in dropdown 2:", selectedValueDropdown2); // Log the selected value
+        });
+      })
+      .catch(function(error) {
+        console.error("Error fetching unique types:", error);
+      });
+  }
+
+  // Array of options
+
+  // Event listener for dropdown1 change event
+  $('#dropdown1').on('change', function() {
+    var selectedId = $(this).val(); // Get the selected ID from dropdown1
+    populateDropdown2(selectedId); // Populate dropdown2 based on the selected ID
+  });
 
   // Fetch unique combinations of ID and Type
   api("/getUniqueIDsFromDatabase", "GET")
@@ -238,110 +238,104 @@ $('#dropdown1').on('change', function() {
       console.error("Error fetching IDs:", error);
     });
 
+  // Define the options array
+  const options = ["", ">", "<", "="];
 
+  // Define a global variable to store the selected value
+  let selectedOption = "";
 
+  // Function to populate options in the select element and store the selected value
+  function populateOptions(selectId, options) {
+    // Get the select element
+    const select = document.getElementById(selectId);
+    
+    // Clear existing options
+    select.innerHTML = "";
 
-// Define the options array
-const options = ["", ">", "<", "="];
+    // Create and append options
+    options.forEach(option => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option; // Set value
+      optionElement.textContent = option; // Set text content
+      select.appendChild(optionElement);
+    });
 
-// Define a global variable to store the selected value
-let selectedOption = "";
-
-// Function to populate options in the select element and store the selected value
-function populateOptions(selectId, options) {
-  // Get the select element
-  const select = document.getElementById(selectId);
-  
-  // Clear existing options
-  select.innerHTML = "";
-
-  // Create and append options
-  options.forEach(option => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option; // Set value
-    optionElement.textContent = option; // Set text content
-    select.appendChild(optionElement);
-  });
-
-  // Attach event listener to the select element
-  select.addEventListener("change", function(event) {
-    // Update the global variable with the selected value
-    selectedOption = event.target.value;
-    console.log("Selected option:", selectedOption); // Log the selected value
-  });
-}
-
-// Populate the select element with options
-populateOptions("dropdown3", options);
-
-
-
-// Define a global variable to store the input value
-let inputValue = "";
-
-// Function to update the global variable with the input value
-function updateInputValue(event) {
-  inputValue = event.target.value;
-  console.log("Input value:", inputValue); // Log the input value
-}
-
-// Get the input box element
-const inputBox = document.getElementById("inputBox1");
-
-// Attach event listener to the input box for input event
-inputBox.addEventListener("input", updateInputValue);
-
-
-
-
-
-// Function to make a POST request to set alert parameters
-function setAlertParameters() {
-  // Get values from global variables
-  const id = selectedChoice;
-  const threshold = inputValue;
-  const comparisonOperator = selectedOption;
-  const type = selectedValueDropdown2;
-
-  // Check if all required parameters are available
-  if (!id || !threshold || !comparisonOperator || !type) {
-    console.error('Missing required parameters');
-    return;
+    // Attach event listener to the select element
+    select.addEventListener("change", function(event) {
+      // Update the global variable with the selected value
+      selectedOption = event.target.value;
+      console.log("Selected option:", selectedOption); // Log the selected value
+    });
   }
 
-  // Log the values before making the API call
-  console.log('ID:', id);
-  console.log('Threshold:', threshold);
-  console.log('Comparison Operator:', comparisonOperator);
-  console.log('Type:', type);
+  // Populate the select element with options
+  populateOptions("dropdown3", options);
 
-  // Prepare data for the POST request
-  const data = {
-    id: id,
-    threshold: threshold,
-    comparison_operator: comparisonOperator,
-    type: type
-  };
+  // Define a global variable to store the input value
+  let inputValue = "";
 
-  // Make the POST request using the api function
-  api('/setAlert', 'POST', data)
-    .then(response => {
-      console.log('Alert parameters set successfully:', response);
-    })
-    .catch(error => {
-      console.error('Error setting alert parameters:', error);
-    });
+  // Function to update the global variable with the input value
+  function updateInputValue(event) {
+    inputValue = event.target.value;
+    console.log("Input value:", inputValue); // Log the input value
+  }
+
+  // Get the input box element
+  const inputBox = document.getElementById("inputBox1");
+
+  // Attach event listener to the input box for input event
+  inputBox.addEventListener("input", updateInputValue);
+
+  // Function to make a POST request to set alert parameters
+  function setAlertParameters() {
+    // Get values from global variables
+    const id = selectedChoice;
+    const threshold = inputValue;
+    const comparisonOperator = selectedOption;
+    const type = selectedValueDropdown2;
+
+    // Check if all required parameters are available
+    if (!id || !threshold || !comparisonOperator || !type) {
+      console.error('Missing required parameters');
+      return;
+    }
+
+    // Log the values before making the API call
+    console.log('ID:', id);
+    console.log('Threshold:', threshold);
+    console.log('Comparison Operator:', comparisonOperator);
+    console.log('Type:', type);
+
+    // Prepare data for the POST request
+    const data = {
+      id: id,
+      threshold: threshold,
+      comparison_operator: comparisonOperator,
+      type: type
+    };
+
+    // Make the POST request using the api function
+    api('/setAlert', 'POST', data)
+      .then(response => {
+        console.log('Alert parameters set successfully:', response);
+      })
+      .catch(error => {
+        console.error('Error setting alert parameters:', error);
+      });
+  }
+
+  // Call the function to set alert parameters when needed
+  // For example, when a button is clicked
+  document.getElementById('send-Alert').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default behavior
+    
+    // Call the setAlertParameters function
+    setAlertParameters();
+  });
+} catch (error) {
+  console.error('An error occurred but was caught:', error);
+  // Handle the error as needed, or simply log it
 }
-
-// Call the function to set alert parameters when needed
-// For example, when a button is clicked
-document.getElementById('send-Alert').addEventListener('click', function(event) {
-  event.preventDefault(); // Prevent the default behavior
-  
-  // Call the setAlertParameters function
-  setAlertParameters();
-});
-
 
 
 
