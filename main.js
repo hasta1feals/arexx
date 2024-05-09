@@ -672,7 +672,7 @@ function updateLocalStorage(key, value) {
 
 
 
-
+//fix alle kle
 function createCombinedChartFromLocalStorage() {
   const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
 

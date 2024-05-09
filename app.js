@@ -4,12 +4,12 @@ const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const bodyParser = require('body-parser');
 
+// const SerialPort = require('serialport');
 
-const SerialPort = require('serialport').SerialPort;
+
+
 const PORT = process.env.PORT || 3000;
-// const portPath = '/COM4'; // path to serial portc(change per pc)// to do is het dynamic te maken 
 const nodemailer = require('nodemailer');
-// const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 app.use(bodyParser.json()); // Parse JSON-encoded bodies
@@ -521,7 +521,11 @@ function evaluateCondition(value, operator, threshold) {
 }
 
 
+// const SerialPort = require('serialport').SerialPort;
 
+
+// const portPath = '/dev/tty.usbserial-10'; // path to serial portc(change per pc)// to do is het dynamic te maken 
+// const port = new SerialPort({ path: portPath, baudRate: 115200 });
 
 
 // port.on('open', () => {
@@ -530,6 +534,139 @@ function evaluateCondition(value, operator, threshold) {
 //   // Set up a listener for incoming data
 //   port.on('data', onData);
 // });
+
+
+const { SerialPort } = require('serialport');
+
+app.post('/openAndListenSerialPort', async (req, res) => {
+  try {
+    // List available serial ports
+    SerialPort.list().then(
+      ports => {
+        // Log available ports and their details
+        console.log('Available serial ports:');
+        ports.forEach(port => {
+          console.log(port);
+        });
+
+        // Define criteria to find the desired serial port
+        const criteria = {
+          vendorId: '1a86',
+          productId: '7523'
+        };
+
+        // Find the port path that matches the criteria
+        const portInfo = ports.find(
+          port =>
+            port.vendorId === criteria.vendorId &&
+            port.productId === criteria.productId &&
+            port.path // Ensure port object has a path property
+        );
+
+        // Log the portInfo object to see its contents
+        console.log('Port info:', portInfo);
+
+        // Check if the portInfo is found and has a path property
+        if (!portInfo || !portInfo.path) {
+          console.error('Serial port not found for the specified criteria:', criteria);
+          return res.status(500).json({ error: 'Serial port not found for the specified criteria', criteria });
+        }
+
+        console.log('Port path:', portInfo.path); // Log port path
+
+        // Open the serial port using the port path from portInfo
+        const port = new SerialPort({ path: portInfo.path, baudRate: 115200 });
+
+        // Listen to incoming data
+        port.on('data', onData);
+
+        res.status(200).json({ message: 'Serial port opened and listening successfully' });
+      },
+      err => {
+        console.error('Error listing serial ports:', err);
+        res.status(500).json({ error: 'Error listing serial ports', details: err.message });
+      }
+    );
+  } catch (err) {
+    console.error('Error handling request:', err);
+    res.status(500).json({ error: 'Error handling request', details: err.message });
+  }
+});
+
+
+
+
+
+app.post('/closeSerial', async (req, res) => {
+  try {
+    // List available serial ports
+    SerialPort.list().then(
+      ports => {
+        // Log available ports and their details
+        console.log('Available serial ports:');
+        ports.forEach(port => {
+          console.log(port);
+        });
+
+        // Define criteria to find the desired serial port
+        const criteria = {
+          vendorId: '1a86',
+          productId: '7523'
+        };
+
+        // Find the port path that matches the criteria
+        const portInfo = ports.find(
+          port =>
+            port.vendorId === criteria.vendorId &&
+            port.productId === criteria.productId &&
+            port.path // Ensure port object has a path property
+        );
+
+        // Log the portInfo object to see its contents
+        console.log('Port info:', portInfo);
+
+        // Check if the portInfo is found and has a path property
+        if (!portInfo || !portInfo.path) {
+          console.error('Serial port not found for the specified criteria:', criteria);
+          return res.status(500).json({ error: 'Serial port not found for the specified criteria', criteria });
+        }
+
+        console.log('Port path:', portInfo.path); // Log port path
+
+        // Open the serial port using the port path from portInfo
+        const port = new SerialPort({ path: portInfo.path, baudRate: 115200 });
+
+        // Listen to incoming data
+        // Open the serial port
+        port.open(err => {
+          if (err) {
+            console.error('Error opening serial port:', err);
+            res.status(500).json({ error: 'Error opening serial port', details: err.message });
+          } else {
+            // Close the serial port
+            port.close((err) => {
+              if (err) {
+                console.error('Error closing serial port:', err);
+                res.status(500).json({ error: 'Error closing serial port', details: err.message });
+              } else {
+                console.log('Serial port closed successfully');
+                res.status(200).json({ message: 'Serial port closed successfully' });
+              }
+            });
+          }
+        });
+      },
+      err => {
+        console.error('Error listing serial ports:', err);
+        res.status(500).json({ error: 'Error listing serial ports', details: err.message });
+      }
+    );
+  } catch (err) {
+    console.error('Error handling request:', err);
+    res.status(500).json({ error: 'Error handling request', details: err.message });
+  }
+});
+
 
 
 
