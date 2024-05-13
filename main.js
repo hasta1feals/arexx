@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOMContentLoaded event fired");
 
@@ -58,13 +60,52 @@ document.addEventListener("DOMContentLoaded", function () {
   var span5_1 = document.getElementsByClassName("close5")[0];
   var buttontab1 = document.getElementById("modaltab1");
   var buttontab10 = document.getElementById("modaltab10");
-
-
-
+  var discardButton = document.getElementById("closemodal5");
+  discardButton.addEventListener('click', function() {
+    console.log('Hello');
+  });
+  var discardButton2 = document.getElementById("close-button3");
 
   var modal3 = document.getElementById("addProductModal3");
   var btn3 = document.getElementById("myBtn6");
   var span5_3 = document.getElementsByClassName("close5")[1];
+  var span5_4 = document.getElementsByClassName("close5")[2];
+
+
+var modal209 = document.getElementById("addProductModal6"); 
+var btn6 = document.getElementById("changecolorASAH");
+
+var bt7 = document.getElementById("discardcolor")
+
+ 
+  span5_3.onclick = function() {
+   closeModal(modal3);
+};
+
+span5_4.onclick = function() {
+  closeModal(modal209);
+};
+
+discardButton.onclick = function() {
+  
+  closeModal(modal1);
+};
+
+bt7.onclick = function() {
+  
+  closeModal(modal209);
+};
+discardButton2.onclick = function() {
+
+  closeModal(modal3);
+};
+
+btn6.onclick = function() {
+
+  closeModal(modal209);
+};
+  var buttontab2 = document.getElementById("modaltab2");
+  var buttontab4 = document.getElementById("modaltab4");
 
 
   // Check if any modal element is null
@@ -90,6 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.style.display = "none";
     // Remove the modal state from localStorage
     localStorage.removeItem(modal.id);
+    localStorage.removeItem("activeTab");
+
+  setTimeout(function() {
+    location.reload();
+  }, 100);
   }
 
   // Check if the modal was open before and open it again
@@ -112,7 +158,38 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModal(modal1);
   };
 
+  buttontab1.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab1");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab1");
+  };
 
+  buttontab10.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab10");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab10");
+  };
+  buttontab2.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab2");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab2");
+  };
+
+  buttontab4.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab4");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab4");
+  };
+
+  var activeTabName = localStorage.getItem("activeTab");
+  if (activeTabName) {
+    openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
+    console.log("Active tab:", activeTabName);
+  }
 
 
   btn3.onclick = function () {
@@ -349,12 +426,22 @@ try {
         console.error('Error setting alert parameters:', error);
       });
   }
-
+var modal200 = document.getElementById('addProductModal3')
   // Call the function to set alert parameters when needed
   // For example, when a button is clicked
   document.getElementById('send-Alert').addEventListener('click', function(event) {
     event.preventDefault(); // Prevent the default behavior
-    
+
+
+    function closeModal(modal) {
+      console.log("Closing modal:", modal.id);
+      modal.style.display = "none";
+      // Remove the modal state from localStorage
+      localStorage.removeItem(modal.id);
+      localStorage.removeItem("activeTab");
+    }
+
+    closeModal(modal200);
     // Call the setAlertParameters function
     setAlertParameters();
   });
@@ -691,6 +778,7 @@ function updateLocalStorage(key, value) {
 
 
 
+let openOptions;
 
 //fix alle kle
 function createCombinedChartFromLocalStorage() {
@@ -786,7 +874,7 @@ function createCombinedChartFromLocalStorage() {
           });
 
           // Create open options button with gear icon
-          const openOptions = document.createElement('button');
+           openOptions = document.createElement('button');
           openOptions.classList.add('open-options');
           openOptions.id = 'open-options';
           openOptions.innerHTML = '<i class="fas fa-cog"></i>'; // Font Awesome gear icon
@@ -796,36 +884,65 @@ function createCombinedChartFromLocalStorage() {
 
           // Add event listener to open the modal
           // Add event listener to the open options button
-openOptions.addEventListener('click', function() {
-  var modal6 = document.getElementById("addProductModal6");
-  modal6.style.display = "block";
+          var modal6 = document.getElementById("addProductModal6");
+var tab45 = document.getElementById("idtab45");
 
-  // Get the key for the chart data from local storage
-  const canvas = container.querySelector('.dynamic-chart');
-  const chartInstanceId = extractNumericPart(canvas.id);
-  console.log("Chart Data Key:", chartInstanceId);
-  currentChartDataKey = 'combinedData_' + chartInstanceId;
-  
-  // Assuming you have a dataset attribute to store the chart data key
+if (localStorage.getItem(modal6.id) === "open") {
+  openModal(modal6);
+}
 
-  // Retrieve chart data from local storage using the key
-  const chartDataString = localStorage.getItem(currentChartDataKey);
+var activeTabName = localStorage.getItem("activeTab");
+if (activeTabName) {
+  openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
+  console.log("Active tab:", activeTabName);
+}
 
-  if (chartDataString) {
-    // Attempt to parse JSON data
-    try {
-      const chartData = JSON.parse(chartDataString);
+tab45.onclick = function () {
+  // Store the active tab state in localStorage
+  localStorage.setItem("activeTab", "tab45");
+  // Update the active tab visually
+  openTab({ currentTarget: tab45 }, "tab45");
+};
 
-      // Log the chart data to the console
-      console.log("Chart Data:", chartData);
 
-    } catch (error) {
-      console.error("Error parsing chart data:", error);
-    }
-  } else {
-    console.error("Chart data not found in local storage for key:", currentChartDataKey);
-  }
-});
+          openOptions.addEventListener('click', function() {
+          
+            // Logic to retrieve and handle chart data
+            const canvas = container.querySelector('.dynamic-chart');
+            const chartInstanceId = extractNumericPart(canvas.id);
+            console.log("Chart Data Key:", chartInstanceId);
+            currentChartDataKey = 'combinedData_' + chartInstanceId;
+            
+            const chartDataString = localStorage.getItem(currentChartDataKey);
+          openModal(modal6);
+            if (chartDataString) {
+              try {
+                const chartData = JSON.parse(chartDataString);
+                console.log("Chart Data:", chartData);
+              } catch (error) {
+                console.error("Error parsing chart data:", error);
+              }
+            } else {
+              console.error("Chart data not found in local storage for key:", currentChartDataKey);
+            }
+          });
+          
+          // Close modal logic
+function closeModal(modal) {
+  console.log("Closing modal:", modal.id);
+  modal.style.display = "none";
+  // Remove the modal state from localStorage
+  localStorage.removeItem(modal.id);
+  localStorage.removeItem("activeTab");
+}
+
+// Open modal logic
+function openModal(modal) {
+  console.log("Opening modal:", modal.id);
+  modal.style.display = "block";
+  // Store the modal state in localStorage
+  localStorage.setItem(modal.id, "open");
+}
 
           // Close the modal when the close button is clicked
           var closeButtons = document.getElementsByClassName("close5");
@@ -900,6 +1017,7 @@ openOptions.addEventListener('click', function() {
     console.error("No combined graph data found in local storage.");
   }
 }
+
 
 
 
@@ -1412,10 +1530,25 @@ if (formGroup) {
       console.log(`Selected items:`, selectedItems);
     }
   });
+
+  
   
   // Event listener for the combine-graph button
   const combineGraphButton = document.getElementById("combine-graph");
+
+  var modal70 = document.getElementById("addProductModal");
   if (combineGraphButton) {
+
+    function closeModal(modal) {
+      console.log("Closing modal:", modal.id);
+      modal.style.display = "none";
+      // Remove the modal state from localStorage
+      localStorage.removeItem(modal.id);
+      localStorage.removeItem("activeTab");
+    }
+    var modal1 = document.getElementById("addProductModal");
+
+  
     combineGraphButton.addEventListener("click", function(event) {
       // Prevent default form submission behavior
       event.preventDefault();
@@ -1424,7 +1557,8 @@ if (formGroup) {
       // Generate combined graph based on selected items if at least one item is selected
       if (selectedItems.length >= 1) {
         generateCombinedGraph(selectedItems);
-  
+        closeModal(modal70);
+
         const modalContent = document.querySelector('.modal-content');
         if (modalContent) {
           const modalContainer = modalContent.parentElement;
@@ -1433,6 +1567,7 @@ if (formGroup) {
             // Add a 3-second delay before reloading the page
             setTimeout(() => {
               location.reload();
+
             }, 100);
           } else {
             console.error("Modal container not found.");

@@ -108,7 +108,8 @@
             <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button class="mbtn export">Discard</button>
+            <button id="closemodal5" class="mbtn export">Discard</button>
+            
             <button id="combine-graph" class="mbtn combine-graph">
               Create Graph
             </button>
@@ -120,13 +121,13 @@
     <div id="addProductModal3" class="modal">
       <!-- Modal content -->
       <div class="modal-content">
-        <span class="close close5">&times;</span>
+        <span id="close53" class="close close5">&times;</span>
         <!-- Tab links -->
         <div class="tab">
-          <button class="tablinks" onclick="openTab(event, 'tab2')">
+          <button id="modaltab2" class="tablinks" onclick="openTab(event, 'tab2')">
             Set an Alarm
           </button>
-          <button class="tablinks" onclick="openTab(event, 'tab4')">
+          <button id="modaltab4" class="tablinks" onclick="openTab(event, 'tab4')">
             Active Alarms
           </button>
         </div>
@@ -170,7 +171,7 @@
             <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button class="mbtn export">Discard</button>
+            <button id="close-button3" class="mbtn export">Discard</button>
             <button id="send-Alert" class="mbtn combine-graph">
               Create Alert
             </button>
@@ -188,22 +189,20 @@
         <span class="close close5">&times;</span>
         <!-- Tab links -->
         <div class="tab">
-          <button class="tablinks" onclick="openTab(event, 'tab10')">
-            Graph Properties
-          </button>
-          <button class="tablinks" onclick="openTab(event, 'tab11')">
+       
+          <button class="tablinks"  id ="idtab45" onclick="openTab(event, 'tab45')">
             Graph Desigin
           </button>
         </div>
 
         <!-- Tab content -->
-        <div id="tab10" class="tabcontent">
+        <div id="tab44" class="tabcontent">
           <input type="text" id="graph-input" placeholder="Enter graph name" />
           <div class="form-group"></div>
           <!-- Add content specific to tab 1 here -->
         </div>
 
-        <div id="tab11" class="tabcontent">
+        <div id="tab45" class="tabcontent">
           <form id="form-color" class="formChangeRegion">
             <div class="form-group">
               <input type="text" id="input10" placeholder="Input 10" />
@@ -221,7 +220,7 @@
             <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button class="mbtn export">Discard</button>
+            <button id="discardcolor" class="mbtn export">Discard</button>
             <button id="changecolorASAH" class="mbtn combine-graph">
               Create Graph1
             </button>
