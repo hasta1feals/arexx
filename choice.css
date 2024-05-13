@@ -49,3 +49,14 @@
     font-weight: bold;
     color: #5d6679;
 }
+
+
+.error-message {
+  position: absolute;
+  top: 10px; /* Adjust top spacing as needed */
+  right: 10px; /* Adjust right spacing as needed */
+  background-color: #ff6961; /* Red color for error */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}

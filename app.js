@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -551,7 +551,8 @@ app.post('/openAndListenSerialPort', async (req, res) => {
 
         // Define criteria to find the desired serial port
         const criteria = {
-          vendorId: '1a86',
+          //voor mac zonder hoofletter A en windows met hoofletter A dus maak 2 pkg.json files een voor mac en een voor windows=
+          vendorId: '1A86',
           productId: '7523'
         };
 

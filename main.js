@@ -1215,13 +1215,44 @@ function deleteAlarm(id) {
       console.error("Error deleting alarm:", error);
     });
 }
+function callOpenAndListenSerialPort() {
+  // Call the openAndListenSerialPort API using your custom api() function
+  api('/openAndListenSerialPort', "POST")
+    .then((res) => {
+      if (res.message === "Serial port opened and listening successfully") {
+        console.log("Serial port opened and listening successfully");
+        // Redirect to homepage.html after successful operation
+        window.location.href = 'homepage.html'; // Ensure the path to homepage.html is correct
+      } else {
+        console.error("Error opening and listening to serial port:", res.error);
+        // Display the error message on the HTML page
+        displayErrorMessage('No device found. Please plug it in.');
+      }
+    })
+    .catch((error) => {
+     s
+    });
+}
 
+    
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.getElementById('error-message');
+  errorMessageElement.innerText = message;
+  errorMessageElement.style.display = 'block';
+
+  // Hide the error message after 3 seconds
+  setTimeout(() => {
+    errorMessageElement.style.display = 'none';
+  }, 3000);
+}
 
 
 
 // You can add all the buttons you want to connect to the API or button functions
 document.addEventListener("DOMContentLoaded", function () {
   connectButton("myButton", getHomepage);
+  connectButton("usb-choice", callOpenAndListenSerialPort);
   createDynamicLabel();
 });
 
