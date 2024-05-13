@@ -46,70 +46,96 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Wait for the DOM content to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOMContentLoaded event fired");
+
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
-  // Open the first tab by default
-
 
   // Get the modals and their respective buttons
   var modal1 = document.getElementById("addProductModal");
-  
   var btn1 = document.getElementById("myBtn3");
   var span5_1 = document.getElementsByClassName("close5")[0];
-
-  var modal2 = document.getElementById("addProductModal1");
-  var btn2 = document.getElementById("myBtn4");
-  var span5_2 = document.getElementsByClassName("close5")[1];
-
+  var buttontab1 = document.getElementById("modaltab1");
+  var buttontab10 = document.getElementById("modaltab10");
 
 
 
 
   var modal3 = document.getElementById("addProductModal3");
   var btn3 = document.getElementById("myBtn6");
-  var span5_3 = document.getElementsByClassName("close5")[2];
-  // Open the first modal when btn1 is clicked
+  var span5_3 = document.getElementsByClassName("close5")[1];
+
+
+  // Check if any modal element is null
+  if (!modal1) {
+    console.log("Modal 1 is null");
+  }
+  
+  if (!modal3) {
+    console.log("Modal 3 is null");
+  }
+
+  // Function to open the modal
+  function openModal(modal) {
+    console.log("Opening modal:", modal.id);
+    modal.style.display = "block";
+    // Store the modal state in localStorage
+    localStorage.setItem(modal.id, "open");
+  }
+
+  // Function to close the modal
+  function closeModal(modal) {
+    console.log("Closing modal:", modal.id);
+    modal.style.display = "none";
+    // Remove the modal state from localStorage
+    localStorage.removeItem(modal.id);
+  }
+
+  // Check if the modal was open before and open it again
+  if (localStorage.getItem(modal1.id) === "open") {
+    openModal(modal1);
+  }
+
+
+
+  if (localStorage.getItem(modal3.id) === "open") {
+    openModal(modal3);
+  }
+
+  // Add event listeners to open and close the modals
   btn1.onclick = function () {
-    modal1.style.display = "block";
+    openModal(modal1);
   };
 
-  // Close the first modal when span5_1 is clicked
   span5_1.onclick = function () {
-    modal1.style.display = "none";
+    closeModal(modal1);
   };
 
-  // Open the second modal when btn2 is clicked
-  btn2.onclick = function () {
-    modal2.style.display = "block";
-  };
 
-  // Close the second modal when span5_2 is clicked
-  span5_2.onclick = function () {
-    modal2.style.display = "none";
-  };
-
-  span5_2.onclick = function () {
-    modal3.style.display = "none";
-  };
 
 
   btn3.onclick = function () {
-    modal3.style.display = "block";
+    openModal(modal3);
   };
 
+  span5_3.onclick = function () {
+    closeModal(modal3);
+  };
 
   // Close the modals when the user clicks outside of them
   window.onclick = function (event) {
     if (event.target == modal1) {
-      modal1.style.display = "none";
+      closeModal(modal1);
     }
-    if (event.target == modal2) {
-      modal2.style.display = "none";
+   
+    if (event.target == modal3) {
+      closeModal(modal3);
     }
   };
 });
+
+
 
 // Function to open a specific tab
 function openTab(evt, tabName) {
@@ -1055,7 +1081,6 @@ tableBody.addEventListener('click', (event) => {
 });
 
 
-
       // Update newDataReceived flag based on whether new data is received
       newDataReceived = hasNewData;
       localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
@@ -1074,6 +1099,15 @@ tableBody.addEventListener('click', (event) => {
       localStorage.setItem('newDataReceived', 'false');
     });
 }
+
+
+
+
+
+
+
+
+
 
 function searchTable() {
   // Declare variables
@@ -1102,7 +1136,6 @@ function searchTable() {
 
 document.addEventListener("DOMContentLoaded", function () {
   itemsLoad(currentTablePage);
-  getRH();
 });
     
 function hideMainContent() {
