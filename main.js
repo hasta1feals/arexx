@@ -784,227 +784,226 @@ function createCombinedChartFromLocalStorage() {
   const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
 
   if (combinedDataKeys.length > 0) {
-      combinedDataKeys.forEach(key => {
-          // Check if container already exists in the DOM
-          if (document.getElementById(`${key}-container`)) {
-              return; // Skip iteration if container already exists
+    combinedDataKeys.forEach(key => {
+      // Check if container already exists in the DOM
+      if (document.getElementById(`${key}-container`)) {
+        return; // Skip iteration if container already exists
+      }
+
+      const combinedDataString = localStorage.getItem(key);
+      try {
+        const combinedData = JSON.parse(combinedDataString);
+
+        if (Array.isArray(combinedData) && combinedData.length > 0) {
+          const labels = combinedData[0].labels;
+
+          const datasets = combinedData.map((data, index) => {
+            const colorFormId = `form-color-${key}-${index}`;
+            let colorForm = document.getElementById(colorFormId);
+            if (colorForm) {
+              colorForm.parentNode.removeChild(colorForm);
+            }
+            colorForm = document.createElement('form');
+            colorForm.setAttribute('id', colorFormId);
+
+            // Create a label element to display the ID above the color picker
+            const idLabel = document.createElement('label');
+            idLabel.textContent = `ID: ${data.id[0]}`;
+            colorForm.appendChild(idLabel);
+
+            colorForm.innerHTML += `<input type="color" id="${colorFormId}" value="${data.color}">`;
+            document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
+
+            const colorInput = colorForm.querySelector(`#${colorFormId}`);
+            colorInput.addEventListener('change', (function (data) {
+              return function (event) {
+                data.borderColor = hexToRGBA(event.target.value, 0.1);
+                data.color = event.target.value;
+                data.backgroundColor = hexToRGBA(event.target.value, 0.1);
+                updateLocalStorage(key, JSON.stringify(combinedData));
+              };
+            })(data));
+
+            return {
+              label: `Data for ID ${data.id[0]}`,
+              data: data.values,
+              borderColor: data.color,
+              backgroundColor: hexToRGBA(data.color, 0.1),
+              naam: data.naam,
+              color: data.color
+            };
+          });
+
+          const nam = datasets[0].naam;
+
+          const container = document.createElement('div');
+          container.classList.add('card');
+          container.classList.add('dynamic-chart-container');
+          container.setAttribute('id', `${key}-container`);
+          container.classList.add('drag');
+
+          const cardContent = document.createElement('div');
+          cardContent.classList.add('card-content');
+
+          const cardTitle = document.createElement('div');
+          cardTitle.classList.add('card-title');
+
+          if (nam === "") {
+            cardTitle.textContent = `Combined Chart - ${key}`;
+          } else {
+            cardTitle.textContent = nam;
           }
 
-          const combinedDataString = localStorage.getItem(key);
-          try {
-              const combinedData = JSON.parse(combinedDataString);
+          const removeButton = document.createElement('button');
+          removeButton.classList.add('remove-button');
+          removeButton.innerHTML = '<i class="fas fa-times"></i>';
+          removeButton.addEventListener('click', function () {
+            container.remove();
+            localStorage.removeItem(key);
+          });
 
-              if (Array.isArray(combinedData) && combinedData.length > 0) {
-                  const labels = combinedData[0].labels;
+          // Close modal logic
+          function closeModal(modal) {
+            console.log("Closing modal:", modal.id);
+            modal.style.display = "none";
+            // Remove the modal state from localStorage
+            localStorage.removeItem(modal.id);
+            localStorage.removeItem("activeTab");
+          }
 
-                  const datasets = combinedData.map((data, index) => {
-                      const colorFormId = `form-color-${key}-${index}`;
-                      let colorForm = document.getElementById(colorFormId);
-                      if (colorForm) {
-                          colorForm.parentNode.removeChild(colorForm);
-                      }
-                      colorForm = document.createElement('form');
-                      colorForm.setAttribute('id', colorFormId);
-                      colorForm.innerHTML = `<input type="color" id="${colorFormId}" value="${data.color}">`;
-                      document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
+          // Open modal logic
+          function openModal(modal) {
+            console.log("Opening modal:", modal.id);
+            modal.style.display = "block";
+            // Store the modal state in localStorage
+            localStorage.setItem(modal.id, "open");
+          }
 
-                      const colorInput = colorForm.querySelector(`#${colorFormId}`);
-                      colorInput.addEventListener('change', (function (data) {
-                          return function (event) {
-                              data.borderColor = hexToRGBA(event.target.value, 0.1);
-                              data.color = event.target.value;
-                              data.backgroundColor = hexToRGBA(event.target.value, 0.1);
-                              updateLocalStorage(key, JSON.stringify(combinedData));
-                          };
-                      })(data));
+          const openOptions = document.createElement('button');
+          openOptions.classList.add('open-options');
+          openOptions.id = 'open-options';
+          openOptions.innerHTML = '<i class="fas fa-cog"></i>';
 
-                      return {
-                          label: `Data for ID ${data.id[0]}`,
-                          data: data.values,
-                          borderColor: data.color,
-                          backgroundColor: hexToRGBA(data.color, 0.1),
-                          naam: data.naam,
-                          color: data.color
-                      };
-                  });
+          document.body.appendChild(openOptions);
 
-                  const nam = datasets[0].naam;
+          var modal6 = document.getElementById("addProductModal6");
+          var tab45 = document.getElementById("idtab45");
 
-                  const container = document.createElement('div');
-                  container.classList.add('card');
-                  container.classList.add('dynamic-chart-container');
-                  container.setAttribute('id', `${key}-container`);
-                  container.classList.add('drag');
+          if (localStorage.getItem(modal6.id) === "open") {
+            openModal(modal6);
+          }
 
-                  const cardContent = document.createElement('div');
-                  cardContent.classList.add('card-content');
+          var activeTabName = localStorage.getItem("activeTab");
+          if (activeTabName) {
+            openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
+          }
 
-                  const cardTitle = document.createElement('div');
-                  cardTitle.classList.add('card-title');
+          tab45.onclick = function () {
+            localStorage.setItem("activeTab", "tab45");
+            openTab({ currentTarget: tab45 }, "tab45");
+          };
 
-                  if (nam === "") {
-                      cardTitle.textContent = `Combined Chart - ${key}`;
-                  } else {
-                      cardTitle.textContent = nam;
-                  }
+          openOptions.addEventListener('click', function () {
+            // Hide all color pickers first
+            document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => form.style.display = 'none');
 
-                  const removeButton = document.createElement('button');
-                  removeButton.classList.add('remove-button');
-                  removeButton.innerHTML = '<i class="fas fa-times"></i>';
-                  removeButton.addEventListener('click', function () {
-                      container.remove();
-                      localStorage.removeItem(key);
-                  });
+            // Show only the relevant color pickers for the current graph
+            document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => form.style.display = 'block');
 
-                               // Close modal logic
-                               function closeModal(modal) {
-                                console.log("Closing modal:", modal.id);
-                                modal.style.display = "none";
-                                // Remove the modal state from localStorage
-                                localStorage.removeItem(modal.id);
-                                localStorage.removeItem("activeTab");
-                            }
-          
-                            // Open modal logic
-                            function openModal(modal) {
-                                console.log("Opening modal:", modal.id);
-                                modal.style.display = "block";
-                                // Store the modal state in localStorage
-                                localStorage.setItem(modal.id, "open");
-                            }
-          
-                  const openOptions = document.createElement('button');
-                  openOptions.classList.add('open-options');
-                  openOptions.id = 'open-options';
-                  openOptions.innerHTML = '<i class="fas fa-cog"></i>';
+            const canvas = container.querySelector('.dynamic-chart');
+            const chartInstanceId = extractNumericPart(canvas.id);
+            currentChartDataKey = 'combinedData_' + chartInstanceId;
 
-                  document.body.appendChild(openOptions);
-
-                  var modal6 = document.getElementById("addProductModal6");
-                  var tab45 = document.getElementById("idtab45");
-
-                  if (localStorage.getItem(modal6.id) === "open") {
-                      openModal(modal6);
-                  }
-
-                  var activeTabName = localStorage.getItem("activeTab");
-                  if (activeTabName) {
-                      openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
-                  }
-
-                  tab45.onclick = function () {
-                      localStorage.setItem("activeTab", "tab45");
-                      openTab({ currentTarget: tab45 }, "tab45");
-                  };
-
-                  openOptions.addEventListener('click', function () {
-                      // Hide all color pickers first
-                      document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => form.style.display = 'none');
-
-                      // Show only the relevant color pickers for the current graph
-                      document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => form.style.display = 'block');
-
-                      const canvas = container.querySelector('.dynamic-chart');
-                      const chartInstanceId = extractNumericPart(canvas.id);
-                      currentChartDataKey = 'combinedData_' + chartInstanceId;
-
-                      const chartDataString = localStorage.getItem(currentChartDataKey);
-                      openModal(modal6);
-                      if (chartDataString) {
-                          try {
-                              const chartData = JSON.parse(chartDataString);
-                          } catch (error) {
-                              console.error("Error parsing chart data:", error);
-                          }
-                      } else {
-                          console.error("Chart data not found in local storage for key:", currentChartDataKey);
-                      }
-                  });
-
-                  var closeButtons = document.getElementsByClassName("close5");
-                  for (var i = 0; i < closeButtons.length; i++) {
-                      closeButtons[i].addEventListener('click', function () {
-                          var modal6 = document.getElementById("addProductModal6");
-                          modal6.style.display = "none";
-                      });
-                  }
-
-                  window.onclick = function (event) {
-                      var modal6 = document.getElementById("addProductModal6");
-                      if (event.target == modal6) {
-                          modal6.style.display = "none";
-                      }
-                  };
-
-                  cardContent.appendChild(openOptions);
-
-                  const graphPlaceholder = document.createElement('div');
-                  graphPlaceholder.classList.add('graph-placeholder');
-
-                  const canvas = document.createElement('canvas');
-                  canvas.setAttribute('id', `${key}-chart`);
-                  canvas.setAttribute('class', 'dynamic-chart');
-                  canvas.setAttribute('width', '600');
-                  canvas.setAttribute('height', '300');
-
-                  graphPlaceholder.appendChild(canvas);
-                  cardContent.appendChild(cardTitle);
-                  cardContent.appendChild(removeButton);
-                  cardContent.appendChild(graphPlaceholder);
-                  container.appendChild(cardContent);
-
-                  const combinedChartContainer = document.getElementById('cont');
-                  if (combinedChartContainer) {
-                      combinedChartContainer.appendChild(container);
-
-                      new Chart(canvas, {
-                          type: 'line',
-                          data: {
-                              labels: labels,
-                              datasets: datasets
-                          },
-                          options: {
-                              plugins: {
-                                  zoom: {
-                                      zoom: {
-                                          wheel: {
-                                              enabled: true,
-                                          },
-                                          pinch: {
-                                              enabled: true
-                                          },
-                                          mode: 'xy',
-                                      }
-                                  }
-                              },
-                              scales: {
-                                  y: {
-                                      beginAtZero: false,
-                                  }
-                              }
-                          }
-                      });
-                  } else {
-                      console.error("Container for chart not found.");
-                  }
+            const chartDataString = localStorage.getItem(currentChartDataKey);
+            openModal(modal6);
+            if (chartDataString) {
+              try {
+                const chartData = JSON.parse(chartDataString);
+              } catch (error) {
+                console.error("Error parsing chart data:", error);
               }
-          } catch (error) {
-              console.error(`Error parsing data for key ${key}:`, error);
+            } else {
+              console.error("Chart data not found in local storage for key:", currentChartDataKey);
+            }
+          });
+
+          var closeButtons = document.getElementsByClassName("close5");
+          for (var i = 0; i < closeButtons.length; i++) {
+            closeButtons[i].addEventListener('click', function () {
+              var modal6 = document.getElementById("addProductModal6");
+              modal6.style.display = "none";
+            });
           }
-      });
+
+          window.onclick = function (event) {
+            var modal6 = document.getElementById("addProductModal6");
+            if (event.target == modal6) {
+              modal6.style.display = "none";
+            }
+          };
+
+          cardContent.appendChild(openOptions);
+
+          const graphPlaceholder = document.createElement('div');
+          graphPlaceholder.classList.add('graph-placeholder');
+
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('id', `${key}-chart`);
+          canvas.setAttribute('class', 'dynamic-chart');
+          canvas.setAttribute('width', '600');
+          canvas.setAttribute('height', '300');
+
+          graphPlaceholder.appendChild(canvas);
+          cardContent.appendChild(cardTitle);
+          cardContent.appendChild(removeButton);
+          cardContent.appendChild(graphPlaceholder);
+          container.appendChild(cardContent);
+
+          const combinedChartContainer = document.getElementById('cont');
+          if (combinedChartContainer) {
+            combinedChartContainer.appendChild(container);
+
+            new Chart(canvas, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: datasets
+              },
+              options: {
+                plugins: {
+                  zoom: {
+                    zoom: {
+                      wheel: {
+                        enabled: true,
+                      },
+                      pinch: {
+                        enabled: true
+                      },
+                      mode: 'xy',
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: false,
+                  }
+                }
+              }
+            });
+          } else {
+            console.error("Container for chart not found.");
+          }
+        }
+      } catch (error) {
+        console.error(`Error parsing data for key ${key}:`, error);
+      }
+    });
   } else {
-      console.error("No combined graph data found in local storage.");
+    console.error("No combined graph data found in local storage.");
   }
 }
 
-// Function to update the chart dataset with new data
-function updateChartDataset(canvas, dataIndex, newData) {
-  const chart = Chart.getChart(canvas); // Get the chart instance
-  if (chart) {
-    chart.data.datasets[dataIndex] = newData; // Update the dataset
-    chart.update(); // Update the chart
-  }
-}
+
 
 
 // Function to update the chart dataset with new data
