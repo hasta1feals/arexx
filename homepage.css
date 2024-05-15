@@ -8,6 +8,62 @@
 .drag{
   cursor: grab;
 }
+.minimize-list-btn {
+  background-color: #f82a12;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  outline: none;
+}
+
+.minimize-list-btn:hover {
+  background-color: #e53935;
+}
+.open-options {
+  background-color: #5d5fef;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+  
+  /* Positioning */
+  position: absolute;
+  top: 27px; /* Adjust the top distance */
+  left: 10px; /* Adjust the right distance */
+}
+
+.open-options:hover {
+  background-color: #5457d0;
+}
+
+
+.remove-button:hover {
+  background-color: #e53935;
+}
+
+
+
+.remove-button {
+  background-color: #f82a12;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+ /* Positioning */
+ position: absolute;
+ top: 27px; /* Adjust the top distance */
+ right: 10px; /* Adjust the right distance */
+
+}
 
 /* CSS styles for labels */
 .label {

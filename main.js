@@ -784,255 +784,239 @@ function createCombinedChartFromLocalStorage() {
   const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
 
   if (combinedDataKeys.length > 0) {
-    combinedDataKeys.forEach(key => {
-      // Check if container already exists in the DOM
-      if (document.getElementById(`${key}-container`)) {
-        // console.log(`Container for key ${key} already exists. Skipping...`);
-        return; // Skip iteration if container already exists
-      }
-
-      const combinedDataString = localStorage.getItem(key);
-      // console.log(`Key: ${key}, Value: ${combinedDataString}`);
-
-      // Attempt to parse JSON data
-      try {
-        const combinedData = JSON.parse(combinedDataString);
-        // console.log(`Parsed data for key ${key}:`, combinedData);
-
-        // Check if combinedData is an array and not empty
-        if (Array.isArray(combinedData) && combinedData.length > 0) {
-          // Extract labels and values for each dataset
-          const labels = combinedData[0].labels;
-
-          // Create an array of datasets
-          const datasets = combinedData.map((data, index) => {
-            // Dynamically create an input element for each dataset color
-            const colorInput = document.createElement('input');
-            colorInput.setAttribute('type', 'color');
-            colorInput.setAttribute('id', `form-color-${key}-${index}`); // Set a unique id for each input
-            colorInput.setAttribute('value', data.color); // Set the initial value of the input to the dataset color
-
-            // Create a closure to capture the current value of `data`
-            colorInput.addEventListener('change', (function(data) {
-              return function(event) {
-                // Update the dataset color when the input value changes
-                data.borderColor = hexToRGBA(event.target.value, 0.1);
-                data.color = event.target.value;
-                data.backgroundColor = hexToRGBA(event.target.value, 0.1); // Assuming you have a function to convert hex to RGBA
-                // Update the local storage with the new data
-                updateLocalStorage(key, JSON.stringify(combinedData));
-              };
-            })(data));
-
-            // Append the input element to the form
-            const colorFormId = `form-color-${key}`;
-            let colorForm = document.getElementById(colorFormId);
-            if (!colorForm) {
-              // Find the modal
-              const modal = document.getElementById('addProductModal6');
-              if (modal) {
-                // Get the modal body
-                const modalBody = modal.querySelector('.modal-body');
-                if (modalBody) {
-                  // Create the color form if it doesn't exist
-                  colorForm = document.createElement('form');
-                  colorForm.setAttribute('id', colorFormId);
-                  modalBody.appendChild(colorForm);
-                }
-              }
-            }
-            if (colorForm) {
-              colorForm.appendChild(colorInput);
-            }
-
-            // Return the dataset object with the updated color input
-            return {
-              label: `Data for ID ${data.id[0]}`,
-              data: data.values,
-              borderColor: data.color, // Set the initial border color from the dataset
-              backgroundColor: hexToRGBA(data.color, 0.1), // Assuming you have a function to convert hex to RGBA
-              naam: data.naam,
-              color: data.color // Retain the color property in the dataset
-            };
-          });
-
-          const nam = datasets[0].naam; // For example, accessing 'nam' from the first dataset
-
-          // Create a container for the chart
-          const container = document.createElement('div');
-          container.classList.add('card');
-          container.classList.add('dynamic-chart-container');
-          container.setAttribute('id', `${key}-container`);
-          container.classList.add('drag'); // Add the 'drag' class to make it draggable
-
-          // Create card content
-          const cardContent = document.createElement('div');
-          cardContent.classList.add('card-content');
-
-          // Create card title
-          const cardTitle = document.createElement('div');
-          cardTitle.classList.add('card-title');
-
-          if (nam === "") {
-            cardTitle.textContent = `Combined Chart - ${key}`;
-          } else {
-            cardTitle.textContent = nam;
+      combinedDataKeys.forEach(key => {
+          // Check if container already exists in the DOM
+          if (document.getElementById(`${key}-container`)) {
+              return; // Skip iteration if container already exists
           }
 
-          // Create remove button with "x" icon
-          const removeButton = document.createElement('button');
-          removeButton.classList.add('remove-button');
-          removeButton.innerHTML = '<i class="fas fa-times"></i>'; // Font Awesome times icon
-          removeButton.addEventListener('click', function() {
-            // Remove container from the DOM
-            container.remove();
-            // Remove data from local storage
-            localStorage.removeItem(key);
-          });
+          const combinedDataString = localStorage.getItem(key);
+          try {
+              const combinedData = JSON.parse(combinedDataString);
 
-          // Create open options button with gear icon
-          const openOptions = document.createElement('button');
-          openOptions.classList.add('open-options');
-          openOptions.id = 'open-options';
-          openOptions.innerHTML = '<i class="fas fa-cog"></i>'; // Font Awesome gear icon
+              if (Array.isArray(combinedData) && combinedData.length > 0) {
+                  const labels = combinedData[0].labels;
 
-          // Append the button to the DOM
-          document.body.appendChild(openOptions);
+                  const datasets = combinedData.map((data, index) => {
+                      const colorFormId = `form-color-${key}-${index}`;
+                      let colorForm = document.getElementById(colorFormId);
+                      if (colorForm) {
+                          colorForm.parentNode.removeChild(colorForm);
+                      }
+                      colorForm = document.createElement('form');
+                      colorForm.setAttribute('id', colorFormId);
+                      colorForm.innerHTML = `<input type="color" id="${colorFormId}" value="${data.color}">`;
+                      document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
 
-          // Add event listener to open the modal
-          // Add event listener to the open options button
-          var modal6 = document.getElementById("addProductModal6");
-          var tab45 = document.getElementById("idtab45");
+                      const colorInput = colorForm.querySelector(`#${colorFormId}`);
+                      colorInput.addEventListener('change', (function (data) {
+                          return function (event) {
+                              data.borderColor = hexToRGBA(event.target.value, 0.1);
+                              data.color = event.target.value;
+                              data.backgroundColor = hexToRGBA(event.target.value, 0.1);
+                              updateLocalStorage(key, JSON.stringify(combinedData));
+                          };
+                      })(data));
 
-          if (localStorage.getItem(modal6.id) === "open") {
-            openModal(modal6);
-          }
+                      return {
+                          label: `Data for ID ${data.id[0]}`,
+                          data: data.values,
+                          borderColor: data.color,
+                          backgroundColor: hexToRGBA(data.color, 0.1),
+                          naam: data.naam,
+                          color: data.color
+                      };
+                  });
 
-          var activeTabName = localStorage.getItem("activeTab");
-          if (activeTabName) {
-            openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
-            console.log("Active tab:", activeTabName);
-          }
+                  const nam = datasets[0].naam;
 
-          tab45.onclick = function () {
-            // Store the active tab state in localStorage
-            localStorage.setItem("activeTab", "tab45");
-            // Update the active tab visually
-            openTab({ currentTarget: tab45 }, "tab45");
-          };
+                  const container = document.createElement('div');
+                  container.classList.add('card');
+                  container.classList.add('dynamic-chart-container');
+                  container.setAttribute('id', `${key}-container`);
+                  container.classList.add('drag');
 
-          openOptions.addEventListener('click', function() {
+                  const cardContent = document.createElement('div');
+                  cardContent.classList.add('card-content');
 
-            // Logic to retrieve and handle chart data
-            const canvas = container.querySelector('.dynamic-chart');
-            const chartInstanceId = extractNumericPart(canvas.id);
-            console.log("Chart Data Key:", chartInstanceId);
-            currentChartDataKey = 'combinedData_' + chartInstanceId;
+                  const cardTitle = document.createElement('div');
+                  cardTitle.classList.add('card-title');
 
-            const chartDataString = localStorage.getItem(currentChartDataKey);
-            openModal(modal6);
-            if (chartDataString) {
-              try {
-                const chartData = JSON.parse(chartDataString);
-                console.log("Chart Data:", chartData);
-              } catch (error) {
-                console.error("Error parsing chart data:", error);
-              }
-            } else {
-              console.error("Chart data not found in local storage for key:", currentChartDataKey);
-            }
-          });
-
-          // Close modal logic
-          function closeModal(modal) {
-            console.log("Closing modal:", modal.id);
-            modal.style.display = "none";
-            // Remove the modal state from localStorage
-            localStorage.removeItem(modal.id);
-            localStorage.removeItem("activeTab");
-          }
-
-          // Open modal logic
-          function openModal(modal) {
-            console.log("Opening modal:", modal.id);
-            modal.style.display = "block";
-            // Store the modal state in localStorage
-            localStorage.setItem(modal.id, "open");
-          }
-
-          // Close the modal when the close button is clicked
-          var closeButtons = document.getElementsByClassName("close5");
-          for (var i = 0; i < closeButtons.length; i++) {
-            closeButtons[i].addEventListener('click', function() {
-              var modal6 = document.getElementById("addProductModal6");
-              modal6.style.display = "none";
-            });
-          }
-
-          // Close the modal when the user clicks outside of it
-          window.onclick = function(event) {
-            var modal6 = document.getElementById("addProductModal6");
-            if (event.target == modal6) {
-              modal6.style.display = "none";
-            }
-          };
-
-          // Append open options button to the card content
-          cardContent.appendChild(openOptions);
-
-          // Create graph placeholder
-          const graphPlaceholder = document.createElement('div');
-          graphPlaceholder.classList.add('graph-placeholder');
-
-          // Create canvas for the chart
-          const canvas = document.createElement('canvas');
-          canvas.setAttribute('id', `${key}-chart`);
-          canvas.setAttribute('class', 'dynamic-chart');
-          canvas.setAttribute('width', '600');
-          canvas.setAttribute('height', '300');
-
-          // Append elements
-          graphPlaceholder.appendChild(canvas);
-          cardContent.appendChild(cardTitle);
-          cardContent.appendChild(removeButton); // Add the remove button to the card content
-          cardContent.appendChild(graphPlaceholder);
-          container.appendChild(cardContent);
-
-          // Append container to the appropriate container in the DOM
-          const combinedChartContainer = document.getElementById('cont');
-          if (combinedChartContainer) {
-            combinedChartContainer.appendChild(container);
-
-            // Create the combined chart using Chart.js
-            new Chart(canvas, {
-              type: 'line',
-              data: {
-                labels: labels,
-                datasets: datasets
-              },
-              options: {
-                scales: {
-                  y: {
-                    beginAtZero: false,
-                    // Set other scale options as needed
+                  if (nam === "") {
+                      cardTitle.textContent = `Combined Chart - ${key}`;
+                  } else {
+                      cardTitle.textContent = nam;
                   }
-                }
+
+                  const removeButton = document.createElement('button');
+                  removeButton.classList.add('remove-button');
+                  removeButton.innerHTML = '<i class="fas fa-times"></i>';
+                  removeButton.addEventListener('click', function () {
+                      container.remove();
+                      localStorage.removeItem(key);
+                  });
+
+                               // Close modal logic
+                               function closeModal(modal) {
+                                console.log("Closing modal:", modal.id);
+                                modal.style.display = "none";
+                                // Remove the modal state from localStorage
+                                localStorage.removeItem(modal.id);
+                                localStorage.removeItem("activeTab");
+                            }
+          
+                            // Open modal logic
+                            function openModal(modal) {
+                                console.log("Opening modal:", modal.id);
+                                modal.style.display = "block";
+                                // Store the modal state in localStorage
+                                localStorage.setItem(modal.id, "open");
+                            }
+          
+                  const openOptions = document.createElement('button');
+                  openOptions.classList.add('open-options');
+                  openOptions.id = 'open-options';
+                  openOptions.innerHTML = '<i class="fas fa-cog"></i>';
+
+                  document.body.appendChild(openOptions);
+
+                  var modal6 = document.getElementById("addProductModal6");
+                  var tab45 = document.getElementById("idtab45");
+
+                  if (localStorage.getItem(modal6.id) === "open") {
+                      openModal(modal6);
+                  }
+
+                  var activeTabName = localStorage.getItem("activeTab");
+                  if (activeTabName) {
+                      openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
+                  }
+
+                  tab45.onclick = function () {
+                      localStorage.setItem("activeTab", "tab45");
+                      openTab({ currentTarget: tab45 }, "tab45");
+                  };
+
+                  openOptions.addEventListener('click', function () {
+                      // Hide all color pickers first
+                      document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => form.style.display = 'none');
+
+                      // Show only the relevant color pickers for the current graph
+                      document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => form.style.display = 'block');
+
+                      const canvas = container.querySelector('.dynamic-chart');
+                      const chartInstanceId = extractNumericPart(canvas.id);
+                      currentChartDataKey = 'combinedData_' + chartInstanceId;
+
+                      const chartDataString = localStorage.getItem(currentChartDataKey);
+                      openModal(modal6);
+                      if (chartDataString) {
+                          try {
+                              const chartData = JSON.parse(chartDataString);
+                          } catch (error) {
+                              console.error("Error parsing chart data:", error);
+                          }
+                      } else {
+                          console.error("Chart data not found in local storage for key:", currentChartDataKey);
+                      }
+                  });
+
+                  var closeButtons = document.getElementsByClassName("close5");
+                  for (var i = 0; i < closeButtons.length; i++) {
+                      closeButtons[i].addEventListener('click', function () {
+                          var modal6 = document.getElementById("addProductModal6");
+                          modal6.style.display = "none";
+                      });
+                  }
+
+                  window.onclick = function (event) {
+                      var modal6 = document.getElementById("addProductModal6");
+                      if (event.target == modal6) {
+                          modal6.style.display = "none";
+                      }
+                  };
+
+                  cardContent.appendChild(openOptions);
+
+                  const graphPlaceholder = document.createElement('div');
+                  graphPlaceholder.classList.add('graph-placeholder');
+
+                  const canvas = document.createElement('canvas');
+                  canvas.setAttribute('id', `${key}-chart`);
+                  canvas.setAttribute('class', 'dynamic-chart');
+                  canvas.setAttribute('width', '600');
+                  canvas.setAttribute('height', '300');
+
+                  graphPlaceholder.appendChild(canvas);
+                  cardContent.appendChild(cardTitle);
+                  cardContent.appendChild(removeButton);
+                  cardContent.appendChild(graphPlaceholder);
+                  container.appendChild(cardContent);
+
+                  const combinedChartContainer = document.getElementById('cont');
+                  if (combinedChartContainer) {
+                      combinedChartContainer.appendChild(container);
+
+                      new Chart(canvas, {
+                          type: 'line',
+                          data: {
+                              labels: labels,
+                              datasets: datasets
+                          },
+                          options: {
+                              plugins: {
+                                  zoom: {
+                                      zoom: {
+                                          wheel: {
+                                              enabled: true,
+                                          },
+                                          pinch: {
+                                              enabled: true
+                                          },
+                                          mode: 'xy',
+                                      }
+                                  }
+                              },
+                              scales: {
+                                  y: {
+                                      beginAtZero: false,
+                                  }
+                              }
+                          }
+                      });
+                  } else {
+                      console.error("Container for chart not found.");
+                  }
               }
-            });
-          } else {
-            console.error("Container for chart not found.");
+          } catch (error) {
+              console.error(`Error parsing data for key ${key}:`, error);
           }
-        } else {
-          // console.error(`Invalid combined graph data for key: ${key}`);
-        }
-      } catch (error) {
-        console.error(`Error parsing data for key ${key}:`, error);
-      }
-    });
+      });
   } else {
-    console.error("No combined graph data found in local storage.");
+      console.error("No combined graph data found in local storage.");
   }
 }
+
+// Function to update the chart dataset with new data
+function updateChartDataset(canvas, dataIndex, newData) {
+  const chart = Chart.getChart(canvas); // Get the chart instance
+  if (chart) {
+    chart.data.datasets[dataIndex] = newData; // Update the dataset
+    chart.update(); // Update the chart
+  }
+}
+
+
+// Function to update the chart dataset with new data
+function updateChartDataset(canvas, dataIndex, newData) {
+  const chart = Chart.getChart(canvas); // Get the chart instance
+  if (chart) {
+    chart.data.datasets[dataIndex] = newData; // Update the dataset
+    chart.update(); // Update the chart
+  }
+}
+
+
 
 
 
