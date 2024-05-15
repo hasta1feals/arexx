@@ -830,7 +830,9 @@ function createCombinedChartFromLocalStorage() {
               borderColor: data.color,
               backgroundColor: hexToRGBA(data.color, 0.1),
               naam: data.naam,
-              color: data.color
+              color: data.color,
+              sensornickname:data.sensornickname
+              
             };
           });
 
@@ -1613,7 +1615,8 @@ function generateCombinedGraph(selectedItems) {
     values: data.map(entry => entry.Value),
     id: data.map(entry => entry.Id),
     naam: document.getElementById('graph-input').value,
-    color: "" // Creates an array with empty strings for each dataset
+    color: "",// Creates an array with empty strings for each dataset
+    sensornickname:""
   }));
   
 

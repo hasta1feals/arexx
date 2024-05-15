@@ -123,6 +123,10 @@ app.get('/getUniqueIDsFromDatabase', (req, res) => {
   });
 });
 
+
+
+app.post
+
 app.get('/getDataFromDatabase', (req, res) => {
   const { id, type } = req.query; // Get the ID and type from the query parameters
 
@@ -132,7 +136,7 @@ app.get('/getDataFromDatabase', (req, res) => {
   }
 
   // Fetch data from the database for the provided ID and type
-  db.all('SELECT * FROM mqtt_messages WHERE Id = ? AND Type = ?', [id, type], (err, rows) => {
+  db.all('SELECT *  FROM mqtt_messages WHERE Id = ? AND Type = ?', [id, type], (err, rows) => {
     if (err) {
       return res.status(500).send({ error: 'Error fetching data from the database' });
     }
@@ -318,6 +322,22 @@ app.get('/infoSensor', (req, res) => {
   });
 });
 
+
+
+app.patch('/nickname', (req, res) => {
+  const { id, nickname } = req.body;
+
+  // SQL query to update the nickname for a specific id
+  const sql = 'UPDATE mqtt_messages SET nickname = ? WHERE id = ?';
+
+  db.run(sql, [nickname, id], (err) => {
+    if (err) {
+      console.error('Error updating nickname:', err);
+      return res.status(500).send({ error: 'Error updating nickname' });
+    }
+    res.status(200).send({ message: 'Nickname updated successfully' });
+  });
+});
 
 app.post('/setAlert', (req, res) => {
   const { id, threshold, comparison_operator: comparisonOperator, type } = req.body;
