@@ -805,16 +805,18 @@ function createCombinedChartFromLocalStorage() {
             }
             colorForm = document.createElement('form');
             colorForm.setAttribute('id', colorFormId);
+            // Set initial display state from localStorage
+            colorForm.style.display = localStorage.getItem(colorFormId) || 'none';
 
             // Create a label element to display the ID above the color picker
             const idLabel = document.createElement('label');
             idLabel.textContent = `ID: ${data.id[0]}`;
             colorForm.appendChild(idLabel);
 
-            colorForm.innerHTML += `<input type="color" id="${colorFormId}" value="${data.color}">`;
+            colorForm.innerHTML += `<input type="color" id="${colorFormId}-input" value="${data.color}">`;
             document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
 
-            const colorInput = colorForm.querySelector(`#${colorFormId}`);
+            const colorInput = colorForm.querySelector(`#${colorFormId}-input`);
             colorInput.addEventListener('change', (function (data) {
               return function (event) {
                 data.borderColor = hexToRGBA(event.target.value, 0.1);
@@ -831,8 +833,7 @@ function createCombinedChartFromLocalStorage() {
               backgroundColor: hexToRGBA(data.color, 0.1),
               naam: data.naam,
               color: data.color,
-              sensornickname:data.sensornickname
-              
+              sensornickname: data.sensornickname
             };
           });
 
@@ -907,10 +908,16 @@ function createCombinedChartFromLocalStorage() {
 
           openOptions.addEventListener('click', function () {
             // Hide all color pickers first
-            document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => form.style.display = 'none');
+            document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => {
+              form.style.display = 'none';
+              localStorage.setItem(form.id, 'none');
+            });
 
             // Show only the relevant color pickers for the current graph
-            document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => form.style.display = 'block');
+            document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => {
+              form.style.display = 'block';
+              localStorage.setItem(form.id, 'block');
+            });
 
             const canvas = container.querySelector('.dynamic-chart');
             const chartInstanceId = extractNumericPart(canvas.id);
@@ -1004,6 +1011,8 @@ function createCombinedChartFromLocalStorage() {
     console.error("No combined graph data found in local storage.");
   }
 }
+
+
 
 
 
