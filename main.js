@@ -165,12 +165,12 @@ btn6.onclick = function() {
     openTab({ currentTarget: buttontab1 }, "tab1");
   };
 
-  buttontab10.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab10");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab10");
-  };
+  // buttontab10.onclick = function () {
+  //   // Store the active tab state in localStorage
+  //   localStorage.setItem("activeTab", "tab10");
+  //   // Update the active tab visually
+  //   openTab({ currentTarget: buttontab1 }, "tab10");
+  // };
   buttontab2.onclick = function () {
     // Store the active tab state in localStorage
     localStorage.setItem("activeTab", "tab2");
