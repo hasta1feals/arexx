@@ -323,9 +323,9 @@ try {
           .then((typesRes) => {
             typesRes.forEach((typeEntry) => {
               const type = typeEntry.Type; // get all types for the current ID from the response object
-
+              const Nickname = typeEntry.Nickname; // get the
               // Create a container and chart for the current ID and Type
-              const label = `${id} - ${type}`; // Create label with ID and Type
+              const label = `${Nickname} - ${type}`; // Create label with ID and Type
               createClickableLabel(id, type, label); // Create clickable label with ID and Type
             });
 
@@ -548,7 +548,7 @@ if (graphList) {
 
       dataArray.forEach(entry => {
         const idElement = document.createElement('div');
-        idElement.textContent = `ID: ${entry.id[0]}`;
+        idElement.textContent = `${entry.Nickname[0]}`;
         idContainer.appendChild(idElement);
       });
 
@@ -609,7 +609,6 @@ if (formGroup) {
 
 
 
-
 document.addEventListener('DOMContentLoaded', function() {
   // Retrieve stored data from local storage
   const storedData = JSON.parse(localStorage.getItem('storedData'));
@@ -624,21 +623,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('No stored data found in local storage.');
   }
 
-// Retrieve combined graph data from local storage
-const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
-if (combinedDataKeys.length > 0) {
-  combinedDataKeys.forEach(key => {
-    const combinedData = JSON.parse(localStorage.getItem(key));
-    if (combinedData) {
-      // Generate combined graph using the retrieved data
-      createCombinedChartFromLocalStorage(combinedData);
-    } else {
-      console.error(`No combined graph data found in local storage for key: ${key}`);
-    }
-  });
-} else {
-  console.error('No combined graph data found in local storage.');
-}
+  // Retrieve combined graph data from local storage
+  const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
+  if (combinedDataKeys.length > 0) {
+    combinedDataKeys.forEach(key => {
+      const combinedData = JSON.parse(localStorage.getItem(key));
+      if (combinedData) {
+        // Generate combined graph using the retrieved data
+        createCombinedChartFromLocalStorage();
+      } else {
+        console.error(`No combined graph data found in local storage for key: ${key}`);
+      }
+    });
+  } else {
+    console.error('No combined graph data found in local storage.');
+  }
 });
 
 
@@ -810,7 +809,7 @@ function createCombinedChartFromLocalStorage() {
 
             // Create a label element to display the ID above the color picker
             const idLabel = document.createElement('label');
-            idLabel.textContent = `ID: ${data.id[0]}`;
+            idLabel.textContent = `ID: ${data.Nickname[0]}`;
             colorForm.appendChild(idLabel);
 
             colorForm.innerHTML += `<input type="color" id="${colorFormId}-input" value="${data.color}">`;
@@ -827,7 +826,7 @@ function createCombinedChartFromLocalStorage() {
             })(data));
 
             return {
-              label: `Data for ID ${data.id[0]}`,
+              label: `Data for ${data.Nickname[0]} - ${data.type[0]}`,
               data: data.values,
               borderColor: data.color,
               backgroundColor: hexToRGBA(data.color, 0.1),
@@ -1181,6 +1180,7 @@ function itemsLoad() {
           <td>${row.Value}</td>
           <td>${row.Type}</td>
           <td>${row.TimeStamp}</td>
+          <td>${row.Nickname}</td>
           <td><button class="btn-get-id" data-id="${row.Id}" data-type="${row.Type}">Graph</button>
           </td>
           <!-- Add more table cells as needed -->
@@ -1623,6 +1623,8 @@ function generateCombinedGraph(selectedItems) {
     labels: data.map(entry => entry.TimeStamp),
     values: data.map(entry => entry.Value),
     id: data.map(entry => entry.Id),
+    Nickname: data.map(entry => entry.Nickname),
+    type: data.map(entry => entry.Type),
     naam: document.getElementById('graph-input').value,
     color: "",// Creates an array with empty strings for each dataset
     sensornickname:""

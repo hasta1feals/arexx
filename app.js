@@ -155,7 +155,7 @@ app.get('/getUniqueTypesForIDFromDatabase', (req, res) => {
   }
 
   // Fetch unique types for the provided ID from the database
-  db.all('SELECT DISTINCT Type FROM mqtt_messages WHERE Id = ?', id, (err, rows) => {
+  db.all('SELECT DISTINCT Type, Nickname FROM mqtt_messages WHERE Id = ?  ', id, (err, rows) => {
     if (err) {
       return res.status(500).send({ error: 'Error fetching unique types' });
     }
@@ -262,10 +262,11 @@ function fetchAndSendLatestItems(req, res) {
       Type, 
       Value, 
       TimeStamp,
+      Nickname, 
       ROW_NUMBER() OVER (PARTITION BY Id, Type ORDER BY TimeStamp DESC) AS RowNum
     FROM mqtt_messages
   )
-  SELECT Id, Type, Value, TimeStamp
+  SELECT Id, Type, Value, TimeStamp, Nickname
   FROM RankedMessages
   WHERE RowNum = 1;
   `, (err, rows) => {
@@ -324,20 +325,7 @@ app.get('/infoSensor', (req, res) => {
 
 
 
-app.patch('/nickname', (req, res) => {
-  const { id, nickname } = req.body;
 
-  // SQL query to update the nickname for a specific id
-  const sql = 'UPDATE mqtt_messages SET nickname = ? WHERE id = ?';
-
-  db.run(sql, [nickname, id], (err) => {
-    if (err) {
-      console.error('Error updating nickname:', err);
-      return res.status(500).send({ error: 'Error updating nickname' });
-    }
-    res.status(200).send({ message: 'Nickname updated successfully' });
-  });
-});
 
 app.post('/setAlert', (req, res) => {
   const { id, threshold, comparison_operator: comparisonOperator, type } = req.body;
@@ -398,18 +386,75 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
 let incompleteData = '';
 let lastEmailSentTime = {}; // Keep track of the last email sent time for each condition
 
-// Function to process and insert data
+function setNickname(sensorId, nickname, callback) {
+  db.serialize(() => {
+    db.run("INSERT INTO sensor_nicknames (id, nickname) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET nickname = excluded.nickname", [sensorId, nickname], (err) => {
+      if (err) {
+        console.error('Error setting nickname:', err);
+        return callback(err);
+      }
+
+      console.log(`Nickname for sensor ${sensorId} set to ${nickname}`);
+
+      // Update the nickname in existing mqtt_messages entries
+      db.run("UPDATE mqtt_messages SET Nickname = ? WHERE Id = ?", [nickname, sensorId], (updateErr) => {
+        if (updateErr) {
+          console.error('Error updating nickname in mqtt_messages:', updateErr);
+          return callback(updateErr);
+        }
+        console.log(`Updated existing entries for sensor ${sensorId} with nickname ${nickname}`);
+        callback(null);
+      });
+    });
+  });
+}
+
+// POST endpoint to set or update a nickname
+app.post('/setNickname', (req, res) => {
+  const { sensorId, nickname } = req.body;
+
+  if (!sensorId || !nickname) {
+    return res.status(400).send({ error: 'Sensor ID and nickname are required' });
+  }
+
+  setNickname(sensorId, nickname, (err) => {
+    if (err) {
+      return res.status(500).send({ error: 'Error setting nickname' });
+    }
+    res.status(200).send({ message: `Nickname for sensor ${sensorId} set to ${nickname}` });
+  });
+});
+
 function processAndInsertData(parsedData) {
   try {
-    const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
-    stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp, (err) => {
+    db.get("SELECT nickname FROM sensor_nicknames WHERE id = ?", [parsedData.Id], (err, row) => {
       if (err) {
-        console.error('Error inserting data into the database:', err);
-      } else {
-        console.log('Data inserted into the database:', parsedData);
-        checkAlertConditions(parsedData);
+        console.error('Error fetching nickname from the database:', err);
+        return;
       }
-      stmt.finalize();
+
+      const nickname = row ? row.nickname : `Sensor-${parsedData.Id}`;
+
+      // Update the nickname in existing mqtt_messages entries
+      db.run("UPDATE mqtt_messages SET Nickname = ? WHERE Id = ?", [nickname, parsedData.Id], (updateErr) => {
+        if (updateErr) {
+          console.error('Error updating nickname in mqtt_messages:', updateErr);
+          return;
+        }
+        console.log(`Updated existing entries for sensor ${parsedData.Id} with nickname ${nickname}`);
+
+        // Insert the new data into mqtt_messages
+        const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp, Nickname) VALUES (?, ?, ?, ?, ?, ?)");
+        stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp, nickname, (err) => {
+          if (err) {
+            console.error('Error inserting data into the database:', err);
+          } else {
+            console.log('Data inserted into the database:', parsedData);
+            checkAlertConditions(parsedData);
+          }
+          stmt.finalize();
+        });
+      });
     });
   } catch (error) {
     console.error('Error preparing database statement:', error);
@@ -418,7 +463,13 @@ function processAndInsertData(parsedData) {
 
 // Function to check alert conditions
 function checkAlertConditions(parsedData) {
-  db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ? AND type = ?', parsedData.Id, parsedData.Type, (err, row) => {
+  const query = `
+    SELECT DISTINCT Id, Type, threshold, comparison_operator 
+    FROM alert_settings 
+    WHERE Id = ? AND Type = ?
+  `;
+
+  db.get(query, [parsedData.Id, parsedData.Type], (err, row) => {
     if (err) {
       console.error('Error fetching alert settings from the database:', err);
       return;
@@ -469,43 +520,6 @@ function onData(data) {
     console.error('Error handling data:', error);
   }
 }
-
-
-// Function to update last sent time in the database
-// Function to update last sent time in the database
-function updateLastSentTime(conditionId, lastSentTime) {
-  // Check if the row already exists
-  db.get('SELECT condition_id FROM email_sent_times WHERE condition_id = ?', conditionId, (err, row) => {
-    if (err) {
-      console.error('Error checking if row exists:', err);
-      return;
-    }
-
-    if (row) {
-      // Row exists, update last sent time
-      db.run('UPDATE email_sent_times SET last_sent_time = ? WHERE condition_id = ?', lastSentTime, conditionId, (err) => {
-        if (err) {
-          console.error('Error updating last sent time in the database:', err);
-        } else {
-          console.log('Last sent time updated in the database for condition:', conditionId);
-        }
-      });
-    } else {
-      // Row doesn't exist, insert new row
-      db.run('INSERT INTO email_sent_times (condition_id, last_sent_time) VALUES (?, ?)', conditionId, lastSentTime, (err) => {
-        if (err) {
-          console.error('Error inserting last sent time into the database:', err);
-        } else {
-          console.log('Last sent time inserted into the database for condition:', conditionId);
-        }
-      });
-    }
-  });
-}
-
-
-
-
 
 
 
