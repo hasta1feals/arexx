@@ -370,8 +370,8 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
         user: "denzelrustenberg@gmail.com", // Your email
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
-        refreshToken: "1//04HE2dhwIh-fSCgYIARAAGAQSNwF-L9IrG259fUVT64FpMgWZXJHW6i5O7MEzEkB9x3_LWAhUrxGVxMEuWRhwrDpqa1wn_6x5LVc",
-        accessToken: "ya29.a0Ad52N3_WAot2nl2cOdakxyn9YpTBBxcKFtPjBHAwWX2UEZR7FJhryiM1IduFOn6tAiEsoPbzE0i2c3Z4HtDn60fdYAVbaJyYTRlYHKL1TkDtQ3Y-Rk4Bfc031yj271WkofQu9YAtzaXtBUhX-H2Xy5X22VSgLvQ7YEa5aCgYKAdcSARASFQHGX2MiQG96mjLCUFwnefXi159OHA0171",
+        refreshToken: "1//04fuSMBfVkTpiCgYIARAAGAQSNwF-L9IrJinx7cbbRBXbjp_C7EFPt9-iuzNaujztcLk7fRIHT61NXhxKvM3ujZVlgB3IQFgnc1Q",
+        accessToken: "ya29.a0AXooCguHR6JVR4R6u8xQ2nOXvCI06gV37DoFTBpROHB9zTETONwP_Oa_eY0OaOnT5nDjuSOhz_Tqia33zzudeH6i1gEt8qnR06loPjXfpgYRuIy9VEn1a4E1L4Nckr744BR-EIiAfCMaSvwlzt4sWUhQ2h0ijCF7xbBNaCgYKAYUSARASFQHGX2MiPnQCdRxpkSvbekqQiU1Sxg0171",
       }
     });
 
@@ -398,72 +398,71 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
 let incompleteData = '';
 let lastEmailSentTime = {}; // Keep track of the last email sent time for each condition
 
-// Function to handle incoming data
+// Function to process and insert data
+function processAndInsertData(parsedData) {
+  try {
+    const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
+    stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp, (err) => {
+      if (err) {
+        console.error('Error inserting data into the database:', err);
+      } else {
+        console.log('Data inserted into the database:', parsedData);
+        checkAlertConditions(parsedData);
+      }
+      stmt.finalize();
+    });
+  } catch (error) {
+    console.error('Error preparing database statement:', error);
+  }
+}
+
+// Function to check alert conditions
+function checkAlertConditions(parsedData) {
+  db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ? AND type = ?', parsedData.Id, parsedData.Type, (err, row) => {
+    if (err) {
+      console.error('Error fetching alert settings from the database:', err);
+      return;
+    }
+
+    if (!row) {
+      console.log('No alert settings found for the specified ID and type:', parsedData.Id, parsedData.Type);
+      return;
+    }
+
+    const savedThreshold = row.threshold;
+    const comparisonOperator = row.comparison_operator;
+    const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
+
+    if (condition) {
+      const subject = 'Alert: Value meets condition';
+      const message = `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`;
+      sendEmail(subject, message);
+    }
+  });
+}
+
+// Main function to handle data
 function onData(data) {
   try {
-    // Convert the incoming data to a string
     const rawData = data.toString();
-
     console.log('Raw data:', rawData);
-
-    // Concatenate the incoming data with any previously incomplete data
     const combinedData = incompleteData + rawData;
-
-    // Regular expression to match JSON-like substrings
     const jsonRegex = /{[^{}]*}/g;
-
-    // Extract JSON-like substrings from the combined data
     const jsonMatches = combinedData.match(jsonRegex);
 
     if (jsonMatches) {
-      // Iterate over each matched substring
       jsonMatches.forEach((jsonString) => {
         try {
-          // Parse the JSON substring
           const parsedData = JSON.parse(jsonString);
-
-          console.log('Parsed data:', parsedData); // Log parsed data
-
-          // Insert the parsed data into the database
-          const stmt = db.prepare("INSERT INTO mqtt_messages (Id, Value, Unit, Type, TimeStamp) VALUES (?, ?, ?, ?, ?)");
-          stmt.run(parsedData.Id, parsedData.Value, parsedData.Unit, parsedData.Type, parsedData.TimeStamp);
-          stmt.finalize();
-
-          console.log('Data inserted into the database:', parsedData);
-
-          // Check if the received data meets the specified conditions for email alerts
-          // Retrieve the alert settings from the database based on the parsed ID
-          db.get('SELECT threshold, comparison_operator FROM alert_settings WHERE id = ? AND type = ?', parsedData.Id, parsedData.Type, (err, row) => {
-            if (err) {
-              console.error('Error fetching alert settings from the database:', err);
-              return;
-            }
-
-            if (!row) {
-              console.log('No alert settings found for the specified ID and type:', parsedData.Id, parsedData.Type);
-              return;
-            }
-
-            const savedThreshold = row.threshold;
-            const comparisonOperator = row.comparison_operator;
-
-            // Now you have the saved threshold and comparison operator, you can use them for comparison
-            const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
-            if (condition) {
-              // Send an email
-              sendEmail('Alert: Value meets condition', `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`);
-            }
-          });
-
+          console.log('Parsed data:', parsedData);
+          processAndInsertData(parsedData);
         } catch (error) {
           console.error('Error parsing JSON:', error);
         }
       });
 
-      // Update incomplete data with any remaining unmatched substring
       incompleteData = combinedData.slice(jsonMatches[jsonMatches.length - 1].length);
     } else {
-      // Update incomplete data with combined data if no JSON-like substrings found
       incompleteData = combinedData;
     }
   } catch (error) {
@@ -506,17 +505,7 @@ function updateLastSentTime(conditionId, lastSentTime) {
 
 
 
-// Function to insert last sent time into the database
-function insertLastSentTime(conditionId, lastSentTime) {
-  // Your database query to insert last sent time for the given conditionId
-  db.run('INSERT INTO email_sent_times (condition_id, last_sent_time) VALUES (?, ?)', conditionId, lastSentTime, (err) => {
-    if (err) {
-      console.error('Error inserting last sent time into the database:', err);
-    } else {
-      console.log('Last sent time inserted into the database for condition:', conditionId);
-    }
-  });
-}
+
 
 
 
