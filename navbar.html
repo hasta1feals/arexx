@@ -1,11 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="navbar.css" />
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <!-- Boxicons CDN Link (Icon link) -->
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,20 +51,22 @@
         </a>
         <span class="tooltip">Language</span>
       </li>
-      
-      <!-- end of admin only section -->
-      <li class="profile">
-        <div class="profile-details">
 
-          <div class="name_job">
-            <div id="userName" class="name">Gast 
-
-            </div>
-            
-
-          </div>
-          <a id="logoutLink" href=""><i class='bx bx-log-out loc' id="log_out"></i></a>
+      <li>
+        <a id="setting-logo" class="nav-link">
+          <i class='bx bx-cog'></i>
+          <span class="links_name">Setting</span>
+        </a>
+        <span class="tooltip">Setting</span>
       </li>
+      <li>
+        <button id="settingBtn">Setting Button</button>
+      </li>
+    
+      <!-- end of admin only section -->
+   
+      <a hallo id="logoutLink" href=""><i></i></a>
+   
     </ul>
   </div>
   <div class="maincontent">
@@ -73,21 +75,23 @@
         <div class="searchbox">
         <i class="bx bx-search"></i>
         <input id="searchInput" onkeyup="searchTable()" type="search" name="search" placeholder="Search Sensors">
+        <img id="img-cc" src="img/no_connection.svg" alt="no CC">
       </div>
+    
       <div class="float-right">
-     
       </div>
-  </div>
+
+    </div>
   </div>
   </div>
 
-
-  
+  <!-- Place the script at the end of the body tag -->
   <script>
     let sidebar = document.querySelector(".sidebar");
     let closeBtn = document.querySelector("#btn");
     let searchInput = document.querySelector("#searchInput");
-  
+    let cc = document.querySelector("#img-cc");
+
     closeBtn.addEventListener("click", () => {
       sidebar.classList.toggle("open");
       menuBtnChange(); //calling the function(optional)
@@ -98,8 +102,19 @@
           "afterbegin",
           '<i class="bx bx-search"></i>'
         );
+
       } else {
         searchInput.querySelector(".bx-search").remove();
+      }
+
+      if (sidebar.classList.contains("open")) {
+        cc.insertAdjacentHTML(
+          "afterbegin",
+          '<i class="bx bx-search"></i>'
+        );
+        
+      } else {
+        cc.querySelector(".bx-search").remove();
       }
     });
   
@@ -113,7 +128,7 @@
         //replacing the icons class
       }
     }
-  
+    
     $(document).ready(function () {
       let allLinks = $(".nav-link").map(function () {
         return this; // Fetch all elements that have the .nav-link class and add them to our list.
@@ -125,12 +140,14 @@
           // If the href attribute for this link matches the current page URL.
           $(this).html(value.classList.add("active1")); // Adjust the HTML of the element and append a suffix to the end, or do anything else here as required.
           // console.log(value.classList);
-        }
+        }       
       });
     });
+
+    // Ensuring the DOM is fully loaded before attaching the event listener
   </script>
   
-   <script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 
 </html>

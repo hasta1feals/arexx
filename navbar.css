@@ -8,6 +8,29 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+#img-cc {
+  position: absolute; /* Ensure the positioning is set */
+  right: 65%; /* Initial position */
+  transition: right 0.5s ease; /* Add transition for smooth movement */
+}
+
+.hover-container {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #000;
+  cursor: pointer;
+}
+
+.hover-text {
+  display: none;
+  margin-top: 10px;
+}
+
+.hover-container:hover .hover-text {
+  display: inline;
+}
+
 .sidebar {
   position: fixed;
   left: 0;

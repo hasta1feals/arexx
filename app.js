@@ -3,6 +3,10 @@ const mqtt = require('mqtt');
 const sqlite3 = require('sqlite3').verbose(); // Import SQLite
 const app = express();
 const bodyParser = require('body-parser');
+const ping = require('ping');
+const http = require('http');
+
+
 
 // const SerialPort = require('serialport');
 
@@ -70,7 +74,53 @@ client.on('connect', function () {
 
 
 
+app.post('/ping', (req, res) => {
+  const url = 'http://192.168.4.1/';
+  if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+  }
 
+  let responseSent = false;
+
+  const requestOptions = new URL(url);
+
+  const options = {
+      method: 'GET',
+      hostname: requestOptions.hostname,
+      port: requestOptions.port || 80,
+      path: requestOptions.pathname,
+      timeout: 5000 // 5 seconds timeout
+  };
+
+  const reqPing = http.request(options, (resPing) => {
+      if (!responseSent) {
+          const isAlive = resPing.statusCode === 200;
+          res.json({
+              url: url,
+              alive: isAlive,
+              statusCode: resPing.statusCode
+          });
+          responseSent = true;
+      }
+  });
+
+  reqPing.on('error', (e) => {
+      if (!responseSent) {
+          res.status(500).json({ error: e.message });
+          responseSent = true;
+      }
+  });
+
+  reqPing.on('timeout', () => {
+      if (!responseSent) {
+          reqPing.destroy();
+          res.status(408).json({ error: 'Request timed out', alive: false });
+          responseSent = true;
+      }
+  });
+
+  reqPing.end();
+});
 
 
 
@@ -358,8 +408,8 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
         user: "denzelrustenberg@gmail.com", // Your email
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
-        refreshToken: "1//04fuSMBfVkTpiCgYIARAAGAQSNwF-L9IrJinx7cbbRBXbjp_C7EFPt9-iuzNaujztcLk7fRIHT61NXhxKvM3ujZVlgB3IQFgnc1Q",
-        accessToken: "ya29.a0AXooCguHR6JVR4R6u8xQ2nOXvCI06gV37DoFTBpROHB9zTETONwP_Oa_eY0OaOnT5nDjuSOhz_Tqia33zzudeH6i1gEt8qnR06loPjXfpgYRuIy9VEn1a4E1L4Nckr744BR-EIiAfCMaSvwlzt4sWUhQ2h0ijCF7xbBNaCgYKAYUSARASFQHGX2MiPnQCdRxpkSvbekqQiU1Sxg0171",
+        refreshToken: "1//04vaCDCOfxBOWCgYIARAAGAQSNwF-L9IrraLdfyPnN8iI0_rgB2l086XMppecFB_ZC8DjYUc6WLc79U_GmudN-L5C-nPrVnh5ZSA",
+        accessToken: "ya29.a0AXooCguoCwT3_sHQNRgGw-El5PK5v92Kh4UjGAOGIdvkz7GXa5T4dxnGRWd0verEz4oGX8kR2CaN1I3-COMUrWi8b9h3dWTjcIRlwbc11egHuCZcHnF4K34slckYsSc-CjOa6TmwZqr8mttwcbjUjovftQIengqBbzj6aCgYKAcMSARASFQHGX2MiVolX7G0iziHBKjEhfZjQ8A0171",
       }
     });
 
@@ -690,6 +740,114 @@ app.post('/closeSerial', async (req, res) => {
     res.status(500).json({ error: 'Error handling request', details: err.message });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+// In-memory storage for the WiFi credentials (for demonstration purposes)
+let wifiCredentials = {
+  STA: {
+    SSID: '',
+    PWD: ''
+  },
+  AP: {
+    SSID: '',
+    PWD: ''
+  }
+};
+
+// Endpoint to set WiFi credentials for station mode
+app.post('/set-wifi-sta', (req, res) => {
+  const { STA, 'admin-key': adminKey } = req.body;
+
+  if (!STA || !STA.SSID) {
+    return res.status(400).send('SSID is required');
+  }
+
+  if (!adminKey || adminKey !== 'wifi key') { // Replace 'wifi key' with your actual admin key
+    return res.status(403).send('Forbidden');
+  }
+
+  wifiCredentials.STA = {
+    SSID: STA.SSID,
+    PWD: STA.PWD || ''
+  };
+
+  res.status(200).send('Station mode WiFi credentials updated');
+});
+
+// Endpoint to set WiFi credentials for access point mode
+app.post('/set-wifi-ap', (req, res) => {
+  const { AP, 'admin-key': adminKey } = req.body;
+
+  if (!AP || !AP.SSID) {
+    return res.status(400).send('SSID is required');
+  }
+
+  if (!adminKey || adminKey !== 'admin') { // Replace 'admin' with your actual admin key
+    return res.status(403).send('Forbidden');
+  }
+
+  wifiCredentials.AP = {
+    SSID: AP.SSID,
+    PWD: AP.PWD || ''
+  };
+
+  res.status(200).send('Access Point mode WiFi credentials updated');
+});
+
+// Endpoint to get the stored WiFi credentials
+app.get('/get-wifi', (req, res) => {
+  res.status(200).json(wifiCredentials);
+});
+
+// Endpoint to set both STA and AP credentials
+app.post('/set-wifi', (req, res) => {
+  const { STA, AP, 'admin-key': adminKey } = req.body;
+
+  if (!adminKey || adminKey !== 'admin') { // Replace 'admin' with your actual admin key
+    return res.status(403).send('Forbidden');
+  }
+
+  if (STA) {
+    if (!STA.SSID) {
+      return res.status(400).send('SSID is required for STA');
+    }
+    wifiCredentials.STA = {
+      SSID: STA.SSID,
+      PWD: STA.PWD || ''
+    };
+  }
+
+  if (AP) {
+    if (!AP.SSID) {
+      return res.status(400).send('SSID is required for AP');
+    }
+    wifiCredentials.AP = {
+      SSID: AP.SSID,
+      PWD: AP.PWD || ''
+    };
+  }
+
+  res.status(200).send('WiFi credentials updated');
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
