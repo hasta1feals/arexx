@@ -12,6 +12,15 @@ body {
     margin: 0 auto; /* Center the container horizontally */
 }
 
+
+#loading-indicator {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+  }
 .table {
     height: 568px;
     width: 95%;

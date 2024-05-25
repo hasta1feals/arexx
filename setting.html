@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="setting.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+    <div class="container">
+        <h1>Wi-Fi Settings</h1>
+        <div class="tabs">
+            <button class="tablink" onclick="openTab(event, 'NetworkSettings')">Network Settings</button>
+            <button id="cn" class="tablink" onclick="openTab(event, 'CurrentNetwork')">Current Network</button>
+        </div>
+
+        <div id="NetworkSettings" class="tabcontent">
+            <h2>Configure Wi-Fi</h2>
+            <form id="wifi-form">
+                <div class="form-group1">
+                    <label for="ssid">SSID:</label>
+                    <input type="text" id="ssid" name="ssid" required>
+                </div>
+                <div class="form-group1">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button id="sendWifibtn">Submit</button>
+            </form>
+            <div id="statusMessage"></div>
+
+        </div>
+
+        <div id="CurrentNetwork" class="tabcontent">
+            <h2>Currently Connected Network</h2>
+            <p id="current">Loading...</p>
+        </div>
+    </div>
+
+
+
+
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    $(function () {
+      // Load the HTML content into the "nav-placeholder" element
+      $("#nav-placeholder").load("navbar.html");
+    });
+  </script>
+  <script src="main.js"></script>
+
+</body>
+
+</html>

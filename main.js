@@ -1446,6 +1446,35 @@ function api(endpoint, method = "GET", data = {}) {
   return fetch(API + endpoint, requestOptions).then((res) => res.json());
 }
 
+
+function api2(endpoint, method = "GET", data = {}) {
+  const API = "http://192.168.4.1/";
+
+  const requestOptions = {
+    method: method,
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + getCookie("token"),
+    },
+  };
+
+  if (method !== "GET") {
+    requestOptions.body = JSON.stringify(data);
+  }
+
+  return fetch(API + endpoint, requestOptions)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
+}
+
 function apiDiffType(endpoint, method = "GET", data = {}) {
   const API = "http://127.0.0.1:3000";
   const headers = {
@@ -1700,6 +1729,36 @@ function generateCombinedGraph(selectedItems) {
     });
 }
 
+document.getElementById("setting-logo").addEventListener("click", function() {
+  var loadingIndicator = document.getElementById("loading-indicator");
+
+  // Show the loading indicator
+  loadingIndicator.style.display = "block";
+
+  api("/ping", "POST")  // Call the API
+    .then((res) => {
+      console.log("Response from API:", res); // Log the actual response
+
+      // Check if the server is alive
+      if (res.alive === false) {
+       alert("Please connect to the 'arexx_multilogger' wifi!'");
+      } else if (res.alive === true) {
+        // Redirect to the settings page
+        window.location.href = "setting.html";
+      }
+
+
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    })
+    .finally(() => {
+      // Hide the loading indicator when done
+      loadingIndicator.style.display = "none";
+    });
+});
+
+
 
 // Function to create the combined chart using Chart.js
 function createCombinedChart(canvas, combinedData) {
@@ -1728,4 +1787,79 @@ function createCombinedChart(canvas, combinedData) {
       }
     }
   });
+}
+
+
+  
+
+document.getElementById("cn").addEventListener("click", function() {
+  console.log("Hello");
+
+  fetch("http://192.168.4.1/get-wifi", {
+    method: "GET"
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Response from API:", data); // Log the actual response
+    const helpElement = document.getElementById("current");
+    
+      helpElement.innerText = data.STA.SSID;
+    
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });
+});
+
+function sendWifi(e) {
+  e.preventDefault(); // Prevent the default form submission behavior
+
+  var ssid = document.getElementById("ssid").value;
+  var password = document.getElementById("password").value;
+  var adminKey = "admin";
+
+  fetch("http://192.168.4.1/set-wifi-sta", {
+      method: "POST",
+      body: JSON.stringify({ 
+          STA: {
+              SSID: ssid, 
+              PWD: password
+          },
+          "admin-key": adminKey // Use quotes for property names with hyphens
+      })
+  })
+  .then(response => response.text()) // Read the response as text
+  .then(text => {
+      try {
+          const data = JSON.parse(text); // Try to parse the response as JSON
+          console.log("Response from API:", data); // Log the actual response if it's valid JSON
+      } catch {
+          console.log("Response from API:", text); // Log the response as plain text if it's not JSON
+          if(text.trim() === "AP credentials successfully updated") {
+            document.getElementById("statusMessage").innerHTML = '<span style="color: red;">&#10060; ' + text + '</span>';
+
+             
+          } else if (!text.includes("successfully")) { // Check if the response text indicates an error
+            document.getElementById("statusMessage").innerHTML = '<span style="color: green;">&#10004; AP credentials successfully updated</span> <br> <span> Please unplug and plug your device!</span>';
+            setTimeout(() => {
+                window.location.href = "choice.html"; // Change to your desired page
+            }, 5000);
+          }
+      }
+  })
+  .catch(error => {
+      console.error("Error:", error.message); // Log any errors
+      document.getElementById("statusMessage").innerHTML = '<span style="color: red;">&#10060; ' + error.message + '</span>';
+  });
+}
+
+var sendwifiBtn = document.getElementById("sendWifibtn");
+
+sendwifiBtn.onclick = function (e) {
+  sendWifi(e); // Pass the event object to the sendWifi function
 }

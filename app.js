@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const ping = require('ping');
 const http = require('http');
+const wifi = require('node-wifi');
 
 
 
@@ -72,6 +73,24 @@ client.on('connect', function () {
   });
 });
 
+
+
+app.post('/set-wifi-sta', (req, res) => {
+  const { SSID, PWD, adminKey } = req.body;
+
+  if (!SSID || !PWD || !adminKey) {
+    return res.status(400).send('Invalid request payload');
+  }
+
+  // Here you would handle the logic to set the Wi-Fi STA
+  console.log('Setting Wi-Fi STA with the following details:');
+  console.log(`SSID: ${SSID}`);
+  console.log(`PWD: ${PWD}`);
+  console.log(`Admin Key: ${adminKey}`);
+
+  // For now, just respond with a success message
+  res.status(200).send('Wi-Fi STA settings updated successfully');
+});
 
 
 app.post('/ping', (req, res) => {
@@ -160,6 +179,12 @@ app.get('/getRH', (req, res) => {
       res.send(rows);
     }
   });
+});
+
+
+app.get('/get-wifi', (req, res) => {
+  
+  res.status(200).json(wifiCredentials);
 });
 
 
@@ -408,8 +433,8 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
         user: "denzelrustenberg@gmail.com", // Your email
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
-        refreshToken: "1//04vaCDCOfxBOWCgYIARAAGAQSNwF-L9IrraLdfyPnN8iI0_rgB2l086XMppecFB_ZC8DjYUc6WLc79U_GmudN-L5C-nPrVnh5ZSA",
-        accessToken: "ya29.a0AXooCguoCwT3_sHQNRgGw-El5PK5v92Kh4UjGAOGIdvkz7GXa5T4dxnGRWd0verEz4oGX8kR2CaN1I3-COMUrWi8b9h3dWTjcIRlwbc11egHuCZcHnF4K34slckYsSc-CjOa6TmwZqr8mttwcbjUjovftQIengqBbzj6aCgYKAcMSARASFQHGX2MiVolX7G0iziHBKjEhfZjQ8A0171",
+        refreshToken: "1//04qrbFria773ACgYIARAAGAQSNwF-L9IrOK_4ciyvVuPd8DvgG-G0zw9yi4hA6XtydCOeQaJPS1mIdTF26quR_9SgblA90sqE124",
+        accessToken: "ya29.a0AXooCgv9OK4zW_77XYdlg1YMM6DXInwt_59oKiEqVenFMSr53PCH8SwAXm8KG3NDIswv2AUM4YzwWQcOfiOXVn4EtFtaWrTxYSnunfFY-oPxbXD0Tnq3igB6W11kbq8f15Bp1Bkqt6YJwe76hwX52kO6nDSYivXMfsUwaCgYKAVwSARASFQHGX2MiAyw4ZwGcoVqIUqF0T3g5KA0171",
       }
     });
 
@@ -512,6 +537,8 @@ function processAndInsertData(parsedData) {
 }
 
 // Function to check alert conditions
+const alertCache = {};
+
 function checkAlertConditions(parsedData) {
   const query = `
     SELECT DISTINCT Id, Type, threshold, comparison_operator 
@@ -535,9 +562,23 @@ function checkAlertConditions(parsedData) {
     const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
 
     if (condition) {
-      const subject = 'Alert: Value meets condition';
-      const message = `The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).`;
-      sendEmail(subject, message);
+      const currentTime = new Date();
+      const cacheKey = `${parsedData.Id}-${parsedData.Type}`;
+      const lastSent = alertCache[cacheKey] || 0;
+
+      if (currentTime - lastSent >= 30 * 60 * 1000) { // 30 minutes
+        alertCache[cacheKey] = currentTime;
+        
+        const subject = 'Alert: Value meets condition';
+        const nextAlertTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
+        const message = `
+          The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).
+          \nTime sent: ${currentTime.toLocaleString()}
+          \nNext alert will be sent at: ${nextAlertTime.toLocaleString()}
+        `;
+
+        sendEmail(subject, message);
+      }
     }
   });
 }
@@ -842,7 +883,21 @@ app.post('/set-wifi', (req, res) => {
 
 
 
+// Initialize wifi module
+wifi.init({
+  iface: null // network interface, choose a random wifi interface if set to null
+});
 
+// Define a route to scan for available Wi-Fi networks
+app.get('/scan-wifi', (req, res) => {
+  wifi.scan((error, networks) => {
+    if (error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.json(networks);
+    }
+  });
+});
 
 
 
