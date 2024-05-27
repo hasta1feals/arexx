@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="choice.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+
+<body>
+ 
+  <!-- Navbar Import -->
+
+
+  <div id="nav-placeholder"></div>
+  <div class="maincontent">
+ 
+    <div id="error-message" style="display: none; color: red;"></div>
+
+  <div class="container1">
+
+    <!-- Graph Card -->
+    <div id="loading-indicator">Loading...</div>
+
+    <a id="usb-choice" class="item item-1"> <p class="leters"USB></p><i class='bx bx-usb larger-icon'></i></a>
+
+    <div class="item item-2"><i class='bx bx-wifi larger-icon'></i></div>
+    <div class="item item-3"><i class='bx bx-user larger-icon'></i></div>
+
+        <!-- Optional: Add title or additional information -->
+  
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    $(function () {
+      // Load the HTML content into the "nav-placeholder" element
+      $("#nav-placeholder").load("navbar.html");
+    });
+  </script>
+  <script src="main.js"></script>
+
+</body>
+
+</html>

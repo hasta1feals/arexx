@@ -1,0 +1,534 @@
+.container1 {
+  display: flex;
+  justify-content: flex-start; /* Change from center to flex-start */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.drag{
+  cursor: grab;
+}
+.minimize-list-btn {
+  background-color: #5d5fef;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  outline: none;
+}
+
+.minimize-list-btn:hover {
+  background-color: #e53935;
+}
+.open-options {
+  background-color: #5d5fef;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+  
+  /* Positioning */
+  position: absolute;
+  top: 27px; /* Adjust the top distance */
+  left: 10px; /* Adjust the right distance */
+}
+
+.open-options:hover {
+  background-color: #5457d0;
+}
+
+
+.remove-button:hover {
+  background-color: #e53935;
+}
+
+
+
+.remove-button {
+  background-color: #f82a12;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+ /* Positioning */
+ position: absolute;
+ top: 27px; /* Adjust the top distance */
+ right: 10px; /* Adjust the right distance */
+
+}
+
+/* CSS styles for labels */
+.label {
+  display: block;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.container {
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+select, input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+/* CSS styles for delete buttons */
+.delete-button {
+  background-color: #ff5252;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #e53935;
+}
+
+.card {
+  width: 550px; /* Initial width */
+  height: 550px; /* Initial height */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin: 10px;
+  position: relative; /* Ensure the card is the reference point for absolute positioning */
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+
+.drag {
+  cursor: grab;
+}
+
+.graph-list {
+  width: 344px; /* Initial width */
+  height: 874px; /* Initial height */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin: 10px;
+  padding: 20px; /* Add some padding for content */
+  overflow: auto; /* Enable scrolling if content overflows */
+}
+
+.graph {
+  margin-bottom: 20px; /* Add some space between graphs */
+}
+
+.graph-name {
+  font-weight: bold;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.graph-name::before {
+  content: "\f114"; /* Folder icon */
+  font-family: "Font Awesome 5 Free";
+  margin-right: 10px;
+  color: #007bff;
+}
+
+.id-container {
+  margin-left: 20px; /* Indent IDs */
+}
+
+.id-container div::before {
+  content: "\f111"; /* Line icon */
+  font-family: "Font Awesome 5 Free";
+  margin-right: 10px;
+  color: #007bff;
+}
+
+.graph-placeholder {
+  width: 550px;
+  height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.clickable-item {
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: block; /* Display vertically */
+}
+
+.clickable-item.clicked {
+  background-color: #f0f0f0; /* Background color when clicked */
+}
+
+
+
+.overalls {
+  height: 168px;
+  width: 95%;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin: 32px auto;
+}
+.headtext {
+  font-weight: 500;
+  margin-left: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+.row {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: flex;
+  width: 100%;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  border-right: 2px solid #f5f5f5;
+  padding-left: 3px;
+}
+
+.subtext {
+  color: #25248b;
+  margin-bottom: 10px;
+}
+/* .total-column .subtext {
+  color: orange;
+  margin-bottom: 10px;
+} */
+.inline {
+  display: flex;
+  gap: 50px;
+}
+.amount {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.checked {
+  color: #5d6679;
+}
+.table {
+  height: 568px;
+  width: 95%;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin: auto;
+}
+.table-head {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  margin: 10px;
+}
+.table-headtext {
+  font-weight: 500;
+}
+.table-button {
+  width: 120px;
+  height: 35px;
+  border-radius: 4px;
+}
+.pagination {
+  margin-bottom: auto;
+  bottom: 27px;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+}
+.pagination-emp{
+  margin-bottom: auto;
+  bottom: 35px;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+}
+.pagination-button {
+  position: relative;
+  left: -50%;
+  height: 35px;
+  font-weight: 500;
+  width: 35px;
+  background-color: #25248b;
+  color: #ffffff;
+  border: none;
+}
+.pagination-button:hover {
+  opacity: 0.8;
+}
+.float-right-number{
+  position:absolute;
+  right: 50px;
+  bottom: 35px;
+}
+
+.mbtn-export {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+}
+.combine-graph {
+  background-color: #f82a12;
+  color: #ffffff;
+  border: none;
+}
+
+.delete-monitor {
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+}
+.add-products {
+  background-color: #25248b;
+  color: #ffffff;
+  border: none;
+}
+.change-city {
+  background-color: #ffa500;
+  color: #ffffff;
+  border: none;
+}
+.change-region {
+  background-color: #1366d9;
+  color: #ffffff;
+  border: none;
+}
+.export {
+  background-color: #ffffff;
+
+  border: 2px solid #d0d3d9;
+}
+table {
+  width: 100%;
+  text-align: center;
+  /* padding: ; */
+}
+table,
+th,
+td {
+  border-bottom: 2px solid #d0d3d9;
+  border-collapse: collapse;
+}
+td,
+th {
+  padding: 10px 50px 10px 10px;
+}
+th {
+  color: #5d6679;
+  font-weight: 500;
+}
+.table-bottom {
+  justify-content: space-between;
+  margin: 10px;
+  padding-bottom: 10px;
+  display: flex;
+}
+
+button:hover {
+  cursor: pointer;
+}
+.start-monitor:hover {
+  background-color: rgb(55, 202, 6);
+}
+.add-products:hover {
+  background-color: #23217e;
+}
+.change-region:hover {
+  background-color: #0553c1;
+}
+.change-city:hover {
+  background-color: #db8f01;
+}
+.export:hover {
+  background-color: #f5f5f5;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 150px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+#graph-input {
+
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  width: 98%;
+  border-radius: 5px;
+  /* margin-bottom: 10px; */
+  margin-top: 20px;
+}
+
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%; /* Set to a percentage value */
+  /* Remove height property */
+  border-radius: 3px;
+}
+
+.modal-monitor {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%;
+  height: 70%;
+  border-radius: 3px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 1000px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column; /* Changed from space-between to column */
+  margin: 20px 0;
+  font-weight: 500;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.formAddProduct input[type="text"] {
+  width: 220px;
+  height: 30px;
+  outline: none;
+  border: 1px solid #d0d5dd;
+  border-radius: 3px;
+  color: #1366d9;
+  font-weight: bold;
+}
+.formChangeCity input[type="text"],
+.city {
+  width: 220px;
+  height: 30px;
+  outline: none;
+  border: 1px solid #d0d5dd;
+  border-radius: 3px;
+  color: #ffa500;
+  font-weight: bold;
+}
+.modalbtn {
+  text-align: right;
+}
+.mbtn {
+  width: 100px;
+  height: 30px;
+  border-radius: 3px;
+}
+.monitor-list {
+  height: 140px;
+  overflow: hidden;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+}
+ul.monitor-list li {
+  color: black;
+}
+ul.monitor-list li:nth-child(odd) {
+  background-color: aliceblue;
+}
+.delete {
+  color: red;
+  float: right;
+  padding-right: 15px;
+}
+.out-of-stock {
+  color: red;
+}
+
+.in-stock {
+  color: green;
+}
+
+/* Style the tab buttons */
+.tab button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  transition: 0.3s;
+}
+
+/* Change background color of active tab button */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+}
+
+/* Show the active tab */
+.tabcontent.active {
+  display: block;
+}
+
+

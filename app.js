@@ -6,12 +6,19 @@ const bodyParser = require('body-parser');
 const ping = require('ping');
 const http = require('http');
 const wifi = require('node-wifi');
+const path = require('path');
+const { exec } = require('child_process'); // Add this line
 
 
 
-// const SerialPort = require('serialport');
 
 
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from the public directory
+
+// Serve index.html on the root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 const PORT = process.env.PORT || 3000;
 const nodemailer = require('nodemailer');
@@ -22,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -666,7 +673,7 @@ app.post('/openAndListenSerialPort', async (req, res) => {
         // Define criteria to find the desired serial port
         const criteria = {
           //voor mac zonder hoofletter A en windows met hoofletter A dus maak 2 pkg.json files een voor mac en een voor windows=
-          vendorId: '1a86',
+          vendorId: '1A86',
           productId: '7523'
         };
 
@@ -909,4 +916,20 @@ app.get('/scan-wifi', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  
+  // Use child_process.exec to open the default web browser
+  const url = `http://localhost:${PORT}`;
+  switch (process.platform) {
+    case 'darwin':
+      exec(`open ${url}`);
+      break;
+    case 'win32':
+      exec(`start ${url}`);
+      break;
+    case 'linux':
+      exec(`xdg-open ${url}`);
+      break;
+    default:
+      console.log(`Cannot open browser on your platform: ${process.platform}`);
+  }
 });

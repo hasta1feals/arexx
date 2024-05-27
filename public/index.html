@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            animation: fadeOut 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <!-- Replace 'your_logo.png' with the actual file path or URL of your logo -->
+        <img src="img/Arexx-logo (1).png" alt="Your Logo">
+    </div>
+
+    <script>
+        // Wait for the animation to complete and then redirect to the next page
+        setTimeout(function() {
+            window.location.href = 'choice.html'; // Replace 'your_next_page.html' with the actual file path or URL of your next page
+        }, 2000); // Adjust the time (in milliseconds) based on your animation duration
+    </script>
+</body>
+</html>
