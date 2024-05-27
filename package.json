@@ -6,10 +6,14 @@
   "scripts": {
     "start": "node app.js"
   },
+  "bin": {
+    "arexx": "./app.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@serialport/bindings": "^9.2.9",
+    "@serialport/bindings-cpp": "^12.0.1",
     "@serialport/list": "^12.0.0",
     "@serialport/parser-byte-length": "^12.0.0",
     "@serialport/parser-readline": "^12.0.0",
@@ -23,6 +27,7 @@
     "node-wifi": "^2.0.16",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
+    "open": "^10.1.0",
     "ping": "^0.4.4",
     "serialport": "^12.0.0",
     "sqlite3": "^5.1.7"
