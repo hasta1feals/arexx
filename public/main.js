@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOMContentLoaded event fired");
 
+
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
 
@@ -138,6 +139,8 @@ btn6.onclick = function() {
   }, 100);
   }
 
+
+  
   // Check if the modal was open before and open it again
   if (localStorage.getItem(modal1.id) === "open") {
     openModal(modal1);
@@ -1162,76 +1165,75 @@ let originalRows = [];
 
 let newDataReceived = localStorage.getItem('newDataReceived') === 'true' ? true : false;
 
-function itemsLoad() {
-  api("/getAllitems", "GET")
-    .then((res) => {
+document.addEventListener('DOMContentLoaded', function () {
+  function itemsLoad() {
+    api("/getAllitems", "GET")
+      .then((res) => {
+        const tableBody = document.querySelector("#myTable tbody");
+        tableBody.innerHTML = ''; // Clear existing rows
 
-      const tableBody = document.querySelector("#myTable tbody");
+        // Check if new data is received
+        const hasNewData = res.rows && res.rows.length > 0;
 
+        // Loop through the items and add them to the table
+        res.rows.forEach((row) => {
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+            <td>${row.Id}</td>
+            <td>${row.Value}</td>
+            <td>${row.Type}</td>
+            <td>${row.TimeStamp}</td>
+            <td>${row.Nickname}</td>
+            <td><button class="btn-get-id" data-id="${row.Id}" data-type="${row.Type}">Graph</button></td>
+          `;
+          tableBody.appendChild(newRow);
+        });
 
-      // Check if new data is received
-      const hasNewData = res.rows && res.rows.length > 0;
+        // Add event listener to all buttons in the table body
+        tableBody.addEventListener('click', (event) => {
+          if (event.target.classList.contains('btn-get-id')) {
+            const id = event.target.dataset.id;
+            const type = event.target.dataset.type;
+            console.log('Clicked button for ID:', id, type);
 
-      // Loop through the items and add them to the table
-      res.rows.forEach((row) => {
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-          <td>${row.Id}</td>
-          <td>${row.Value}</td>
-          <td>${row.Type}</td>
-          <td>${row.TimeStamp}</td>
-          <td>${row.Nickname}</td>
-          <td><button class="btn-get-id" data-id="${row.Id}" data-type="${row.Type}">Graph</button>
-          </td>
-          <!-- Add more table cells as needed -->
-        `;
-        tableBody.appendChild(newRow);
-      });
+            // Retrieve existing data from local storage or initialize an empty array
+            let storedData = JSON.parse(localStorage.getItem('storedData')) || [];
 
-   
-// Add event listener to all buttons in the table body
-tableBody.addEventListener('click', (event) => {
-  if (event.target.classList.contains('btn-get-id')) {
-    const id = event.target.dataset.id;
-    const type = event.target.dataset.type;
-    console.log('Clicked button for ID:', id, type);
-    
-    // Retrieve existing data from local storage or initialize an empty array
-    let storedData = JSON.parse(localStorage.getItem('storedData')) || [];
+            // Add the new ID and type to the array
+            storedData.push({ id, type });
 
-    // Add the new ID and type to the array
-    storedData.push({ id, type });
+            // Store the updated array back into local storage
+            localStorage.setItem('storedData', JSON.stringify(storedData));
 
-    // Store the updated array back into local storage
-    localStorage.setItem('storedData', JSON.stringify(storedData));
+            // Navigate to homepage.html
+            window.location.href = `homepage.html`;
+          }
+        });
 
-    // Navigate to homepage.html
-    window.location.href = `homepage.html`;
-  }
-});
+        // Update newDataReceived flag based on whether new data is received
+        newDataReceived = hasNewData;
+        localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
 
-
-      // Update newDataReceived flag based on whether new data is received
-      newDataReceived = hasNewData;
-      localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
-
-      // Reset the newDataReceived flag after 10 seconds (adjust the time as needed)
-      setTimeout(() => {
+        // Reset the newDataReceived flag after 10 seconds (adjust the time as needed)
+        setTimeout(() => {
+          newDataReceived = false;
+          localStorage.setItem('newDataReceived', 'false'); // Update localStorage
+        }, 10000); // 10 seconds in milliseconds
+      })
+      .catch((error) => {
+        console.error("Error fetching items:", error);
+        // In case of an error, set newDataReceived to false
         newDataReceived = false;
-        localStorage.setItem('newDataReceived', 'false'); // Update localStorage
-      }, 10000); // 10 seconds in milliseconds
+        localStorage.setItem('newDataReceived', 'false');
+      });
+  }
 
-    })
-    .catch((error) => {
-      console.error("Error fetching items:", error);
-      // In case of an error, set newDataReceived to false
-      newDataReceived = false;
-      localStorage.setItem('newDataReceived', 'false');
-    });
-}
+  // Initial table update
+  itemsLoad();
 
-
-
+  // Periodically update the table every 5 seconds
+  setInterval(itemsLoad, 5000);
+});
 
 
 
@@ -1428,7 +1430,7 @@ function connectButton(id, event) {
 
 // API function to get info from the server to frontend
 function api(endpoint, method = "GET", data = {}) {
-  const API = "http://127.0.0.1:3000";
+  const API = "http://localhost:3000";
 
   const requestOptions = {
     method: method,

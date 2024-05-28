@@ -407,8 +407,6 @@ app.get('/infoSensor', (req, res) => {
 
 
 
-
-
 app.post('/setAlert', (req, res) => {
   const { id, threshold, comparison_operator: comparisonOperator, type } = req.body;
 
@@ -430,25 +428,25 @@ app.post('/setAlert', (req, res) => {
 
 
 
-async function sendEmail(subject, text, authOptions, senderEmail, senderPassword) {
+async function sendEmail(subject, text, recipientEmail, senderEmail = "denzelrustenberg@gmail.com", senderPassword) {
   try {
     // Create a transporter object using SMTP
     let transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         type: 'OAuth2',
-        user: "denzelrustenberg@gmail.com", // Your email
+        user: senderEmail,
         clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
         clientSecret: "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",
-        refreshToken: "1//04qrbFria773ACgYIARAAGAQSNwF-L9IrOK_4ciyvVuPd8DvgG-G0zw9yi4hA6XtydCOeQaJPS1mIdTF26quR_9SgblA90sqE124",
-        accessToken: "ya29.a0AXooCgv9OK4zW_77XYdlg1YMM6DXInwt_59oKiEqVenFMSr53PCH8SwAXm8KG3NDIswv2AUM4YzwWQcOfiOXVn4EtFtaWrTxYSnunfFY-oPxbXD0Tnq3igB6W11kbq8f15Bp1Bkqt6YJwe76hwX52kO6nDSYivXMfsUwaCgYKAVwSARASFQHGX2MiAyw4ZwGcoVqIUqF0T3g5KA0171",
+        refreshToken: "1//04t4iv85ylYI5CgYIARAAGAQSNwF-L9IrCsZrx7g0OiaXQ7hLJO0J-Fh4GYT3vyEVr8JUNayOnjfcOaqMaSQbFl7CQu0Z-pgi2oY",
+        accessToken: "ya29.a0AXooCgtYfrJ5kWpUyGwjzPbB4-Gj5zxpQllVXExajUCJ31FTVu3WR2LQywGPEmZ0xgZZJRNH_Y1Ah5r8R0g0eTaATCDmutLLN5pk2l5FR8ryPXrgPt6YPHSQuKhMpRHp7FFiIVD2YsPe7ZGdBgcK9z48dqKy0FQLLcuLaCgYKAXoSARASFQHGX2MiFxzA9hdihzhMgD458gOoUQ0171",
       }
     });
 
     // Define email options
     let mailOptions = {
       from: senderEmail, // Sender address
-      to: 'Debohughes15@gmail.com', // List of recipients
+      to: recipientEmail, // Recipient address from the database
       subject: subject, // Subject line
       text: text // Plain text body
     };
@@ -461,7 +459,6 @@ async function sendEmail(subject, text, authOptions, senderEmail, senderPassword
     console.error('Error occurred while sending email:', error);
   }
 }
-
 
 // Function to check if an alert should be triggered
 
@@ -545,48 +542,68 @@ function processAndInsertData(parsedData) {
 
 // Function to check alert conditions
 const alertCache = {};
-
 function checkAlertConditions(parsedData) {
-  const query = `
-    SELECT DISTINCT Id, Type, threshold, comparison_operator 
+  const alertSettingsQuery = `
+    SELECT DISTINCT id, type, threshold, comparison_operator, id_alert 
     FROM alert_settings 
-    WHERE Id = ? AND Type = ?
+    WHERE id = ? AND type = ?
   `;
 
-  db.get(query, [parsedData.Id, parsedData.Type], (err, row) => {
+  db.get(alertSettingsQuery, [parsedData.Id, parsedData.Type], (err, alertRow) => {
     if (err) {
       console.error('Error fetching alert settings from the database:', err);
       return;
     }
 
-    if (!row) {
+    if (!alertRow) {
       console.log('No alert settings found for the specified ID and type:', parsedData.Id, parsedData.Type);
       return;
     }
 
-    const savedThreshold = row.threshold;
-    const comparisonOperator = row.comparison_operator;
-    const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
+    const savedThreshold = alertRow.threshold;
+    const comparisonOperator = alertRow.comparison_operator;
 
-    if (condition) {
-      const currentTime = new Date();
-      const cacheKey = `${parsedData.Id}-${parsedData.Type}`;
-      const lastSent = alertCache[cacheKey] || 0;
+    // Second query to get the email address
+    const emailQuery = `
+      SELECT email 
+      FROM email 
+      WHERE id = ?
+    `;
 
-      if (currentTime - lastSent >= 30 * 60 * 1000) { // 30 minutes
-        alertCache[cacheKey] = currentTime;
-        
-        const subject = 'Alert: Value meets condition';
-        const nextAlertTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
-        const message = `
-          The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).
-          \nTime sent: ${currentTime.toLocaleString()}
-          \nNext alert will be sent at: ${nextAlertTime.toLocaleString()}
-        `;
-
-        sendEmail(subject, message);
+    db.get(emailQuery, [alertRow.id_alert], (err, emailRow) => {
+      if (err) {
+        console.error('Error fetching email from the database:', err);
+        return;
       }
-    }
+
+      if (!emailRow) {
+        console.log('No email found for the specified alert:', alertRow.id_alert);
+        return;
+      }
+
+      const recipientEmail = emailRow.email;
+      const condition = evaluateCondition(parsedData.Value, comparisonOperator, savedThreshold);
+
+      if (condition) {
+        const currentTime = new Date();
+        const cacheKey = `${parsedData.Id}-${parsedData.Type}`;
+        const lastSent = alertCache[cacheKey] || 0;
+
+        if (currentTime - lastSent >= 30 * 60 * 1000) { // 30 minutes
+          alertCache[cacheKey] = currentTime;
+          
+          const subject = 'Alert: Value meets condition';
+          const nextAlertTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
+          const message = `
+            The value associated with ID ${parsedData.Id} and type ${parsedData.Type} meets the condition (${parsedData.Value} ${comparisonOperator} ${savedThreshold}).
+            \nTime sent: ${currentTime.toLocaleString()}
+            \nNext alert will be sent at: ${nextAlertTime.toLocaleString()}
+          `;
+
+          sendEmail(subject, message, recipientEmail);
+        }
+      }
+    });
   });
 }
 
@@ -916,9 +933,11 @@ app.get('/scan-wifi', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  
+ 
+
   // Use child_process.exec to open the default web browser
   const url = `http://localhost:${PORT}`;
+  console.log(`Open ${url} in your browser`);
   switch (process.platform) {
     case 'darwin':
       exec(`open ${url}`);
