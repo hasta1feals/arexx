@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -936,7 +936,7 @@ app.listen(PORT, () => {
  
 
   // Use child_process.exec to open the default web browser
-  const url = `http://localhost:${PORT}`;
+  const url = `http://127.0.0.1:5501/public`;
   console.log(`Open ${url} in your browser`);
   switch (process.platform) {
     case 'darwin':

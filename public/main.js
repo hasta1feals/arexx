@@ -783,15 +783,14 @@ function updateLocalStorage(key, value) {
 let openOptions;
 
 function createCombinedChartFromLocalStorage() {
+  // Clear existing chart containers
+  const existingContainers = document.querySelectorAll('.dynamic-chart-container');
+  existingContainers.forEach(container => container.remove());
+
   const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
 
   if (combinedDataKeys.length > 0) {
     combinedDataKeys.forEach(key => {
-      // Check if container already exists in the DOM
-      if (document.getElementById(`${key}-container`)) {
-        return; // Skip iteration if container already exists
-      }
-
       const combinedDataString = localStorage.getItem(key);
       try {
         const combinedData = JSON.parse(combinedDataString);
@@ -825,6 +824,8 @@ function createCombinedChartFromLocalStorage() {
                 data.color = event.target.value;
                 data.backgroundColor = hexToRGBA(event.target.value, 0.1);
                 updateLocalStorage(key, JSON.stringify(combinedData));
+                // Recreate charts to reflect color changes
+                createCombinedChartFromLocalStorage();
               };
             })(data));
 
@@ -867,47 +868,12 @@ function createCombinedChartFromLocalStorage() {
             localStorage.removeItem(key);
           });
 
-          // Close modal logic
-          function closeModal(modal) {
-            console.log("Closing modal:", modal.id);
-            modal.style.display = "none";
-            // Remove the modal state from localStorage
-            localStorage.removeItem(modal.id);
-            localStorage.removeItem("activeTab");
-          }
-
-          // Open modal logic
-          function openModal(modal) {
-            console.log("Opening modal:", modal.id);
-            modal.style.display = "block";
-            // Store the modal state in localStorage
-            localStorage.setItem(modal.id, "open");
-          }
+          cardContent.appendChild(cardTitle);
+          cardContent.appendChild(removeButton);
 
           const openOptions = document.createElement('button');
           openOptions.classList.add('open-options');
-          openOptions.id = 'open-options';
           openOptions.innerHTML = '<i class="fas fa-cog"></i>';
-
-          document.body.appendChild(openOptions);
-
-          var modal6 = document.getElementById("addProductModal6");
-          var tab45 = document.getElementById("idtab45");
-
-          if (localStorage.getItem(modal6.id) === "open") {
-            openModal(modal6);
-          }
-
-          var activeTabName = localStorage.getItem("activeTab");
-          if (activeTabName) {
-            openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
-          }
-
-          tab45.onclick = function () {
-            localStorage.setItem("activeTab", "tab45");
-            openTab({ currentTarget: tab45 }, "tab45");
-          };
-
           openOptions.addEventListener('click', function () {
             // Hide all color pickers first
             document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => {
@@ -921,37 +887,8 @@ function createCombinedChartFromLocalStorage() {
               localStorage.setItem(form.id, 'block');
             });
 
-            const canvas = container.querySelector('.dynamic-chart');
-            const chartInstanceId = extractNumericPart(canvas.id);
-            currentChartDataKey = 'combinedData_' + chartInstanceId;
-
-            const chartDataString = localStorage.getItem(currentChartDataKey);
-            openModal(modal6);
-            if (chartDataString) {
-              try {
-                const chartData = JSON.parse(chartDataString);
-              } catch (error) {
-                console.error("Error parsing chart data:", error);
-              }
-            } else {
-              console.error("Chart data not found in local storage for key:", currentChartDataKey);
-            }
+            openModal(document.getElementById("addProductModal6"));
           });
-
-          var closeButtons = document.getElementsByClassName("close5");
-          for (var i = 0; i < closeButtons.length; i++) {
-            closeButtons[i].addEventListener('click', function () {
-              var modal6 = document.getElementById("addProductModal6");
-              modal6.style.display = "none";
-            });
-          }
-
-          window.onclick = function (event) {
-            var modal6 = document.getElementById("addProductModal6");
-            if (event.target == modal6) {
-              modal6.style.display = "none";
-            }
-          };
 
           cardContent.appendChild(openOptions);
 
@@ -965,8 +902,6 @@ function createCombinedChartFromLocalStorage() {
           canvas.setAttribute('height', '300');
 
           graphPlaceholder.appendChild(canvas);
-          cardContent.appendChild(cardTitle);
-          cardContent.appendChild(removeButton);
           cardContent.appendChild(graphPlaceholder);
           container.appendChild(cardContent);
 
@@ -1017,18 +952,12 @@ function createCombinedChartFromLocalStorage() {
 
 
 
-
-
-// Function to update the chart dataset with new data
-function updateChartDataset(canvas, dataIndex, newData) {
-  const chart = Chart.getChart(canvas); // Get the chart instance
-  if (chart) {
-    chart.data.datasets[dataIndex] = newData; // Update the dataset
-    chart.update(); // Update the chart
+// Optional: Add a listener to update charts when localStorage changes
+window.addEventListener('storage', (event) => {
+  if (event.key && event.key.startsWith('combinedData_')) {
+    createCombinedChartFromLocalStorage();
   }
-}
-
-
+});
 
 
 
