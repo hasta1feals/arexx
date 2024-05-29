@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use(function(req, res, next) {
  // Allow requests from this origin
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+  res.header('Access-Control-Allow-Origin', '*');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Include Authorization header
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Include allowed methods
   next();
@@ -432,16 +432,13 @@ async function sendEmail(subject, text, recipientEmail, senderEmail = "denzelrus
   try {
     // Create a transporter object using SMTP
     let transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      service: 'gmail',
       auth: {
-        type: 'OAuth2',
-        user: senderEmail,
-        clientId: "1071497641816-bofvj0vukv01uo4vanou1gp2cbptdb96.apps.googleusercontent.com",
-        clientSecret: "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",
-        refreshToken: "1//04t4iv85ylYI5CgYIARAAGAQSNwF-L9IrCsZrx7g0OiaXQ7hLJO0J-Fh4GYT3vyEVr8JUNayOnjfcOaqMaSQbFl7CQu0Z-pgi2oY",
-        accessToken: "ya29.a0AXooCgtYfrJ5kWpUyGwjzPbB4-Gj5zxpQllVXExajUCJ31FTVu3WR2LQywGPEmZ0xgZZJRNH_Y1Ah5r8R0g0eTaATCDmutLLN5pk2l5FR8ryPXrgPt6YPHSQuKhMpRHp7FFiIVD2YsPe7ZGdBgcK9z48dqKy0FQLLcuLaCgYKAXoSARASFQHGX2MiFxzA9hdihzhMgD458gOoUQ0171",
+          user: 'arexxschoollab@gmail.com',
+          pass: 'gvja gnsn yqpr ozcm'
       }
-    });
+  });
+
 
     // Define email options
     let mailOptions = {
@@ -567,17 +564,17 @@ function checkAlertConditions(parsedData) {
     const emailQuery = `
       SELECT email 
       FROM email 
-      WHERE id = ?
+      WHERE id = 1
     `;
 
-    db.get(emailQuery, [alertRow.id_alert], (err, emailRow) => {
+    db.get(emailQuery, (err, emailRow) => {
       if (err) {
         console.error('Error fetching email from the database:', err);
         return;
       }
 
       if (!emailRow) {
-        console.log('No email found for the specified alert:', alertRow.id_alert);
+        console.log('No email found for the specified alert:');
         return;
       }
 
@@ -606,6 +603,35 @@ function checkAlertConditions(parsedData) {
     });
   });
 }
+
+
+// Update email address endpoint
+app.post('/update-email', (req, res) => {
+  const { email } = req.body; // Extract email from request body
+
+  if (!email) {
+    return res.status(400).send('New email is required');
+  }
+
+  const updateEmailQuery = `
+    UPDATE email 
+    SET email = ? 
+    WHERE id = 1
+  `;
+
+  db.run(updateEmailQuery, [email], function(err) {
+    if (err) {
+      console.error('Error updating email in the database:', err);
+      return res.status(500).send('Internal server error');
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).send('Email not found');
+    }
+
+    res.send('Email updated successfully');
+  });
+});
 
 // Main function to handle data
 function onData(data) {
@@ -690,7 +716,7 @@ app.post('/openAndListenSerialPort', async (req, res) => {
         // Define criteria to find the desired serial port
         const criteria = {
           //voor mac zonder hoofletter A en windows met hoofletter A dus maak 2 pkg.json files een voor mac en een voor windows=
-          vendorId: '1A86',
+          vendorId: '1a86',
           productId: '7523'
         };
 
@@ -936,7 +962,7 @@ app.listen(PORT, () => {
  
 
   // Use child_process.exec to open the default web browser
-  const url = `http://127.0.0.1:5501/public`;
+  const url = `http://127.0.0.1:5500/arexx/public`;
   console.log(`Open ${url} in your browser`);
   switch (process.platform) {
     case 'darwin':

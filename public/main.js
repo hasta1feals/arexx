@@ -107,6 +107,8 @@ btn6.onclick = function() {
 };
   var buttontab2 = document.getElementById("modaltab2");
   var buttontab4 = document.getElementById("modaltab4");
+  var buttontab100 = document.getElementById("modaltab100");
+
 
 
   // Check if any modal element is null
@@ -186,6 +188,14 @@ btn6.onclick = function() {
     localStorage.setItem("activeTab", "tab4");
     // Update the active tab visually
     openTab({ currentTarget: buttontab1 }, "tab4");
+  };
+
+
+  buttontab100.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab100");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab100");
   };
 
   var activeTabName = localStorage.getItem("activeTab");
@@ -307,6 +317,56 @@ try {
         console.error("Error fetching unique types:", error);
       });
   }
+
+
+
+
+
+
+  function sendmail() {
+    var email = document.getElementById("inputBox100").value;
+   
+  
+    if (!email) {
+      console.error("Email is required");
+      return;
+    }
+  
+    var data = {
+      email: email,
+    };
+  
+    api("/update-email", "POST", data)
+      .then(function(response) {
+        console.log("Email updated successfully:", response);
+      })
+      .catch(function(error) {
+        console.error("Error updating email:", error);
+      });
+  
+
+  }
+ 
+
+
+  document.getElementById('send-email').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default behavior
+    var modal2000 = document.getElementById('addProductModal3')
+
+    function closeModal(modal) {
+      console.log("Closing modal:", modal.id);
+      modal.style.display = "none";
+      // Remove the modal state from localStorage
+      localStorage.removeItem(modal.id);
+      localStorage.removeItem("activeTab");
+    }
+    
+
+    closeModal(modal2000);
+    // Call the setAlertParameters function
+    sendmail();
+  });
+
 
   // Array of options
 
@@ -1376,6 +1436,11 @@ function api(endpoint, method = "GET", data = {}) {
 
   return fetch(API + endpoint, requestOptions).then((res) => res.json());
 }
+
+
+
+
+
 
 
 function api2(endpoint, method = "GET", data = {}) {
