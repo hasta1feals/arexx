@@ -149,6 +149,53 @@ app.post('/ping', (req, res) => {
 });
 
 
+app.post('/pingLocal', (req, res) => {
+  const url = 'http://multilogger.local/';
+  if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+  }
+
+  let responseSent = false;
+
+  const requestOptions = new URL(url);
+
+  const options = {
+      method: 'GET',
+      hostname: requestOptions.hostname,
+      port: requestOptions.port || 80,
+      path: requestOptions.pathname,
+      timeout: 50000 // 5 seconds timeout
+  };
+
+  const reqPing = http.request(options, (resPing) => {
+      if (!responseSent) {
+          const isAlive = resPing.statusCode === 200;
+          res.json({
+              url: url,
+              alive: isAlive,
+              statusCode: resPing.statusCode
+          });
+          responseSent = true;
+      }
+  });
+
+  reqPing.on('error', (e) => {
+      if (!responseSent) {
+          res.status(500).json({ error: e.message });
+          responseSent = true;
+      }
+  });
+
+  reqPing.on('timeout', () => {
+      if (!responseSent) {
+          reqPing.destroy();
+          res.status(408).json({ error: 'Request timed out', alive: false });
+          responseSent = true;
+      }
+  });
+
+  reqPing.end();
+});
 
 
 

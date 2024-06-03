@@ -1,4 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+
+  console.log('Document loaded, running script...'); // Initial debug log
+
+  // Function to ping the server and update the image
+  const pingServer = () => {
+    console.log('Attempting to ping the server...');
+    api('/pingLocal', 'POST')
+      .then(data => {
+        console.log('Received response from server:', data);
+        const img = document.getElementById('img-cc');
+        if (data.alive) {
+          img.src = 'img/connection.svg';
+          img.alt = 'Connected';
+          console.log('Server is alive. Updated image to connected.');
+        } else {
+          img.src = 'img/no_connection.svg';
+          img.alt = 'No Connection';
+          console.log('Server is not alive. Updated image to no connection.');
+        }
+      })
+      .catch(error => {
+        console.error('Error while pinging the server:', error);
+        const img = document.getElementById('img-cc');
+        img.src = 'img/no_connection.svg';
+        img.alt = 'No Connection';
+        console.log('Failed to reach server. Updated image to no connection.');
+      });
+  };
+
+  // Ping the server immediately on startup
+  pingServer();
+
+  // Set an interval to ping the server every minute (60000 milliseconds)
+  setInterval(pingServer, 60000);
   // Retrieve position and display status from local storage
   const graphListPosition = JSON.parse(localStorage.getItem('graphListPosition'));
   const graphListDisplay = localStorage.getItem('graphListDisplay');
@@ -1660,7 +1695,8 @@ function generateCombinedGraph(selectedItems) {
     color: "",// Creates an array with empty strings for each dataset
     sensornickname:"",
     linechoices:"",
-    lineThickness:""
+    lineThickness:"",
+    datechoices:""
 
   }));
   
@@ -2070,8 +2106,6 @@ function createCombinedChartFromLocalStorage() {
     console.error("No combined graph data found in local storage.");
   }
 }
-
-
 
 
 
