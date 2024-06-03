@@ -46,6 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+function openModal(modal) {
+  console.log("Opening modal:", modal.id);
+  modal.style.display = "block";
+  // Store the modal state in localStorage
+  localStorage.setItem(modal.id, "open");
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1652,7 +1658,10 @@ function generateCombinedGraph(selectedItems) {
     type: data.map(entry => entry.Type),
     naam: document.getElementById('graph-input').value,
     color: "",// Creates an array with empty strings for each dataset
-    sensornickname:""
+    sensornickname:"",
+    linechoices:"",
+    lineThickness:""
+
   }));
   
 
@@ -1756,34 +1765,317 @@ document.getElementById("setting-logo").addEventListener("click", function() {
 
 
 
-// Function to create the combined chart using Chart.js
-function createCombinedChart(canvas, combinedData) {
-  new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: combinedData[0].labels, // Using labels from the first dataset
-      datasets: combinedData.map((data, index) => ({
-        label: ` for ID ${selectedItems[0].id}`, // Using ID as label
-        data: data.values,
-        borderColor: index === 0 ? 'green' : 'blue', // Different color for each line
-        backgroundColor: 'rgba(0, 255, 0, 0.1)',
-        borderWidth: 1
-      }))
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: false,
-          // Set the steps for the y-axis
-          stepSize: 0.20, // Set the step size to 0.20
-          // Set the minimum and maximum values for the y-axis
-          min: Math.min(...combinedData.flatMap(data => data.values)),
-          max: Math.max(...combinedData.flatMap(data => data.values))
-        }
-      }
-    }
-  });
+function saveLineChoice(id, lineStyle) {
+  const lineChoicesKey = 'lineChoices';
+  const storedLineChoices = JSON.parse(localStorage.getItem(lineChoicesKey)) || {};
+  storedLineChoices[id] = lineStyle;
+  localStorage.setItem(lineChoicesKey, JSON.stringify(storedLineChoices));
 }
+
+function addLineStyleOptions(form, id, key, index, data) {
+  const lineStyleId = `line-style-${key}-${index}`;
+  const lineStyleSelect = document.createElement('select');
+  lineStyleSelect.setAttribute('id', lineStyleId);
+
+  const lineStyles = ['solid', 'dashed', 'dotted'];
+  lineStyles.forEach(style => {
+    const option = document.createElement('option');
+    option.value = style;
+    option.text = style.charAt(0).toUpperCase() + style.slice(1);
+    option.selected = data.linechoices === style;
+    lineStyleSelect.appendChild(option);
+  });
+
+  lineStyleSelect.addEventListener('change', (event) => {
+    saveLineChoice(id, event.target.value);
+    createCombinedChartFromLocalStorage();
+  });
+
+  form.appendChild(lineStyleSelect);
+}
+
+function createCombinedChartFromLocalStorage() {
+  // Clear existing chart containers
+  const existingContainers = document.querySelectorAll('.dynamic-chart-container');
+  existingContainers.forEach(container => container.remove());
+
+  const combinedDataKeys = Object.keys(localStorage).filter(key => key.startsWith('combinedData_'));
+
+  if (combinedDataKeys.length > 0) {
+    combinedDataKeys.forEach(key => {
+      const combinedDataString = localStorage.getItem(key);
+      try {
+        const combinedData = JSON.parse(combinedDataString);
+
+        if (Array.isArray(combinedData) && combinedData.length > 0) {
+          const labels = combinedData[0].labels;
+
+          const datasets = combinedData.map((data, index) => {
+            const lineChoicesKey = 'lineChoices';
+            const lineThicknessKey = 'lineThickness';
+            const storedLineChoices = JSON.parse(localStorage.getItem(lineChoicesKey)) || {};
+            const storedLineThickness = JSON.parse(localStorage.getItem(lineThicknessKey)) || {};
+            const lineStyle = storedLineChoices[data.id[0]] || 'solid';
+            const lineThickness = storedLineThickness[data.id[0]] || 1;
+
+            const colorFormId = `form-color-${key}-${index}`;
+            let colorForm = document.getElementById(colorFormId);
+            if (colorForm) {
+              colorForm.parentNode.removeChild(colorForm);
+            }
+            colorForm = document.createElement('form');
+            colorForm.setAttribute('id', colorFormId);
+            // Set initial display state from localStorage
+            colorForm.style.display = localStorage.getItem(colorFormId) || 'none';
+            colorForm.style.border = '1px solid #ccc';
+            colorForm.style.padding = '10px';
+            colorForm.style.marginBottom = '10px';
+
+            // Create a label element to display the ID above the color picker
+            const idLabel = document.createElement('label');
+            idLabel.textContent = `ID: ${data.id[0]}`;
+            colorForm.appendChild(idLabel);
+            colorForm.appendChild(document.createElement('br'));
+
+            // Color picker label
+            const colorPickerLabel = document.createElement('label');
+            colorPickerLabel.textContent = 'Line Color: ';
+            colorForm.appendChild(colorPickerLabel);
+
+            // Color picker input
+            colorForm.innerHTML += `<input type="color" id="${colorFormId}-input" value="${data.color}">`;
+            document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
+
+            const colorInput = colorForm.querySelector(`#${colorFormId}-input`);
+            colorInput.addEventListener('change', (function (data) {
+              return function (event) {
+                data.borderColor = hexToRGBA(event.target.value, 0.1);
+                data.color = event.target.value;
+                data.backgroundColor = hexToRGBA(event.target.value, 0.1);
+                updateLocalStorage(key, JSON.stringify(combinedData));
+                // Recreate charts to reflect color changes
+                createCombinedChartFromLocalStorage();
+              };
+            })(data));
+            colorForm.appendChild(document.createElement('br'));
+
+            // Line style label
+            const lineStyleLabel = document.createElement('label');
+            lineStyleLabel.textContent = 'Line Style: ';
+            colorForm.appendChild(lineStyleLabel);
+
+            // Line style select
+            const lineStyleId = `line-style-${key}-${index}`;
+            const lineStyleSelect = document.createElement('select');
+            lineStyleSelect.setAttribute('id', lineStyleId);
+
+            const lineStyles = ['solid', 'dashed', 'dotted'];
+            lineStyles.forEach(style => {
+              const option = document.createElement('option');
+              option.value = style;
+              option.text = style.charAt(0).toUpperCase() + style.slice(1);
+              option.selected = lineStyle === style;
+              lineStyleSelect.appendChild(option);
+            });
+
+            lineStyleSelect.addEventListener('change', (function (data) {
+              return function (event) {
+                const style = event.target.value;
+                data.linechoices = style;
+                const storedLineChoices = JSON.parse(localStorage.getItem(lineChoicesKey)) || {};
+                storedLineChoices[data.id[0]] = style;
+                localStorage.setItem(lineChoicesKey, JSON.stringify(storedLineChoices));
+                createCombinedChartFromLocalStorage();
+              };
+            })(data));
+
+            colorForm.appendChild(lineStyleSelect);
+            colorForm.appendChild(document.createElement('br'));
+
+            // Line thickness label
+            const lineThicknessLabel = document.createElement('label');
+            lineThicknessLabel.textContent = 'Line Thickness (1-9): ';
+            colorForm.appendChild(lineThicknessLabel);
+
+            // Line thickness input
+            const lineThicknessId = `line-thickness-${key}-${index}`;
+            const lineThicknessInput = document.createElement('input');
+            lineThicknessInput.setAttribute('type', 'number');
+            lineThicknessInput.setAttribute('id', lineThicknessId);
+            lineThicknessInput.setAttribute('min', '1');
+            lineThicknessInput.setAttribute('max', '9');
+            lineThicknessInput.setAttribute('value', lineThickness);
+
+            lineThicknessInput.addEventListener('change', (function (data) {
+              return function (event) {
+                const thickness = event.target.value;
+                data.lineThickness = thickness;
+                const storedLineThickness = JSON.parse(localStorage.getItem(lineThicknessKey)) || {};
+                storedLineThickness[data.id[0]] = thickness;
+                localStorage.setItem(lineThicknessKey, JSON.stringify(storedLineThickness));
+                createCombinedChartFromLocalStorage();
+              };
+            })(data));
+
+            colorForm.appendChild(lineThicknessInput);
+
+            return {
+              label: `Data for ${data.id[0]}`,
+              data: data.values,
+              borderColor: data.color,
+              backgroundColor: hexToRGBA(data.color, 0.1),
+              borderDash: lineStyle === 'dashed' ? [5, 5] : lineStyle === 'dotted' ? [1, 1] : [],
+              borderWidth: lineThickness,
+              naam: data.naam,
+              color: data.color,
+              sensornickname: data.sensornickname
+            };
+          });
+
+          const nam = datasets[0].naam;
+
+          const container = document.createElement('div');
+          container.classList.add('card');
+          container.classList.add('dynamic-chart-container');
+          container.setAttribute('id', `${key}-container`);
+          container.classList.add('drag');
+
+          const cardContent = document.createElement('div');
+          cardContent.classList.add('card-content');
+
+          const cardTitle = document.createElement('div');
+          cardTitle.classList.add('card-title');
+
+          if (nam === "") {
+            cardTitle.textContent = `Combined Chart - ${key}`;
+          } else {
+            cardTitle.textContent = nam;
+          }
+
+          const removeButton = document.createElement('button');
+          removeButton.classList.add('remove-button');
+          removeButton.innerHTML = '<i class="fas fa-times"></i>';
+          removeButton.addEventListener('click', function () {
+            container.remove();
+            localStorage.removeItem(key);
+          });
+
+          cardContent.appendChild(cardTitle);
+          cardContent.appendChild(removeButton);
+
+          const openOptions = document.createElement('button');
+          openOptions.classList.add('open-options');
+          openOptions.innerHTML = '<i class="fas fa-cog"></i>';
+          openOptions.addEventListener('click', function () {
+            // Hide all color pickers first
+            document.querySelectorAll('#addProductModal6 .modal-body form').forEach(form => {
+              form.style.display = 'none';
+              localStorage.setItem(form.id, 'none');
+            });
+
+            // Show only the relevant color pickers for the current graph
+            document.querySelectorAll(`#addProductModal6 .modal-body form[id^="form-color-${key}"]`).forEach(form => {
+              form.style.display = 'block';
+              localStorage.setItem(form.id, 'block');
+            });
+
+            openModal(document.getElementById("addProductModal6"));
+          });
+
+          cardContent.appendChild(openOptions);
+
+          const graphPlaceholder = document.createElement('div');
+          graphPlaceholder.classList.add('graph-placeholder');
+
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('id', `${key}-chart`);
+          canvas.setAttribute('class', 'dynamic-chart');
+          canvas.setAttribute('width', '1200');
+          canvas.setAttribute('height', '800'); // Adjust the height as needed
+
+          graphPlaceholder.appendChild(canvas);
+          cardContent.appendChild(graphPlaceholder);
+          container.appendChild(cardContent);
+
+          const combinedChartContainer = document.getElementById('cont');
+          if (combinedChartContainer) {
+            combinedChartContainer.appendChild(container);
+
+            new Chart(canvas, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: datasets
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                  padding: {
+                    left: 50,
+                    right: 50,
+                    top: 50,
+                    bottom: 50
+                  }
+                },
+                plugins: {
+                  zoom: {
+                    zoom: {
+                      wheel: {
+                        enabled: true,
+                      },
+                      pinch: {
+                        enabled: true
+                      },
+                      mode: 'xy',
+                    }
+                  }
+                },
+                scales: {
+                  x: {
+                    grid: {
+                      display: true,
+                      color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    title: {
+                      display: true,
+                      text: 'Time'
+                    }
+                  },
+                  y: {
+                    beginAtZero: false,
+                    min: Math.min(...combinedData.flatMap(data => data.values)) - 1, // Ensure some padding below min value
+                    max: Math.max(...combinedData.flatMap(data => data.values)) + 1, // Ensure some padding above max value
+                    grid: {
+                      display: true,
+                      color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    title: {
+                      display: true,
+                      text: 'Value'
+                    }
+                  }
+                }
+              }
+            });
+          } else {
+            console.error("Container for chart not found.");
+          }
+        }
+      } catch (error) {
+        console.error(`Error parsing data for key ${key}:`, error);
+      }
+    });
+  } else {
+    console.error("No combined graph data found in local storage.");
+  }
+}
+
+
+
+
+
+
 
 
   

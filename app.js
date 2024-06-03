@@ -962,7 +962,7 @@ app.listen(PORT, () => {
  
 
   // Use child_process.exec to open the default web browser
-  const url = `http://127.0.0.1:5500/arexx/public`;
+  const url = `http://localhost:5500/arexx/public/`;
   console.log(`Open ${url} in your browser`);
   switch (process.platform) {
     case 'darwin':
