@@ -49,6 +49,9 @@
             <button class="table-button combine-graph" id="myBtn6">
               Alerts
             </button>
+            <button class="table-button combine-graph" id="myBtn20001">
+              Export Excel
+            </button>
           </div>
         </div>
         <div id="cont" class="container1">
@@ -199,6 +202,7 @@
 
 
 
+
     <div id="addProductModal6" class="modal">
       <!-- Modal content -->
       <div class="modal-content">
@@ -239,6 +243,47 @@
         </form>
       </div>
     </div>
+
+
+
+    <div id="addProductModal2000" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close close5">&times;</span>
+        <!-- Tab links -->
+        <div class="tab">
+          <button id="modaltab2000" class="tablinks" onclick="openTab(event, 'tab2000')">
+            Excel
+          </button>
+          
+        </div>
+
+        <!-- Tab content -->
+        <div id="tab2000" class="tabcontent">
+          <input type="text" id="graph-input" placeholder="Enter graph name" />
+          <div class="form-group"></div>
+          <!-- Add content specific to tab 1 here -->
+        </div>
+
+      
+        <!-- Form for combining graphs -->
+        <form class="formChangeRegion">
+          <div class="form-group">
+            <!-- Add form inputs or content here -->
+          </div>
+          <div class="modalbtn">
+            <button id="closemodal5" class="mbtn export">Discard</button>
+            
+            <button id="combine-graph" class="mbtn combine-graph">
+              Export to Excel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

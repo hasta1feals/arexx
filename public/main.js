@@ -109,6 +109,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var discardButton2 = document.getElementById("close-button3");
 
   var modal3 = document.getElementById("addProductModal3");
+  var modal2000 = document.getElementById("addProductModal2000");
+
   var btn3 = document.getElementById("myBtn6");
   var span5_3 = document.getElementsByClassName("close5")[1];
   var span5_4 = document.getElementsByClassName("close5")[2];
@@ -119,7 +121,6 @@ var btn6 = document.getElementById("changecolorASAH");
 
 var bt7 = document.getElementById("discardcolor")
 
- 
   span5_3.onclick = function() {
    closeModal(modal3);
 };
@@ -149,7 +150,7 @@ btn6.onclick = function() {
   var buttontab2 = document.getElementById("modaltab2");
   var buttontab4 = document.getElementById("modaltab4");
   var buttontab100 = document.getElementById("modaltab100");
-
+  var buttontab2000 = document.getElementById("tab2000");
 
 
   // Check if any modal element is null
@@ -239,6 +240,15 @@ btn6.onclick = function() {
     openTab({ currentTarget: buttontab1 }, "tab100");
   };
 
+
+  buttontab2000.onclick = function () {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", "tab2000");
+    // Update the active tab visually
+    openTab({ currentTarget: buttontab1 }, "tab2000");
+  };
+
+
   var activeTabName = localStorage.getItem("activeTab");
   if (activeTabName) {
     openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
@@ -248,6 +258,10 @@ btn6.onclick = function() {
 
   btn3.onclick = function () {
     openModal(modal3);
+  };
+var btn2000 = document.getElementById("myBtn20001");
+  btn2000.onclick = function () {
+    openModal(modal2000);
   };
 
   span5_3.onclick = function () {
