@@ -115,7 +115,7 @@ app.post('/ping', (req, res) => {
       hostname: requestOptions.hostname,
       port: requestOptions.port || 80,
       path: requestOptions.pathname,
-      timeout: 5000 // 5 seconds timeout
+      timeout: 2000 // 5 seconds timeout
   };
 
   const reqPing = http.request(options, (resPing) => {
@@ -150,7 +150,7 @@ app.post('/ping', (req, res) => {
 
 
 app.post('/pingLocal', (req, res) => {
-  const url = 'http://multilogger.local/';
+  const url = 'http://multilogger.local/ping';
   if (!url) {
       return res.status(400).json({ error: 'URL is required' });
   }
@@ -164,7 +164,7 @@ app.post('/pingLocal', (req, res) => {
       hostname: requestOptions.hostname,
       port: requestOptions.port || 80,
       path: requestOptions.pathname,
-      timeout: 50000 // 5 seconds timeout
+      timeout: 70000 // 5 seconds timeout
   };
 
   const reqPing = http.request(options, (resPing) => {

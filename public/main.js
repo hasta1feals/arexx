@@ -1776,16 +1776,17 @@ document.getElementById("setting-logo").addEventListener("click", function() {
   // Show the loading indicator
   loadingIndicator.style.display = "block";
 
-  api("/ping", "POST")  // Call the API
+  api("/pingLocal", "POST")  // Call the API
     .then((res) => {
       console.log("Response from API:", res); // Log the actual response
 
       // Check if the server is alive
-      if (res.alive === false) {
-       alert("Please connect to the 'arexx_multilogger' wifi!'");
-      } else if (res.alive === true) {
-        // Redirect to the settings page
+      if (res.alive === true) {
         window.location.href = "setting.html";
+      } else{
+        // Redirect to the settings page
+       
+        alert("Please connect to the 'arexx_multilogger' wifi!'");
       }
 
 
@@ -1830,6 +1831,11 @@ function addLineStyleOptions(form, id, key, index, data) {
   form.appendChild(lineStyleSelect);
 }
 
+function updateLocalStorage(key, value) {
+  localStorage.setItem(key, value);
+}
+
+
 function createCombinedChartFromLocalStorage() {
   // Clear existing chart containers
   const existingContainers = document.querySelectorAll('.dynamic-chart-container');
@@ -1849,10 +1855,14 @@ function createCombinedChartFromLocalStorage() {
           const datasets = combinedData.map((data, index) => {
             const lineChoicesKey = 'lineChoices';
             const lineThicknessKey = 'lineThickness';
+            const dateChoicesKey = 'datechoices';
             const storedLineChoices = JSON.parse(localStorage.getItem(lineChoicesKey)) || {};
             const storedLineThickness = JSON.parse(localStorage.getItem(lineThicknessKey)) || {};
+            const storedDateChoices = JSON.parse(localStorage.getItem(dateChoicesKey)) || {};
             const lineStyle = storedLineChoices[data.id[0]] || 'solid';
             const lineThickness = storedLineThickness[data.id[0]] || 1;
+            const startDate = storedDateChoices[data.id[0]] ? new Date(storedDateChoices[data.id[0]].startDate) : null;
+            const endDate = storedDateChoices[data.id[0]] ? new Date(storedDateChoices[data.id[0]].endDate) : null;
 
             const colorFormId = `form-color-${key}-${index}`;
             let colorForm = document.getElementById(colorFormId);
@@ -1941,6 +1951,7 @@ function createCombinedChartFromLocalStorage() {
             lineThicknessInput.setAttribute('min', '1');
             lineThicknessInput.setAttribute('max', '9');
             lineThicknessInput.setAttribute('value', lineThickness);
+            
 
             lineThicknessInput.addEventListener('change', (function (data) {
               return function (event) {
@@ -1952,23 +1963,112 @@ function createCombinedChartFromLocalStorage() {
                 createCombinedChartFromLocalStorage();
               };
             })(data));
+            
 
             colorForm.appendChild(lineThicknessInput);
+            colorForm.appendChild(document.createElement('br'));
+
+            // Date range filter label
+            colorForm.appendChild(document.createElement('br'));
+
+            const dateRangeLabel = document.createElement('label');
+            dateRangeLabel.textContent = 'Date Range: ';
+            colorForm.appendChild(dateRangeLabel);
+            colorForm.appendChild(document.createElement('br'));
+
+            // Start date input
+            const startDateLabel = document.createElement('label');
+            startDateLabel.textContent = 'Start Date:';
+            colorForm.appendChild(startDateLabel);
+
+            const startDateInput = document.createElement('input');
+            startDateInput.setAttribute('type', 'date');
+            startDateInput.setAttribute('id', `start-date-${key}-${index}`);
+            startDateInput.value = storedDateChoices[data.id[0]] ? storedDateChoices[data.id[0]].startDate : '';
+            colorForm.appendChild(startDateInput);
+            colorForm.appendChild(document.createElement('br'));
+
+            // End date input
+            const endDateLabel = document.createElement('label');
+            endDateLabel.textContent = 'End Date:';
+            colorForm.appendChild(endDateLabel);
+
+            const endDateInput = document.createElement('input');
+            endDateInput.setAttribute('type', 'date');
+            endDateInput.setAttribute('id', `end-date-${key}-${index}`);
+            endDateInput.value = storedDateChoices[data.id[0]] ? storedDateChoices[data.id[0]].endDate : '';
+            colorForm.appendChild(endDateInput);
+            colorForm.appendChild(document.createElement('br'));
+
+            const applyFilterButton = document.createElement('button');
+            applyFilterButton.setAttribute('type', 'button');
+            applyFilterButton.textContent = 'Apply Filter';
+            applyFilterButton.style.padding = '5px 10px';
+            applyFilterButton.style.marginTop = '10px';
+            applyFilterButton.style.backgroundColor = '#007bff';
+            applyFilterButton.style.color = 'white';
+            applyFilterButton.style.border = 'none';
+            applyFilterButton.style.borderRadius = '4px';
+            applyFilterButton.style.cursor = 'pointer';
+
+            applyFilterButton.addEventListener('click', () => {
+              const startDate = document.getElementById(`start-date-${key}-${index}`).value;
+              const endDate = document.getElementById(`end-date-${key}-${index}`).value;
+              const storedDateChoices = JSON.parse(localStorage.getItem(dateChoicesKey)) || {};
+              storedDateChoices[data.id[0]] = { startDate, endDate };
+              localStorage.setItem(dateChoicesKey, JSON.stringify(storedDateChoices));
+              createCombinedChartFromLocalStorage();
+            });
+
+            colorForm.appendChild(applyFilterButton);
+
+            const resetFilterButton = document.createElement('button');
+            resetFilterButton.setAttribute('type', 'button');
+            resetFilterButton.textContent = 'Reset Filter';
+            resetFilterButton.style.padding = '5px 10px';
+            resetFilterButton.style.marginTop = '10px';
+            resetFilterButton.style.marginLeft = '10px';
+            resetFilterButton.style.backgroundColor = '#dc3545';
+            resetFilterButton.style.color = 'white';
+            resetFilterButton.style.border = 'none';
+            resetFilterButton.style.borderRadius = '4px';
+            resetFilterButton.style.cursor = 'pointer';
+
+            resetFilterButton.addEventListener('click', () => {
+              startDateInput.value = '';
+              endDateInput.value = '';
+              const storedDateChoices = JSON.parse(localStorage.getItem(dateChoicesKey)) || {};
+              delete storedDateChoices[data.id[0]];
+              localStorage.setItem(dateChoicesKey, JSON.stringify(storedDateChoices));
+              createCombinedChartFromLocalStorage();
+            });
+
+            colorForm.appendChild(resetFilterButton);
+
+            document.querySelector('#addProductModal6 .modal-body').appendChild(colorForm);
+
+            const filteredValues = data.values.filter((value, index) => {
+              const date = new Date(data.labels[index]);
+              return (!startDate || date >= startDate) && (!endDate || date <= endDate);
+            });
+            const filteredLabels = data.labels.filter((label, index) => {
+              const date = new Date(label);
+              return (!startDate || date >= startDate) && (!endDate || date <= endDate);
+            });
 
             return {
               label: `Data for ${data.id[0]}`,
-              data: data.values,
+              data: filteredValues,
               borderColor: data.color,
               backgroundColor: hexToRGBA(data.color, 0.1),
               borderDash: lineStyle === 'dashed' ? [5, 5] : lineStyle === 'dotted' ? [1, 1] : [],
               borderWidth: lineThickness,
+              labels: filteredLabels,
               naam: data.naam,
               color: data.color,
               sensornickname: data.sensornickname
             };
           });
-
-          const nam = datasets[0].naam;
 
           const container = document.createElement('div');
           container.classList.add('card');
@@ -1981,7 +2081,7 @@ function createCombinedChartFromLocalStorage() {
 
           const cardTitle = document.createElement('div');
           cardTitle.classList.add('card-title');
-
+          const nam = datasets[0].naam;
           if (nam === "") {
             cardTitle.textContent = `Combined Chart - ${key}`;
           } else {
@@ -2040,7 +2140,7 @@ function createCombinedChartFromLocalStorage() {
             new Chart(canvas, {
               type: 'line',
               data: {
-                labels: labels,
+                labels: datasets[0].labels,
                 datasets: datasets
               },
               options: {
@@ -2080,8 +2180,8 @@ function createCombinedChartFromLocalStorage() {
                   },
                   y: {
                     beginAtZero: false,
-                    min: Math.min(...combinedData.flatMap(data => data.values)) - 1, // Ensure some padding below min value
-                    max: Math.max(...combinedData.flatMap(data => data.values)) + 1, // Ensure some padding above max value
+                    min: Math.min(...datasets.flatMap(data => data.data)) - 1, // Ensure some padding below min value
+                    max: Math.max(...datasets.flatMap(data => data.data)) + 1, // Ensure some padding above max value
                     grid: {
                       display: true,
                       color: 'rgba(0, 0, 0, 0.1)'
@@ -2109,15 +2209,12 @@ function createCombinedChartFromLocalStorage() {
 
 
 
-
-
-
   
 
 document.getElementById("cn").addEventListener("click", function() {
   console.log("Hello");
 
-  fetch("http://192.168.4.1/get-wifi", {
+  fetch("http://multilogger.local/get-wifi", {
     method: "GET"
   })
   .then((response) => {
@@ -2145,7 +2242,7 @@ function sendWifi(e) {
   var password = document.getElementById("password").value;
   var adminKey = "admin";
 
-  fetch("http://192.168.4.1/set-wifi-sta", {
+  fetch("http://multilogger.local/set-wifi-sta", {
       method: "POST",
       body: JSON.stringify({ 
           STA: {
