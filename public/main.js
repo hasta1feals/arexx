@@ -92,7 +92,6 @@ function openModal(modal) {
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOMContentLoaded event fired");
 
-
   // Load the HTML content into the "nav-placeholder" element
   $("#nav-placeholder").load("navbar.html");
 
@@ -100,12 +99,9 @@ document.addEventListener("DOMContentLoaded", function () {
   var modal1 = document.getElementById("addProductModal");
   var btn1 = document.getElementById("myBtn3");
   var span5_1 = document.getElementsByClassName("close5")[0];
-  var buttontab1 = document.getElementById("modaltab1");
-  var buttontab10 = document.getElementById("modaltab10");
   var discardButton = document.getElementById("closemodal5");
-  discardButton.addEventListener('click', function() {
-    console.log('Hello');
-  });
+  var discardButton2000 = document.getElementById("closemodal2000");
+
   var discardButton2 = document.getElementById("close-button3");
 
   var modal3 = document.getElementById("addProductModal3");
@@ -114,44 +110,51 @@ document.addEventListener("DOMContentLoaded", function () {
   var btn3 = document.getElementById("myBtn6");
   var span5_3 = document.getElementsByClassName("close5")[1];
   var span5_4 = document.getElementsByClassName("close5")[2];
+  var span5_5 = document.getElementsByClassName("close5")[3];
 
 
-var modal209 = document.getElementById("addProductModal6"); 
-var btn6 = document.getElementById("changecolorASAH");
-
-var bt7 = document.getElementById("discardcolor")
+  var modal209 = document.getElementById("addProductModal6"); 
+  var btn6 = document.getElementById("changecolorASAH");
+  var bt7 = document.getElementById("discardcolor");
 
   span5_3.onclick = function() {
-   closeModal(modal3);
-};
+    closeModal(modal3);
+  };
 
-span5_4.onclick = function() {
-  closeModal(modal209);
-};
+  span5_4.onclick = function() {
+    closeModal(modal209);
+  };
+  span5_5.onclick = function() {
+    closeModal(modal2000);
+  };
 
-discardButton.onclick = function() {
+  discardButton.onclick = function() {
+    closeModal(modal1);
+  };
+
+
+  discardButton2000.onclick = function() {
+    closeModal(modal2000);
+  };
+
+
+  bt7.onclick = function() {
+    closeModal(modal209);
+  };
   
-  closeModal(modal1);
-};
+  discardButton2.onclick = function() {
+    closeModal(modal3);
+  };
 
-bt7.onclick = function() {
-  
-  closeModal(modal209);
-};
-discardButton2.onclick = function() {
+  btn6.onclick = function() {
+    closeModal(modal209);
+  };
 
-  closeModal(modal3);
-};
-
-btn6.onclick = function() {
-
-  closeModal(modal209);
-};
+  var buttontab1 = document.getElementById("modaltab1");
   var buttontab2 = document.getElementById("modaltab2");
   var buttontab4 = document.getElementById("modaltab4");
   var buttontab100 = document.getElementById("modaltab100");
-  var buttontab2000 = document.getElementById("tab2000");
-
+  var buttontab2000 = document.getElementById("modaltab2000");
 
   // Check if any modal element is null
   if (!modal1) {
@@ -178,22 +181,22 @@ btn6.onclick = function() {
     localStorage.removeItem(modal.id);
     localStorage.removeItem("activeTab");
 
-  setTimeout(function() {
-    location.reload();
-  }, 100);
+    setTimeout(function() {
+      location.reload();
+    }, 100);
   }
 
-
-  
   // Check if the modal was open before and open it again
   if (localStorage.getItem(modal1.id) === "open") {
     openModal(modal1);
   }
 
-
-
   if (localStorage.getItem(modal3.id) === "open") {
     openModal(modal3);
+  }
+
+  if (localStorage.getItem(modal2000.id) === "open") {
+    openModal(modal2000);
   }
 
   // Add event listeners to open and close the modals
@@ -206,60 +209,63 @@ btn6.onclick = function() {
   };
 
   buttontab1.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab1");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab1");
+    setActiveTab("tab1");
   };
 
-  // buttontab10.onclick = function () {
-  //   // Store the active tab state in localStorage
-  //   localStorage.setItem("activeTab", "tab10");
-  //   // Update the active tab visually
-  //   openTab({ currentTarget: buttontab1 }, "tab10");
-  // };
   buttontab2.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab2");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab2");
+    setActiveTab("tab2");
   };
 
   buttontab4.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab4");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab4");
+    setActiveTab("tab4");
   };
-
 
   buttontab100.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab100");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab100");
+    setActiveTab("tab100");
   };
-
 
   buttontab2000.onclick = function () {
-    // Store the active tab state in localStorage
-    localStorage.setItem("activeTab", "tab2000");
-    // Update the active tab visually
-    openTab({ currentTarget: buttontab1 }, "tab2000");
+    setActiveTab("tab20000");
   };
 
+  // Function to set the active tab
+  function setActiveTab(tabName) {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", tabName);
+    // Update the active tab visually
+    openTab(tabName);
+  }
+
+  // Function to open a tab
+  function openTab(tabName) {
+    // Hide all tab content
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Remove active class from all tab buttons
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab and add active class to the button
+    document.getElementById(tabName).style.display = "block";
+    document.querySelector("[data-tab='" + tabName + "']").className += " active";
+  }
 
   var activeTabName = localStorage.getItem("activeTab");
   if (activeTabName) {
-    openTab({ currentTarget: document.querySelector("[data-tab='" + activeTabName + "']") }, activeTabName);
+    openTab(activeTabName);
     console.log("Active tab:", activeTabName);
   }
-
 
   btn3.onclick = function () {
     openModal(modal3);
   };
-var btn2000 = document.getElementById("myBtn20001");
+
+  var btn2000 = document.getElementById("myBtn20001");
   btn2000.onclick = function () {
     openModal(modal2000);
   };
@@ -277,8 +283,13 @@ var btn2000 = document.getElementById("myBtn20001");
     if (event.target == modal3) {
       closeModal(modal3);
     }
+
+    if (event.target == modal2000) {
+      closeModal(modal2000);
+    }
   };
 });
+
 
 
 
