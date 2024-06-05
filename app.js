@@ -329,7 +329,7 @@ app.get('/getVOLT', (req, res) => {
 
 
 app.get('/getAll', (req, res) => {
-  db.all('SELECT * FROM mqtt_messages', (err, rows) => {
+  db.all('SELECT * FROM mqtt_messages ORDER BY TimeStamp;', (err, rows) => {
     if (err) {
       res.status(500).send({ error: 'Error fetching alarm settings' });
     } else {

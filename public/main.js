@@ -1452,8 +1452,9 @@ function searchTable() {
 
 
 function handleKeyupEvent() {
-  searchTable();
   searchTable4();
+  searchTable();
+
 }
 
 document.addEventListener("DOMContentLoaded", function () {
