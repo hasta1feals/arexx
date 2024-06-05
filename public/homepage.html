@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
     <style>
       .drag {
@@ -255,33 +256,34 @@
           <button id="modaltab2000" class="tablinks" onclick="openTab(event, 'tab20000')">
             Excel
           </button>
-          
         </div>
-
+    
         <!-- Tab content -->
         <div id="tab20000" class="tabcontent">
-          <input type="text" id="graph-input" placeholder="Enter graph name" />
-          <div class="form-group"></div>
-          <!-- Add content specific to tab 1 here -->
-        </div>
-
-      
+          <div class="form-group">
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date" class="form-control" />
+          </div>
+     
+    
         <!-- Form for combining graphs -->
         <form class="formChangeRegion">
           <div class="form-group">
             <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button id="closemodal2000" class="mbtn export">Discard</button>
-            
-            <button id="combine-graph" class="mbtn combine-graph">
+            <button type="button" id="closemodal2000" class="mbtn export">Discard</button>
+            <button type="button" id="exceldownload" class="mbtn combine-graph">
               Export to Excel
             </button>
           </div>
         </form>
       </div>
     </div>
-
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

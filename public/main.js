@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   pingServer();
 
   // Set an interval to ping the server every minute (60000 milliseconds)
-  setInterval(pingServer, 60000);
+  setInterval(pingServer,10000 );
   // Retrieve position and display status from local storage
   const graphListPosition = JSON.parse(localStorage.getItem('graphListPosition'));
   const graphListDisplay = localStorage.getItem('graphListDisplay');
@@ -79,6 +79,63 @@ document.addEventListener('DOMContentLoaded', function() {
       localStorage.setItem('graphListDisplay', graphList.style.display);
   });
 });
+//makes the excel
+try {
+  document.getElementById('exceldownload').addEventListener('click', async () => {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
+    if (!startDate || !endDate) {
+      alert('Please select both start date and end date.');
+      return;
+    }
+
+    try {
+      const data = await api(`/getDate?startDate=${startDate}&endDate=${endDate}`, "GET");
+      
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+
+      // Set the headers
+      const headers = ['Id', 'Value', 'Type', 'Unit', 'TimeStamp', 'Nickname'];
+      XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: 'A1' });
+
+      // Style the header
+      const headerCellStyle = {
+        font: { bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '4F81BD' } },
+        alignment: { horizontal: 'center' }
+      };
+
+      headers.forEach((header, index) => {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: index });
+        if (!worksheet[cellAddress]) worksheet[cellAddress] = {};
+        worksheet[cellAddress].s = headerCellStyle;
+      });
+
+      // Style the data
+      for (let R = 1; R <= data.length; ++R) {
+        for (let C = 0; C < headers.length; ++C) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!worksheet[cellAddress]) worksheet[cellAddress] = {};
+          worksheet[cellAddress].s = { alignment: { horizontal: 'center' } };
+        }
+      }
+
+      // Set column widths
+      worksheet['!cols'] = headers.map(header => ({ wch: Math.max(header.length, 20) }));
+
+      // Create the Excel file
+      XLSX.writeFile(workbook, 'data.xlsx');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to fetch data or generate Excel file.');
+    }
+  });
+} catch (error) {
+  // Intentionally left empty to prevent page break
+}
 
 
 function openModal(modal) {
@@ -1220,6 +1277,10 @@ let originalRows = [];
 
 let newDataReceived = localStorage.getItem('newDataReceived') === 'true' ? true : false;
 
+
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
   function itemsLoad() {
     api("/getAllitems", "GET")
@@ -1265,6 +1326,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
 
+
         // Update newDataReceived flag based on whether new data is received
         newDataReceived = hasNewData;
         localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
@@ -1283,9 +1345,51 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
+  try {
+    function itemsLoad2() {
+      api("/getAll", "GET")
+        .then((res) => {
+          const tableBody = document.querySelector("#myTable2 tbody");
+          tableBody.innerHTML = ''; // Clear existing rows
+  
+          // Check if new data is received
+          const hasNewData = res.rows && res.rows.length > 0;
+  
+          // Loop through the items and add them to the table
+          if (hasNewData) {
+            res.rows.forEach((row) => {
+              const newRow = document.createElement("tr");
+              newRow.innerHTML = `
+                <td>${row.Id}</td>
+                <td>${row.Value}</td>
+                <td>${row.Type}</td>
+                <td>${row.TimeStamp}</td>
+                <td>${row.Nickname}</td>
+                
+              `;
+              tableBody.appendChild(newRow);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error('Error loading items:', error);
+        });
+    }
+  
+    // Call the function to load items
+    itemsLoad2();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+  
+
+
+
+ 
+
   // Initial table update
   itemsLoad();
-
+  // itemsLoad2();
   // Periodically update the table every 5 seconds
   setInterval(itemsLoad, 5000);
 });
@@ -1293,7 +1397,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+function searchTable4() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable2");
+  tr = table.getElementsByTagName("tr");
 
+  // Loop through all table rows, and hide those that don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td");
+    for (var j = 0; j < td.length; j++) {
+      if (td[j]) {
+        txtValue = td[j].textContent || td[j].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+          break; // Break the inner loop if a match is found
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+}
 
 
 function searchTable() {
@@ -1319,6 +1446,14 @@ function searchTable() {
       }
     }
   }
+}
+
+
+
+
+function handleKeyupEvent() {
+  searchTable();
+  searchTable4();
 }
 
 document.addEventListener("DOMContentLoaded", function () {

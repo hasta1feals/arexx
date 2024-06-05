@@ -274,6 +274,27 @@ app.get('/getDataFromDatabase', (req, res) => {
 });
 
 
+app.get('/getDate', (req, res) => {
+  const { startDate, endDate } = req.query; // Get startDate and endDate from the query parameters
+
+  // Check if both startDate and endDate are provided
+  if (!startDate || !endDate) {
+    return res.status(400).send({ error: 'startDate and endDate parameters are required' });
+  }
+
+  // Optional: You can add further validation for date format here if necessary
+
+  // Fetch data from the database for the provided startDate and endDate
+  db.all('SELECT mqtt_messages.Id, mqtt_messages.Value, mqtt_messages.Type, mqtt_messages.Unit, mqtt_messages.TimeStamp, mqtt_messages.Nickname FROM mqtt_messages WHERE mqtt_messages.TimeStamp BETWEEN ? AND ?', [startDate, endDate], (err, rows) => {
+    if (err) {
+      return res.status(500).send({ error: 'Error fetching data from the database' });
+    }
+    res.send(rows);
+  });
+});
+
+
+
 
 app.get('/getUniqueTypesForIDFromDatabase', (req, res) => {
   const id = req.query.id; // Get the ID from the query parameters
@@ -306,6 +327,16 @@ app.get('/getVOLT', (req, res) => {
 
 
 
+
+app.get('/getAll', (req, res) => {
+  db.all('SELECT * FROM mqtt_messages', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching alarm settings' });
+    } else {
+      res.send({ message: 'Success', rows });
+    }
+  });
+});
 app.get('/getAlarm', (req, res) => {
   db.all('SELECT * FROM alert_settings', (err, rows) => {
     if (err) {
