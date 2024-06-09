@@ -734,7 +734,7 @@ if (graphList) {
 
       dataArray.forEach(entry => {
         const idElement = document.createElement('div');
-        idElement.textContent = `${entry.Nickname[0]}`;
+        // idElement.textContent = `${entry.Nickname[0]}`;
         idContainer.appendChild(idElement);
       });
 
@@ -1605,11 +1605,26 @@ function displayErrorMessage(message) {
 
 
 
+
 // You can add all the buttons you want to connect to the API or button functions
 document.addEventListener("DOMContentLoaded", function () {
   connectButton("myButton", getHomepage);
   connectButton("usb-choice", callOpenAndListenSerialPort);
   createDynamicLabel();
+
+
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  api("/getEmail", "GET").then((res) => {
+    document.getElementById('activeEmail').value = res[0].email || "SLATTTT";
+
+    console.log(res[0].email);
+  });
+
+  console.log("Email");
 });
 
 function connectButton(id, event) {
@@ -2443,3 +2458,94 @@ var sendwifiBtn = document.getElementById("sendWifibtn");
 sendwifiBtn.onclick = function (e) {
   sendWifi(e); // Pass the event object to the sendWifi function
 }
+
+function sendMQTT(e) {
+  e.preventDefault(); // Prevent the default form submission behavior
+
+  var broker = document.getElementById("broker").value;
+  var port = document.getElementById("port").value;
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("mqtt-password").value;
+  var topic = document.getElementById("topic").value;
+  var adminKey = document.getElementById("admin-key").value;
+
+  fetch("http://multilogger.local/set-mqtt", {
+      method: "POST",
+      body: JSON.stringify({
+          MQTT: {
+              BROKER: broker,
+              PORT: port,
+              USERNAME: username,
+              PWD: password,
+              TOPIC: topic
+          },
+          "admin-key": adminKey // Use quotes for property names with hyphens
+      })
+  })
+  .then(response => response.text()) // Read the response as text
+  .then(text => {
+      try {
+          const data = JSON.parse(text); // Try to parse the response as JSON
+          console.log("Response from API:", data); // Log the actual response if it's valid JSON
+      } catch {
+          console.log("Response from API:", text); // Log the response as plain text if it's not JSON'
+          if (text.trim() === "MQTT settings successfully updated") {
+              document.getElementById("mqttStatusMessage").innerHTML = '<span style="color: red;">&#10060; ' + text + '</span>';
+              setTimeout(() => {
+                  window.location.href = "choice.html"; // Change to your desired page
+              }, 5000);
+          } else if (!text.includes("successfully")) { // Check if the response text indicates an error
+              document.getElementById("mqttStatusMessage").innerHTML = 
+              '<span style="color: green;">&#10004; ' + text + '</span> <br> <span> Please unplug and plug your device!</span>';
+              setTimeout(() => {
+                window.location.href = "choice.html"; // Change to your desired page
+            }, 5000);
+          }
+      }
+  })
+  .catch(error => {
+      console.error("Error:", error.message); // Log any errors
+      document.getElementById("mqttStatusMessage").innerHTML = '<span style="color: red;">&#10060; ' + error.message + '</span>';
+  });
+}
+
+var sendMQTTBtn = document.getElementById("sendMQTTbtn");
+
+sendMQTTBtn.onclick = function (e) {
+  sendMQTT(e); // Pass the event object to the sendMQTT function
+  console.log("iworke")
+}
+
+
+
+function fetchCurrentMQTTSettings() {
+  fetch("http://multilogger.local/get-mqtt")
+      .then(response => response.json()) // Parse the response as JSON
+      .then(data => {
+          document.getElementById("current-mqtt").innerText = `
+              Broker: ${data.MQTT.BROKER}
+              Port: ${data.MQTT.PORT}
+              Username: ${data.MQTT.USERNAME}
+              Password: ${data.MQTT.PWD}
+              Topic: ${data.MQTT.TOPIC}
+          `;
+      })
+      .catch(error => {
+          console.error("Error fetching MQTT settings:", error);
+          document.getElementById("current-mqtt").innerText = "Error loading MQTT settings.";
+      });
+}
+
+document.getElementById("cn-mqtt").addEventListener("click", function() {
+  fetch("http://multilogger.local/get-current-network")
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById("current").innerText = data.network;
+      })
+      .catch(error => {
+          console.error("Error fetching network settings:", error);
+          document.getElementById("current").innerText = "Error loading network settings.";
+      });
+});
+
+document.getElementsByClassName("tablink")[3].addEventListener("click", fetchCurrentMQTTSettings);

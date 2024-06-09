@@ -236,6 +236,18 @@ app.get('/getRH', (req, res) => {
 });
 
 
+app.get('/getEmail', (req, res) => {
+  db.all('SELECT email FROM email ', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching users' });
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+
+
 app.get('/get-wifi', (req, res) => {
   
   res.status(200).json(wifiCredentials);

@@ -45,7 +45,7 @@
               Graph List
             </button>
             <button class="table-button combine-graph" id="myBtn5">
-              Sensor List
+             Notes
             </button>
             <button class="table-button combine-graph" id="myBtn6">
               Alerts
@@ -122,87 +122,88 @@
         </form>
       </div>
     </div>
+<div id="addProductModal3" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span id="close53" class="close close5">&times;</span>
+    <!-- Tab links -->
+    <div class="tab">
+      <button id="modaltab2" class="tablinks" onclick="openTab(event, 'tab2')">
+        Set an Alarm
+      </button>
+      <button id="modaltab4" class="tablinks" onclick="openTab(event, 'tab4')">
+        Active Alarms
+      </button>
+      <button id="modaltab100" class="tablinks" onclick="openTab(event, 'tab100')">
+        E-mail Settings
+      </button>
+    </div>
 
-    <div id="addProductModal3" class="modal">
-      <!-- Modal content -->
-      <div class="modal-content">
-        <span id="close53" class="close close5">&times;</span>
-        <!-- Tab links -->
-        <div class="tab">
-          <button id="modaltab2" class="tablinks" onclick="openTab(event, 'tab2')">
-            Set an Alarm
-          </button>
-          <button id="modaltab4" class="tablinks" onclick="openTab(event, 'tab4')">
-            Active Alarms
-          </button>
-          <button id="modaltab100" class="tablinks" onclick="openTab(event, 'tab100')">
-            E-mail Settings
-          </button>
+    <!-- Tab content -->
+    <div id="tab2" class="tabcontent">
+      <div class="container">
+        <div class="form-group">
+          <label for="dropdown1">Sensor</label>
+          <select id="dropdown1">
+            <option value=""></option>
+          </select>
         </div>
-
-        <!-- Tab content -->
-        <div id="tab2" class="tabcontent">
-          <div class="container">
-            <div class="form-group">
-              <label for="dropdown1">Sensor</label>
-              <select id="dropdown1">
-                <option value=""></option>
-                >
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="dropdown2">Type</label>
-              <select id="dropdown2">
-                <option value="option1"></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="dropdown3">Operator</label>
-              <select id="dropdown3">
-                <option value="option1"></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="inputBox">Value</label>
-              <input type="text" id="inputBox1" placeholder="Enter text" />
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="dropdown2">Type</label>
+          <select id="dropdown2">
+            <option value="option1"></option>
+          </select>
         </div>
-
-        <div id="tab4" class="tabcontent">
-          <div id="hallo101"></div>
+        <div class="form-group">
+          <label for="dropdown3">Operator</label>
+          <select id="dropdown3">
+            <option value="option1"></option>
+          </select>
         </div>
-
-
-        <div id="tab100" class="tabcontent">
-          <div class="container">
-            <div class="form-group">
-              <label for="inputBox">E-mail</label>
-              <input type="text" id="inputBox100" placeholder="Enter text" />
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="inputBox">Value</label>
+          <input type="text" id="inputBox1" placeholder="Enter text" />
         </div>
-        <!-- Form for combining graphs -->
-        <form class="formChangeRegion">
-          <div class="form-group">
-            <!-- Add form inputs or content here -->
-          </div>
-          <div class="modalbtn">
-            <button id="close-button3" class="mbtn export">Discard</button>
-            <button id="send-Alert" class="mbtn combine-graph">
-              Create Alert
-            </button>
-            <button id="send-email" class="mbtn combine-graph">
-              Update E-Mail 
-            </button>
-          </div>
-        </form>
       </div>
     </div>
 
+    <div id="tab4" class="tabcontent">
+      <div id="hallo101"></div>
+    </div>
+
+    <div id="tab100" class="tabcontent">
+      <div class="container">
+        <div class="form-group">
+          <label for="inputBox">E-mail</label>
+          <input type="text" id="inputBox100" placeholder="Enter text" />
+        </div>
+        <div class="form-group">
+          <label for="activeEmail">Active E-mail</label>
+          <input type="text" id="activeEmail" placeholder="No email set" readonly />
+        </div>
+      </div>
+    </div>
+
+    <!-- Form for combining graphs -->
+    <form class="formChangeRegion">
+      <div class="form-group">
+        <!-- Add form inputs or content here -->
+      </div>
+      <div class="modalbtn">
+        <button id="close-button3" class="mbtn export">Discard</button>
+        <button id="send-Alert" class="mbtn combine-graph">
+          Create Alert
+        </button>
+        <button id="send-email" class="mbtn combine-graph">
+          Update E-Mail 
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 
-
+    
 
     <div id="addProductModal6" class="modal">
       <!-- Modal content -->
