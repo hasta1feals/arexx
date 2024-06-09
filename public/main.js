@@ -841,7 +841,7 @@ if (graphList) {
 
       dataArray.forEach(entry => {
         const idElement = document.createElement('div');
-        // idElement.textContent = `${entry.Nickname[0]}`;
+        idElement.textContent = `${entry.Nickname[0]}`;
         idContainer.appendChild(idElement);
       });
 
