@@ -22,6 +22,67 @@
 .minimize-list-btn:hover {
   background-color: #e53935;
 }
+
+/* Style for the Save Note button */
+#saveNote {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+#saveNote:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+/* Style for the Delete buttons */
+.note button {
+  background-color: #f44336; /* Red */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.note button:hover {
+  background-color: #d32f2f; /* Darker red */
+}
+
+
+.note {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  word-wrap: break-word; /* Ensures long words break within the container */
+  overflow-wrap: break-word; /* Ensures long words break within the container */
+}
+
+.note h3 {
+  margin-top: 0;
+  word-wrap: break-word; /* Ensures long words break within the container */
+  overflow-wrap: break-word; /* Ensures long words break within the container */
+}
+
+.note p {
+  word-wrap: break-word; /* Ensures long words break within the container */
+  overflow-wrap: break-word; /* Ensures long words break within the container */
+}
+
 .open-options {
   background-color: #5d5fef;
   color: #fff;

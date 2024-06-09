@@ -155,7 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // Get the modals and their respective buttons
   var modal1 = document.getElementById("addProductModal");
   var btn1 = document.getElementById("myBtn3");
-  var span5_1 = document.getElementsByClassName("close5")[0];
+  var btnNotes = document.getElementById("myBtn5");
+
+  var span5_1 = document.getElementsByClassName("close5")[1];
   var discardButton = document.getElementById("closemodal5");
   var discardButton2000 = document.getElementById("closemodal2000");
 
@@ -163,11 +165,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var modal3 = document.getElementById("addProductModal3");
   var modal2000 = document.getElementById("addProductModal2000");
+  var modalNotes = document.getElementById("notesModal");
 
   var btn3 = document.getElementById("myBtn6");
-  var span5_3 = document.getElementsByClassName("close5")[1];
-  var span5_4 = document.getElementsByClassName("close5")[2];
-  var span5_5 = document.getElementsByClassName("close5")[3];
+  var span5_3 = document.getElementsByClassName("close5")[2];
+  var span5_4 = document.getElementsByClassName("close5")[3];
+  var span5_5 = document.getElementsByClassName("close5")[4];
+  var span5_6 = document.getElementsByClassName("close5")[0];
+
 
 
   var modal209 = document.getElementById("addProductModal6"); 
@@ -185,6 +190,9 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModal(modal2000);
   };
 
+  span5_6.onclick = function() {
+    closeModal(modalNotes);
+  };
   discardButton.onclick = function() {
     closeModal(modal1);
   };
@@ -212,6 +220,11 @@ document.addEventListener("DOMContentLoaded", function () {
   var buttontab4 = document.getElementById("modaltab4");
   var buttontab100 = document.getElementById("modaltab100");
   var buttontab2000 = document.getElementById("modaltab2000");
+
+  var buttontab50000 = document.getElementById("modaltab444");
+  var buttontab60000 = document.getElementById("modaltab555");
+
+
 
   // Check if any modal element is null
   if (!modal1) {
@@ -256,6 +269,11 @@ document.addEventListener("DOMContentLoaded", function () {
     openModal(modal2000);
   }
 
+
+  if (localStorage.getItem(modalNotes.id) === "open") {
+    openModal(modalNotes);
+  }
+
   // Add event listeners to open and close the modals
   btn1.onclick = function () {
     openModal(modal1);
@@ -277,13 +295,25 @@ document.addEventListener("DOMContentLoaded", function () {
     setActiveTab("tab4");
   };
 
+  buttontab50000.onclick = function () {
+    setActiveTab("tab5000");
+  };
+
+
+  buttontab60000.onclick = function () {
+    setActiveTab("tab6000");
+  };
+
   buttontab100.onclick = function () {
     setActiveTab("tab100");
   };
 
+
+  
   buttontab2000.onclick = function () {
     setActiveTab("tab20000");
   };
+
 
   // Function to set the active tab
   function setActiveTab(tabName) {
@@ -325,6 +355,10 @@ document.addEventListener("DOMContentLoaded", function () {
   var btn2000 = document.getElementById("myBtn20001");
   btn2000.onclick = function () {
     openModal(modal2000);
+  };
+
+  btnNotes.onclick = function () {
+    openModal(modalNotes);  
   };
 
   span5_3.onclick = function () {
@@ -469,8 +503,82 @@ try {
   
 
   }
- 
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      let notes = JSON.parse(localStorage.getItem("notes")) || [];
+  
+      function renderNotes() {
+        const notesList = document.getElementById("notesList");
+        notesList.innerHTML = "";
+        notes.forEach((note, index) => {
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "note";
+          noteDiv.innerHTML = `
+            <h3>${note.title}</h3>
+            <p>${note.content}</p>
+            <button onclick="deleteNote(${index})">Delete</button>
+          `;
+          notesList.appendChild(noteDiv);
+        });
+      }
+  
+      function saveNote() {
+        const title = document.getElementById("noteTitle").value;
+        const content = document.getElementById("noteContent").value;
+        const messageElement = document.getElementById("noteMessage");
+        if (title && content) {
+          notes.push({ title, content });
+          localStorage.setItem("notes", JSON.stringify(notes));
+          document.getElementById("noteTitle").value = "";
+          document.getElementById("noteContent").value = "";
+          localStorage.removeItem("noteTitle");
+          localStorage.removeItem("noteContent");
+          messageElement.textContent = "Note saved!";
+          messageElement.style.color = "green";
+        } else {
+          messageElement.textContent = "Please fill in both fields.";
+          messageElement.style.color = "red";
+        }
+        renderNotes();
+      }
+  
+      function deleteNote(index) {
+        notes.splice(index, 1);
+        localStorage.setItem("notes", JSON.stringify(notes));
+        renderNotes();
+      }
+  
+      function saveDraft() {
+        const title = document.getElementById("noteTitle").value;
+        const content = document.getElementById("noteContent").value;
+        localStorage.setItem("noteTitle", title);
+        localStorage.setItem("noteContent", content);
+      }
+  
+      // Load draft
+      if (localStorage.getItem("noteTitle")) {
+        document.getElementById("noteTitle").value = localStorage.getItem("noteTitle");
+      }
+      if (localStorage.getItem("noteContent")) {
+        document.getElementById("noteContent").value = localStorage.getItem("noteContent");
+      }
+  
+      document.getElementById("noteTitle").addEventListener("input", saveDraft);
+      document.getElementById("noteContent").addEventListener("input", saveDraft);
+      document.getElementById("saveNote").onclick = saveNote;
+  
+      // Expose deleteNote function to global scope
+      window.deleteNote = deleteNote;
+  
+      // Render notes on load
+      renderNotes();
+    } catch (error) {
+    }
 
+  });
+  
+  
+  
 
   document.getElementById('send-email').addEventListener('click', function(event) {
     event.preventDefault(); // Prevent the default behavior
@@ -632,7 +740,6 @@ var modal200 = document.getElementById('addProductModal3')
     setAlertParameters();
   });
 } catch (error) {
-  console.error('An error occurred but was caught:', error);
   // Handle the error as needed, or simply log it
 }
 

@@ -44,12 +44,13 @@
             <button class="table-button combine-graph" id="myBtn4">
               Graph List
             </button>
-            <button class="table-button combine-graph" id="myBtn5">
-             Notes
-            </button>
             <button class="table-button combine-graph" id="myBtn6">
               Alerts
             </button>
+            <button class="table-button combine-graph" id="myBtn5">
+             Notes
+            </button>
+           
             <button class="table-button combine-graph" id="myBtn20001">
               Export Excel
             </button>
@@ -80,7 +81,40 @@
 
 
 
+    <div id="notesModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span id="closeNotesModal" class="close close5">&times;</span>
+        <!-- Tab links -->
+        <div class="tab">
+          <button id="modaltab444" class="tablinks" onclick="openTab(event, 'tab5000')">Create Note</button>
+          <button id="modaltab555" class="tablinks" onclick="openTab(event, 'tab6000')">All Notes</button>
+        </div>
 
+        <!-- Tab content -->
+        <div id="tab5000" class="tabcontent">
+          <div class="container">
+            <div class="form-group3">
+              <label for="noteTitle">Title</label>
+              <input type="text" id="noteTitle" placeholder="Enter note title" />
+            </div>
+            <div class="form-group3">
+              <label for="noteContent">Content</label>
+              <textarea id="noteContent" placeholder="Enter note content"></textarea>
+            </div>
+            <button id="saveNote" class="mbtn">Save</button>
+                    <p id="noteMessage"></p>
+
+          </div>
+        </div>
+
+        <div id="tab6000" class="tabcontent">
+          <div id="notesList" class="container">
+            <!-- Notes will be displayed here -->
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <div id="addProductModal" class="modal">
