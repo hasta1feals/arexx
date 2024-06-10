@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+
+  <!-- Navbar Import -->
+  <div id="nav-placeholder"></div>
+  <div class="maincontent">
+
+    <div id="error-message" style="display: none; color: red;"></div>
+
+    <div class="container1">
+
+      <!-- Graph Card -->
+      <div id="loading-indicator">Loading...</div>
+
+      <a id="adminModalOpen" class="item item-1">
+        <p class="leters"></p><i class='bx bx-notepad larger-icon'></i>
+      </a>
+      <a id="offsetModalOpen" class="item item-1">
+        <p class="leters"></p><i class='bx bxs-adjust larger-icon'></i>
+      </a>
+
+      <!-- Optional: Add title or additional information -->
+
+      <div id="addproductnotes" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span id="closeNotesModal22" class="close close5">&times;</span>
+          <!-- Tab links -->
+          <div class="tab">
+            <button id="modaltab4442" class="tablinks" data-tab="tab50002">Create Note</button>
+            <button id="modaltab5552" class="tablinks" data-tab="tab60002">All Notes</button>
+          </div>
+
+          <!-- Tab content -->
+          <div id="tab50002" class="tabcontent">
+            <div class="container">
+              <div class="form-group3">
+                <label for="noteTitle">Title</label>
+                <input type="text" id="noteTitle" placeholder="Enter note title" />
+              </div>
+              <div class="form-group3">
+                <label for="noteContent">Content</label>
+                <textarea id="noteContent" placeholder="Enter note content"></textarea>
+              </div>
+              <button id="saveNoteAdmin" class="mbtn">Save</button>
+              <p id="noteMessage"></p>
+            </div>
+          </div>
+
+          <div id="tab60002" class="tabcontent">
+            <div id="notesList" class="container">
+              <!-- Notes will be displayed here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  </div>
+  <script src="main.js"></script>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    $(function () {
+      // Load the HTML content into the "nav-placeholder" element
+      $("#nav-placeholder").load("navbar.html");
+    });
+  </script>
+
+</body>
+
+</html>

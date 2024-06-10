@@ -399,6 +399,28 @@ function queryDatabaseForData(id, type) {
   });
 }
 
+
+// POST route for login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  db.get('SELECT * FROM admin WHERE username = ? AND password = ?', [username, password], (err, row) => {
+      if (err) {
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      if (row) {
+          res.json({ success: true, message: 'Login successful' });
+      } else {
+          res.status(401).json({ error: 'Invalid username or password' });
+      }
+  });
+});
+
 // Route to fetch data from the database based on ID and type
 app.get('/combinedData/:id', async (req, res) => {
   const id = req.params.id; // Get the ID from the request parameters

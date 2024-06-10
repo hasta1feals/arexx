@@ -1,3 +1,39 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const savedLanguage = localStorage.getItem('language') || 'en';
+  applyTranslation(savedLanguage);
+
+  document.querySelectorAll('.emoji-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const language = button.getAttribute('data-lang');
+      setLanguage(language);
+    });
+  });
+});
+
+function setLanguage(language) {
+  localStorage.setItem('language', language);
+  applyTranslation(language);
+}
+
+function applyTranslation(language) {
+  const elements = document.querySelectorAll('[data-translate]');
+  elements.forEach(element => {
+    const translation = element.getAttribute(`data-${language}`);
+    if (translation) {
+      element.innerText = translation;
+    }
+  });
+}
+
+// Ensure this code runs after the DOM has fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  // Apply the saved language translation on page load
+  const savedLanguage = localStorage.getItem('language') || 'en';
+  applyTranslation(savedLanguage);
+});
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -136,7 +172,95 @@ try {
 } catch (error) {
   // Intentionally left empty to prevent page break
 }
+document.addEventListener('DOMContentLoaded', function () {
+  function setActiveTab(tabName) {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", tabName);
+    // Update the active tab visually
+    openTab(tabName);
+  }
 
+  var activeTabName = localStorage.getItem("activeTab");
+  if (activeTabName) {
+    openTab(activeTabName);
+    console.log("Active tab:", activeTabName);
+  }
+
+  // Function to open a tab
+  function openTab(tabName) {
+    // Hide all tab content
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Remove active class from all tab buttons
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab and add active class to the button
+    document.getElementById(tabName).style.display = "block";
+    document.querySelector("[data-tab='" + tabName + "']").className += " active";
+  }
+
+
+  
+  // Add event listener to the "Notes" button
+  var modalAdmin =  document.getElementById('addproductnotes');
+  var buttontab200000 = document.getElementById("modaltab4442");
+  var buttontab2 = document.getElementById("modaltab5552");
+
+  var closemodalbuttn444 = document.getElementById("closeNotesModal2")
+  function closeModal(modal) {
+    console.log("Closing modal:", modal.id);
+    modal.style.display = "none";
+    // Remove the modal state from localStorage
+    localStorage.removeItem(modal.id);
+    localStorage.removeItem("activeTab");
+  }
+  buttontab200000.onclick = function () {
+    setActiveTab("tab50002");
+  };
+
+  buttontab2.onclick = function () {
+    setActiveTab("tab60002");
+  };
+
+
+  document.getElementById('closeNotesModal22').addEventListener('click', function () {
+    console.log('hello');
+closeModal(modalAdmin);  });
+
+
+  if (localStorage.getItem(modalAdmin.id) === "open") {
+    openModal(modalAdmin);
+  }
+
+  document.getElementById('adminModalOpen').addEventListener('click', function () {
+    console.log('hello');
+      openModal(modalAdmin);
+  });
+});
+
+function adminLogin(){
+  const username = document.getElementById('admin-u').value
+
+  const password =  document.getElementById('admin-p').value;
+
+  api('/login', 'POST', { username, password })
+      .then(data => {
+          if (data.success) {
+            window.location.href = '/arexx/public/admin.html';          } else {
+              alert(data.error);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+
+}
 
 
 
@@ -158,6 +282,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var modal1 = document.getElementById("addProductModal");
   var btn1 = document.getElementById("myBtn3");
   var btnNotes = document.getElementById("myBtn5");
+  var btnNotes2 = document.getElementById("adminModalOpen");
+
 
   var span5_1 = document.getElementsByClassName("close5")[1];
   var discardButton = document.getElementById("closemodal5");
@@ -178,6 +304,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   var modal209 = document.getElementById("addProductModal6"); 
+  var modal333 = document.getElementById("addproductnotes"); 
+
+  var modalAdmin = document.getElementById("adminModal"); 
+  var adminModal = document.getElementById("notesModal2"); 
+
+  
+
   var btn6 = document.getElementById("changecolorASAH");
   var bt7 = document.getElementById("discardcolor");
 
@@ -361,6 +494,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   btnNotes.onclick = function () {
     openModal(modalNotes);  
+  };
+
+
+  btnNotes2.onclick = function () {
+console.log("sasdds");
+  }
+
+
+  modalAdmin.onclick = function () {
+    openModal(adminModal);
   };
 
   span5_3.onclick = function () {
@@ -577,6 +720,81 @@ try {
     } catch (error) {
     }
 
+  });
+  
+
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      let adminNotes = JSON.parse(localStorage.getItem("adminNotes")) || [];
+  
+      function renderAdminNotes() {
+        const adminNotesList = document.getElementById("notesList");
+        adminNotesList.innerHTML = "";
+        adminNotes.forEach((note, index) => {
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "adminNote";
+          noteDiv.innerHTML = `
+            <h3>${note.title}</h3>
+            <p>${note.content}</p>
+            <button id="hello" onclick="deleteAdminNote(${index})">Delete</button>
+          `;
+          adminNotesList.appendChild(noteDiv);
+        });
+      }
+  
+      function saveAdminNote() {
+        const title = document.getElementById("noteTitle").value;
+        const content = document.getElementById("noteContent").value;
+        const messageElement = document.getElementById("noteMessage");
+        if (title && content) {
+          adminNotes.push({ title, content });
+          localStorage.setItem("adminNotes", JSON.stringify(adminNotes));
+          document.getElementById("noteTitle").value = "";
+          document.getElementById("noteContent").value = "";
+          localStorage.removeItem("adminNoteTitle");
+          localStorage.removeItem("adminNoteContent");
+          messageElement.textContent = "Note saved!";
+          messageElement.style.color = "green";
+        } else {
+          messageElement.textContent = "Please fill in both fields.";
+          messageElement.style.color = "red";
+        }
+        renderAdminNotes();
+      }
+  
+      function deleteAdminNote(index) {
+        adminNotes.splice(index, 1);
+        localStorage.setItem("adminNotes", JSON.stringify(adminNotes));
+        renderAdminNotes();
+      }
+  
+      function saveAdminDraft() {
+        const title = document.getElementById("noteTitle").value;
+        const content = document.getElementById("noteContent").value;
+        localStorage.setItem("adminNoteTitle", title);
+        localStorage.setItem("adminNoteContent", content);
+      }
+  
+      // Load draft
+      if (localStorage.getItem("adminNoteTitle")) {
+        document.getElementById("noteTitle").value = localStorage.getItem("adminNoteTitle");
+      }
+      if (localStorage.getItem("adminNoteContent")) {
+        document.getElementById("noteContent").value = localStorage.getItem("adminNoteContent");
+      }
+  
+      document.getElementById("noteTitle").addEventListener("input", saveAdminDraft);
+      document.getElementById("noteContent").addEventListener("input", saveAdminDraft);
+      document.getElementById("saveNoteAdmin").onclick = saveAdminNote;
+  
+      // Expose deleteAdminNote function to global scope
+      window.deleteAdminNote = deleteAdminNote;
+  
+      // Render notes on load
+      renderAdminNotes();
+    } catch (error) {
+      console.error("Error loading admin notes:", error);
+    }
   });
   
   
@@ -1717,12 +1935,16 @@ function displayErrorMessage(message) {
 
 // You can add all the buttons you want to connect to the API or button functions
 document.addEventListener("DOMContentLoaded", function () {
-  connectButton("myButton", getHomepage);
-  connectButton("usb-choice", callOpenAndListenSerialPort);
-  createDynamicLabel();
-
-
+  try {
+      connectButton("myButton", getHomepage);
+      connectButton("usb-choice", callOpenAndListenSerialPort);
+      connectButton("admin-login", adminLogin);
+      createDynamicLabel();
+  } catch (error) {
+      // Catch block left intentionally empty
+  }
 });
+
 
 
 
