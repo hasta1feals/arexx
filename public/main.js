@@ -138,6 +138,8 @@ try {
 }
 
 
+
+
 function openModal(modal) {
   console.log("Opening modal:", modal.id);
   modal.style.display = "block";
@@ -2059,29 +2061,39 @@ document.getElementById("setting-logo").addEventListener("click", function() {
   // Show the loading indicator
   loadingIndicator.style.display = "block";
 
-  api("/pingLocal", "POST")  // Call the API
-    .then((res) => {
-      console.log("Response from API:", res); // Log the actual response
+  // Create a timeout promise that rejects after 10 seconds
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Please connect to the 'arexx_multilogger' wifi!"));
+    }, 10000);
+  });
 
-      // Check if the server is alive
-      if (res.alive === true) {
-        window.location.href = "setting.html";
-      } else{
-        // Redirect to the settings page
-       
-        alert("Please connect to the 'arexx_multilogger' wifi!'");
-      }
+  // Call the API and race it against the timeout promise
+  Promise.race([
+    api("/pingLocal", "POST"),
+    timeoutPromise
+  ])
+  .then((res) => {
+    console.log("Response from API:", res); // Log the actual response
 
-
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    })
-    .finally(() => {
-      // Hide the loading indicator when done
-      loadingIndicator.style.display = "none";
-    });
+    // Check if the server is alive
+    if (res.alive === true) {
+      window.location.href = "setting.html";
+    } else {
+      // Show alert if the server is not alive
+      alert("Please connect to the 'arexx_multilogger' wifi!");
+    }
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+    alert(error.message); // Display error message to user
+  })
+  .finally(() => {
+    // Hide the loading indicator when done
+    loadingIndicator.style.display = "none";
+  });
 });
+
 
 
 
