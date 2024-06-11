@@ -20,13 +20,13 @@
     <div class="container1">
 
       <!-- Graph Card -->
-      <div id="loading-indicator">Loading...</div>
+      <div id="loading-indicator" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</div>
 
       <a id="adminModalOpen" class="item item-1">
-        <p class="leters"></p><i class='bx bx-notepad larger-icon'></i>
+        <p class="leters" data-translate data-eng="Create Note" data-fr="Créer une note" data-de="Notiz erstellen" data-nl="Notitie maken"></p><i class='bx bx-notepad larger-icon'></i>
       </a>
       <a id="offsetModalOpen" class="item item-1">
-        <p class="leters"></p><i class='bx bxs-adjust larger-icon'></i>
+        <p class="leters" data-translate data-eng="Adjust Settings" data-fr="Ajuster les paramètres" data-de="Einstellungen anpassen" data-nl="Instellingen aanpassen"></p><i class='bx bxs-adjust larger-icon'></i>
       </a>
 
       <!-- Optional: Add title or additional information -->
@@ -37,22 +37,22 @@
           <span id="closeNotesModal22" class="close close5">&times;</span>
           <!-- Tab links -->
           <div class="tab">
-            <button id="modaltab4442" class="tablinks" data-tab="tab50002">Create Note</button>
-            <button id="modaltab5552" class="tablinks" data-tab="tab60002">All Notes</button>
+            <button id="modaltab4442" class="tablinks" data-tab="tab50002" data-translate data-eng="Create Note" data-fr="Créer une note" data-de="Notiz erstellen" data-nl="Notitie maken">Create Note</button>
+            <button id="modaltab5552" class="tablinks" data-tab="tab60002" data-translate data-eng="All Notes" data-fr="Toutes les notes" data-de="Alle Notizen" data-nl="Alle notities">All Notes</button>
           </div>
 
           <!-- Tab content -->
           <div id="tab50002" class="tabcontent">
             <div class="container">
               <div class="form-group3">
-                <label for="noteTitle">Title</label>
+                <label for="noteTitle" data-translate data-eng="Title" data-fr="Titre" data-de="Titel" data-nl="Titel">Title</label>
                 <input type="text" id="noteTitle" placeholder="Enter note title" />
               </div>
               <div class="form-group3">
-                <label for="noteContent">Content</label>
+                <label for="noteContent" data-translate data-eng="Content" data-fr="Contenu" data-de="Inhalt" data-nl="Inhoud">Content</label>
                 <textarea id="noteContent" placeholder="Enter note content"></textarea>
               </div>
-              <button id="saveNoteAdmin" class="mbtn">Save</button>
+              <button id="saveNoteAdmin" class="mbtn" data-translate data-eng="Save" data-fr="Enregistrer" data-de="Speichern" data-nl="Opslaan">Save</button>
               <p id="noteMessage"></p>
             </div>
           </div>
@@ -67,9 +67,7 @@
 
     </div>
   </div>
-  </div>
 
-  </div>
   <script src="main.js"></script>
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

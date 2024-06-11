@@ -4,25 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="navbar.css" />
     <link rel="stylesheet" href="homepage.css" />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link
-      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"
-    />
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-
     <style>
       .drag {
         cursor: grab;
@@ -38,296 +24,217 @@
       <div class="table">
         <div class="table-head">
           <div>
-            <button class="table-button combine-graph" id="myBtn3">
+            <button class="table-button combine-graph" id="myBtn3" data-translate data-eng="Add Graph" data-fr="Ajouter Graphique" data-de="Grafik Hinzufügen" data-nl="Grafiek Toevoegen">
               Add Graph
             </button>
-            <button class="table-button combine-graph" id="myBtn4">
+            <button class="table-button combine-graph" id="myBtn4" data-translate data-eng="Graph List" data-fr="Liste des Graphiques" data-de="Grafikliste" data-nl="Grafiekenlijst">
               Graph List
             </button>
-            <button class="table-button combine-graph" id="myBtn6">
+            <button class="table-button combine-graph" id="myBtn6" data-translate data-eng="Alerts" data-fr="Alertes" data-de="Alarme" data-nl="Waarschuwingen">
               Alerts
             </button>
-            <button class="table-button combine-graph" id="myBtn5">
-             Notes
+            <button class="table-button combine-graph" id="myBtn5" data-translate data-eng="Notes" data-fr="Notes" data-de="Notizen" data-nl="Notities">
+              Notes
             </button>
-           
-            <button class="table-button combine-graph" id="myBtn20001">
+            <button class="table-button combine-graph" id="myBtn20001" data-translate data-eng="Export Excel" data-fr="Exporter Excel" data-de="Excel Exportieren" data-nl="Excel Exporteren">
               Export Excel
             </button>
           </div>
         </div>
         <div id="cont" class="container1">
           <div class="graph-list" style="display: none">
-            <button class="minimize-list-btn">Minimize</button>
+            <button class="minimize-list-btn" data-translate data-eng="Minimize" data-fr="Minimiser" data-de="Minimieren" data-nl="Minimaliseren">Minimize</button>
           </div>
-
-          <!-- Graph Card -->
           <div class="card-content drag" id="charts-container">
             <div class="card-title"></div>
-            <!-- Replace this div with your actual graph or content -->
             <div class="drag" id="charts-container">
-              <!-- Your graph or content goes here -->
             </div>
             <div id="combinedChartContainer"></div>
           </div>
-          <!-- Optional: Add title or additional information -->
         </div>
       </div>
     </div>
 
-
-
-
-
-
-
     <div id="notesModal" class="modal">
-      <!-- Modal content -->
       <div class="modal-content">
         <span id="closeNotesModal" class="close close5">&times;</span>
-        <!-- Tab links -->
         <div class="tab">
-          <button id="modaltab444" class="tablinks" onclick="openTab(event, 'tab5000')">Create Note</button>
-          <button id="modaltab555" class="tablinks" onclick="openTab(event, 'tab6000')">All Notes</button>
+          <button id="modaltab444" class="tablinks" onclick="openTab(event, 'tab5000')" data-translate data-eng="Create Note" data-fr="Créer Note" data-de="Notiz Erstellen" data-nl="Notitie Maken">Create Note</button>
+          <button id="modaltab555" class="tablinks" onclick="openTab(event, 'tab6000')" data-translate data-eng="All Notes" data-fr="Toutes les Notes" data-de="Alle Notizen" data-nl="Alle Notities">All Notes</button>
         </div>
-
-        <!-- Tab content -->
         <div id="tab5000" class="tabcontent">
           <div class="container">
             <div class="form-group3">
-              <label for="noteTitle">Title</label>
+              <label for="noteTitle" data-translate data-eng="Title" data-fr="Titre" data-de="Titel" data-nl="Titel">Title</label>
               <input type="text" id="noteTitle" placeholder="Enter note title" />
             </div>
             <div class="form-group3">
-              <label for="noteContent">Content</label>
+              <label for="noteContent" data-translate data-eng="Content" data-fr="Contenu" data-de="Inhalt" data-nl="Inhoud">Content</label>
               <textarea id="noteContent" placeholder="Enter note content"></textarea>
             </div>
-            <button id="saveNote" class="mbtn">Save</button>
-                    <p id="noteMessage"></p>
-
+            <button id="saveNote" class="mbtn" data-translate data-eng="Save" data-fr="Enregistrer" data-de="Speichern" data-nl="Opslaan">Save</button>
+            <p id="noteMessage"></p>
           </div>
         </div>
-
         <div id="tab6000" class="tabcontent">
           <div id="notesList" class="container">
-            <!-- Notes will be displayed here -->
           </div>
         </div>
       </div>
     </div>
 
-
     <div id="addProductModal" class="modal">
-      <!-- Modal content -->
       <div class="modal-content">
         <span class="close close5">&times;</span>
-        <!-- Tab links -->
         <div class="tab">
-          <button id="modaltab1" class="tablinks" onclick="openTab(event, 'tab1')">
+          <button id="modaltab1" class="tablinks" onclick="openTab(event, 'tab1')" data-translate data-eng="Graph Properties" data-fr="Propriétés du Graphique" data-de="Grafikeigenschaften" data-nl="Grafiekeigenschappen">
             Graph Properties
           </button>
-          
         </div>
-
-        <!-- Tab content -->
         <div id="tab1" class="tabcontent">
           <input type="text" id="graph-input" placeholder="Enter graph name" />
           <div class="form-group"></div>
-          <!-- Add content specific to tab 1 here -->
         </div>
-
         <div id="tab10" class="tabcontent">
           <div class="color-picker"></div>
-      <p>hallo</p>
+          <p>hallo</p>
         </div>
-
-        <!-- Form for combining graphs -->
         <form class="formChangeRegion">
           <div class="form-group">
-            <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button id="closemodal5" class="mbtn export">Discard</button>
-            
-            <button id="combine-graph" class="mbtn combine-graph">
-              Create Graph
-            </button>
+            <button id="closemodal5" class="mbtn export" data-translate data-eng="Discard" data-fr="Annuler" data-de="Verwerfen" data-nl="Weggooien">Discard</button>
+            <button id="combine-graph" class="mbtn combine-graph" data-translate data-eng="Create Graph" data-fr="Créer Graphique" data-de="Grafik Erstellen" data-nl="Grafiek Maken">Create Graph</button>
           </div>
         </form>
       </div>
     </div>
-<div id="addProductModal3" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span id="close53" class="close close5">&times;</span>
-    <!-- Tab links -->
-    <div class="tab">
-      <button id="modaltab2" class="tablinks" onclick="openTab(event, 'tab2')">
-        Set an Alarm
-      </button>
-      <button id="modaltab4" class="tablinks" onclick="openTab(event, 'tab4')">
-        Active Alarms
-      </button>
-      <button id="modaltab100" class="tablinks" onclick="openTab(event, 'tab100')">
-        E-mail Settings
-      </button>
-    </div>
 
-    <!-- Tab content -->
-    <div id="tab2" class="tabcontent">
-      <div class="container">
-        <div class="form-group">
-          <label for="dropdown1">Sensor</label>
-          <select id="dropdown1">
-            <option value=""></option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="dropdown2">Type</label>
-          <select id="dropdown2">
-            <option value="option1"></option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="dropdown3">Operator</label>
-          <select id="dropdown3">
-            <option value="option1"></option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="inputBox">Value</label>
-          <input type="text" id="inputBox1" placeholder="Enter text" />
-        </div>
-      </div>
-    </div>
-
-    <div id="tab4" class="tabcontent">
-      <div id="hallo101"></div>
-    </div>
-
-    <div id="tab100" class="tabcontent">
-      <div class="container">
-        <div class="form-group">
-          <label for="inputBox">E-mail</label>
-          <input type="text" id="inputBox100" placeholder="Enter text" />
-        </div>
-        <div class="form-group">
-          <label for="activeEmail">Active E-mail</label>
-          <input type="text" id="activeEmail" placeholder="No email set" readonly />
-        </div>
-      </div>
-    </div>
-
-    <!-- Form for combining graphs -->
-    <form class="formChangeRegion">
-      <div class="form-group">
-        <!-- Add form inputs or content here -->
-      </div>
-      <div class="modalbtn">
-        <button id="close-button3" class="mbtn export">Discard</button>
-        <button id="send-Alert" class="mbtn combine-graph">
-          Create Alert
-        </button>
-        <button id="send-email" class="mbtn combine-graph">
-          Update E-Mail 
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-    
-
-    <div id="addProductModal6" class="modal">
-      <!-- Modal content -->
+    <div id="addProductModal3" class="modal">
       <div class="modal-content">
-        <span class="close close5">&times;</span>
-        <!-- Tab links -->
+        <span id="close53" class="close close5">&times;</span>
         <div class="tab">
-       
-          <button class="tablinks"  id ="idtab45" onclick="openTab(event, 'tab45')">
-            Graph Desigin
+          <button id="modaltab2" class="tablinks" onclick="openTab(event, 'tab2')" data-translate data-eng="Set an Alarm" data-fr="Définir une Alarme" data-de="Alarm Einstellen" data-nl="Alarm Instellen">
+            Set an Alarm
+          </button>
+          <button id="modaltab4" class="tablinks" onclick="openTab(event, 'tab4')" data-translate data-eng="Active Alarms" data-fr="Alarmes Actives" data-de="Aktive Alarme" data-nl="Actieve Alarmen">
+            Active Alarms
+          </button>
+          <button id="modaltab100" class="tablinks" onclick="openTab(event, 'tab100')" data-translate data-eng="E-mail Settings" data-fr="Paramètres de Courriel" data-de="E-Mail-Einstellungen" data-nl="E-mailinstellingen">
+            E-mail Settings
           </button>
         </div>
+        <div id="tab2" class="tabcontent">
+          <div class="container">
+            <div class="form-group">
+              <label for="dropdown1" data-translate data-eng="Sensor" data-fr="Capteur" data-de="Sensor" data-nl="Sensor">Sensor</label>
+              <select id="dropdown1">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dropdown2" data-translate data-eng="Type" data-fr="Type" data-de="Typ" data-nl="Type">Type</label>
+              <select id="dropdown2">
+                <option value="option1"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dropdown3" data-translate data-eng="Operator" data-fr="Opérateur" data-de="Operator" data-nl="Operator">Operator</label>
+              <select id="dropdown3">
+                <option value="option1"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inputBox1" data-translate data-eng="Value" data-fr="Valeur" data-de="Wert" data-nl="Waarde">Value</label>
+              <input type="text" id="inputBox1" placeholder="Enter text" />
+            </div>
+          </div>
+        </div>
+        <div id="tab4" class="tabcontent">
+          <div id="hallo101"></div>
+        </div>
+        <div id="tab100" class="tabcontent">
+          <div class="container">
+            <div class="form-group">
+              <label for="inputBox100" data-translate data-eng="E-mail" data-fr="E-mail" data-de="E-Mail" data-nl="E-mail">E-mail</label>
+              <input type="text" id="inputBox100" placeholder="Enter text" />
+            </div>
+            <div class="form-group">
+              <label for="activeEmail" data-translate data-eng="Active E-mail" data-fr="E-mail Actif" data-de="Aktive E-Mail" data-nl="Actieve E-mail">Active E-mail</label>
+              <input type="text" id="activeEmail" placeholder="No email set" readonly />
+            </div>
+          </div>
+        </div>
+        <form class="formChangeRegion">
+          <div class="form-group">
+          </div>
+          <div class="modalbtn">
+            <button id="close-button3" class="mbtn export" data-translate data-eng="Discard" data-fr="Annuler" data-de="Verwerfen" data-nl="Weggooien">Discard</button>
+            <button id="send-Alert" class="mbtn combine-graph" data-translate data-eng="Create Alert" data-fr="Créer Alerte" data-de="Alarm Erstellen" data-nl="Alarm Maken">Create Alert</button>
+            <button id="send-email" class="mbtn combine-graph" data-translate data-eng="Update E-Mail" data-fr="Mettre à Jour le Courriel" data-de="E-Mail Aktualisieren" data-nl="E-mail Bijwerken">Update E-Mail</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-    
-
+    <div id="addProductModal6" class="modal">
+      <div class="modal-content">
+        <span class="close close5">&times;</span>
+        <div class="tab">
+          <button class="tablinks" id="idtab45" onclick="openTab(event, 'tab45')" data-translate data-eng="Graph Design" data-fr="Conception de Graphique" data-de="Grafikdesign" data-nl="Grafisch Ontwerp">
+            Graph Design
+          </button>
+        </div>
         <div id="tab45" class="tabcontent">
           <form id="form-color" class="formChangeRegion1">
             <div class="form-group">
               <div class="modal-body"></div>
-           
             </div>
-        
-      
           </form>
-          <!-- Add content specific to tab 3 here -->
         </div>
-
-        <!-- Form for combining graphs -->
         <form class="formChangeRegion">
           <div class="form-group">
-            <!-- Add form inputs or content here -->
           </div>
           <div class="modalbtn">
-            <button id="discardcolor" class="mbtn export">Discard</button>
-            <button id="changecolorASAH" class="mbtn combine-graph">
-              Change Graph
-            </button>
+            <button id="discardcolor" class="mbtn export" data-translate data-eng="Discard" data-fr="Annuler" data-de="Verwerfen" data-nl="Weggooien">Discard</button>
+            <button id="changecolorASAH" class="mbtn combine-graph" data-translate data-eng="Change Graph" data-fr="Changer Graphique" data-de="Grafik Ändern" data-nl="Grafiek Wijzigen">Change Graph</button>
           </div>
         </form>
       </div>
     </div>
 
-
-
     <div id="addProductModal2000" class="modal">
-      <!-- Modal content -->
       <div class="modal-content">
         <span class="close close5">&times;</span>
-        <!-- Tab links -->
         <div class="tab">
-          <button id="modaltab2000" class="tablinks" onclick="openTab(event, 'tab20000')">
+          <button id="modaltab2000" class="tablinks" onclick="openTab(event, 'tab20000')" data-translate data-eng="Excel" data-fr="Excel" data-de="Excel" data-nl="Excel">
             Excel
           </button>
         </div>
-    
-        <!-- Tab content -->
         <div id="tab20000" class="tabcontent">
           <div class="form-group">
-            <label for="start-date">Start Date:</label>
+            <label for="start-date" data-translate data-eng="Start Date" data-fr="Date de Début" data-de="Startdatum" data-nl="Begindatum">Start Date:</label>
             <input type="date" id="start-date" class="form-control" />
           </div>
           <div class="form-group">
-            <label for="end-date">End Date:</label>
+            <label for="end-date" data-translate data-eng="End Date" data-fr="Date de Fin" data-de="Enddatum" data-nl="Einddatum">End Date:</label>
             <input type="date" id="end-date" class="form-control" />
           </div>
-     
-    
-        <!-- Form for combining graphs -->
-        <form class="formChangeRegion">
-          <div class="form-group">
-            <!-- Add form inputs or content here -->
-          </div>
-          <div class="modalbtn">
-            <button type="button" id="closemodal2000" class="mbtn export">Discard</button>
-            <button type="button" id="exceldownload" class="mbtn combine-graph">
-              Export to Excel
-            </button>
-          </div>
-        </form>
+          <form class="formChangeRegion">
+            <div class="form-group">
+            </div>
+            <div class="modalbtn">
+              <button type="button" id="closemodal2000" class="mbtn export" data-translate data-eng="Discard" data-fr="Annuler" data-de="Verwerfen" data-nl="Weggooien">Discard</button>
+              <button type="button" id="exceldownload" class="mbtn combine-graph" data-translate data-eng="Export to Excel" data-fr="Exporter en Excel" data-de="In Excel Exportieren" data-nl="Exporteren naar Excel">Export to Excel</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-    <!-- One of the following themes -->
-
-    <!-- Modern or es5 bundle -->
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js"></script>
 
@@ -337,9 +244,59 @@
       });
 
       $(function () {
-        // Load the HTML content into the "nav-placeholder" element
         $("#nav-placeholder").load("navbar.html");
       });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        applyTranslation(savedLanguage);
+
+        document.querySelectorAll('.emoji-button').forEach(button => {
+          button.addEventListener('click', () => {
+            const language = button.getAttribute('data-lang');
+            setLanguage(language);
+          });
+        });
+
+        // Sidebar toggle functionality
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+
+        closeBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          menuBtnChange();
+
+          // Add or remove the search icon inside the input based on sidebar state
+          if (sidebar.classList.contains("open")) {
+            document.querySelector(".searchbox i.bx").style.display = "block";
+          } else {
+            document.querySelector(".searchbox i.bx").style.display = "none";
+          }
+        });
+
+        function menuBtnChange() {
+          if (sidebar.classList.contains("open")) {
+            closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
+        }
+      });
+
+      function setLanguage(language) {
+        localStorage.setItem('language', language);
+        applyTranslation(language);
+      }
+
+      function applyTranslatxion(language) {
+        const elements = document.querySelectorAll('[data-translate]');
+        elements.forEach(element => {
+          const translation = element.getAttribute(`data-${language}`);
+          if (translation) {
+            element.innerText = translation;
+          }
+        });
+      }
     </script>
     <script src="main.js"></script>
   </body>

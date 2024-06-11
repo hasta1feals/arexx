@@ -14,70 +14,70 @@
 <body>
     <div id="nav-placeholder"></div>
     <div class="container">
-        <h1>Settings</h1>
+        <h1 data-translate data-eng="Settings" data-fr="Paramètres" data-de="Einstellungen" data-nl="Instellingen">Settings</h1>
         <div class="tabs">
-            <button class="tablink" onclick="openTab(event, 'NetworkSettings')">Network Settings</button>
-            <button id="cn" class="tablink" onclick="openTab(event, 'CurrentNetwork')">Current Network</button>
-            <button class="tablink" onclick="openTab(event, 'MQTTSettings')">MQTT Settings</button>
-            <button id="cn-mqtt" class="tablink" onclick="openTab(event, 'CurrentMQTT')">Current MQTT Settings</button>
+            <button class="tablink" onclick="openTab(event, 'NetworkSettings')" data-translate data-eng="Network Settings" data-fr="Paramètres Réseau" data-de="Netzwerkeinstellungen" data-nl="Netwerkinstellingen">Network Settings</button>
+            <button id="cn" class="tablink" onclick="openTab(event, 'CurrentNetwork')" data-translate data-eng="Current Network" data-fr="Réseau Actuel" data-de="Aktuelles Netzwerk" data-nl="Huidig Netwerk">Current Network</button>
+            <button class="tablink" onclick="openTab(event, 'MQTTSettings')" data-translate data-eng="MQTT Settings" data-fr="Paramètres MQTT" data-de="MQTT-Einstellungen" data-nl="MQTT-instellingen">MQTT Settings</button>
+            <button id="cn-mqtt" class="tablink" onclick="openTab(event, 'CurrentMQTT')" data-translate data-eng="Current MQTT Settings" data-fr="Paramètres MQTT Actuels" data-de="Aktuelle MQTT-Einstellungen" data-nl="Huidige MQTT-instellingen">Current MQTT Settings</button>
         </div>
 
         <div id="NetworkSettings" class="tabcontent">
-            <h2>Configure Wi-Fi</h2>
+            <h2 data-translate data-eng="Configure Wi-Fi" data-fr="Configurer le Wi-Fi" data-de="Wi-Fi Konfigurieren" data-nl="Wi-Fi Configureren">Configure Wi-Fi</h2>
             <form id="wifi-form">
                 <div class="form-group1">
-                    <label for="ssid">SSID:</label>
+                    <label for="ssid" data-translate data-eng="SSID" data-fr="SSID" data-de="SSID" data-nl="SSID">SSID:</label>
                     <input type="text" id="ssid" name="ssid" required>
                 </div>
                 <div class="form-group1">
-                    <label for="password">Password:</label>
+                    <label for="password" data-translate data-eng="Password" data-fr="Mot de Passe" data-de="Passwort" data-nl="Wachtwoord">Password:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button id="sendWifibtn">Submit</button>
+                <button id="sendWifibtn" data-translate data-eng="Submit" data-fr="Soumettre" data-de="Einreichen" data-nl="Indienen">Submit</button>
             </form>
             <div id="statusMessage"></div>
         </div>
 
         <div id="CurrentNetwork" class="tabcontent">
-            <h2>Currently Connected Network</h2>
-            <p id="current">Loading...</p>
+            <h2 data-translate data-eng="Currently Connected Network" data-fr="Réseau Actuellement Connecté" data-de="Derzeit Verbundenes Netzwerk" data-nl="Huidig Verbonden Netwerk">Currently Connected Network</h2>
+            <p id="current" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</p>
         </div>
 
         <div id="MQTTSettings" class="tabcontent">
-            <h2>MQTT Settings</h2>
+            <h2 data-translate data-eng="MQTT Settings" data-fr="Paramètres MQTT" data-de="MQTT-Einstellungen" data-nl="MQTT-instellingen">MQTT Settings</h2>
             <form id="mqtt-form">
                 <div class="form-group1">
-                    <label for="broker">Broker:</label>
+                    <label for="broker" data-translate data-eng="Broker" data-fr="Courtier" data-de="Makler" data-nl="Makelaarskantoor">Broker:</label>
                     <input type="text" id="broker" name="broker" value="185.107.90.149" required>
                 </div>
                 <div class="form-group1">
-                    <label for="port">Port:</label>
+                    <label for="port" data-translate data-eng="Port" data-fr="Port" data-de="Hafen" data-nl="Haven">Port:</label>
                     <input type="text" id="port" name="port" value="1883" required>
                 </div>
                 <div class="form-group1">
-                    <label for="username">Username:</label>
+                    <label for="username" data-translate data-eng="Username" data-fr="Nom d'utilisateur" data-de="Benutzername" data-nl="Gebruikersnaam">Username:</label>
                     <input type="text" id="username" name="username" value="public" required>
                 </div>
                 <div class="form-group1">
-                    <label for="password">Password:</label>
+                    <label for="password" data-translate data-eng="Password" data-fr="Mot de Passe" data-de="Passwort" data-nl="Wachtwoord">Password:</label>
                     <input type="password" id="mqtt-password" name="mqtt-password" value="public" required>
                 </div>
                 <div class="form-group1">
-                    <label for="topic">Topic:</label>
+                    <label for="topic" data-translate data-eng="Topic" data-fr="Sujet" data-de="Thema" data-nl="Onderwerp">Topic:</label>
                     <input type="text" id="topic" name="topic" value="hallo" required>
                 </div>
                 <div class="form-group1">
-                    <label for="admin-key">Admin Key:</label>
+                    <label for="admin-key" data-translate data-eng="Admin Key" data-fr="Clé Admin" data-de="Admin-Schlüssel" data-nl="Beheerderssleutel">Admin Key:</label>
                     <input type="password" id="admin-key" name="admin-key" value="admin" required>
                 </div>
-                <button id="sendMQTTbtn">Submit</button>
+                <button id="sendMQTTbtn" data-translate data-eng="Submit" data-fr="Soumettre" data-de="Einreichen" data-nl="Indienen">Submit</button>
             </form>
             <div id="mqttStatusMessage"></div>
         </div>
 
         <div id="CurrentMQTT" class="tabcontent">
-            <h2>Current MQTT Settings</h2>
-            <p id="current-mqtt">Loading...</p>
+            <h2 data-translate data-eng="Current MQTT Settings" data-fr="Paramètres MQTT Actuels" data-de="Aktuelle MQTT-Einstellungen" data-nl="Huidige MQTT-instellingen">Current MQTT Settings</h2>
+            <p id="current-mqtt" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</p>
         </div>
     </div>
 

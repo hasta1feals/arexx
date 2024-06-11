@@ -8,6 +8,30 @@ document.addEventListener('DOMContentLoaded', () => {
       setLanguage(language);
     });
   });
+
+  // Sidebar toggle functionality
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+
+  closeBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    menuBtnChange();
+
+    // Add or remove the search icon inside the input based on sidebar state
+    if (sidebar.classList.contains("open")) {
+      document.querySelector(".searchbox i.bx").style.display = "block";
+    } else {
+      document.querySelector(".searchbox i.bx").style.display = "none";
+    }
+  });
+
+  function menuBtnChange() {
+    if (sidebar.classList.contains("open")) {
+      closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+    } else {
+      closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+    }
+  }
 });
 
 function setLanguage(language) {
@@ -24,14 +48,6 @@ function applyTranslation(language) {
     }
   });
 }
-
-// Ensure this code runs after the DOM has fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  // Apply the saved language translation on page load
-  const savedLanguage = localStorage.getItem('language') || 'en';
-  applyTranslation(savedLanguage);
-});
-
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1077,7 +1093,7 @@ if (graphList) {
     } 
   });
 } else {
-  console.error('No element found with class name "graph-list"');
+  
 }
 
 
@@ -1117,7 +1133,7 @@ if (formGroup) {
     }
   });
 } else {
-  console.error("Form group not found.");
+ 
 }
 
 
@@ -1481,10 +1497,10 @@ function extractNumericPart(str) {
 }
 
 
-$(document).ready(function() {
-  // Initialize draggability for elements with the 'drag' class
-  $(".drag").draggable();
-});
+// $(document).ready(function() {
+//   // Initialize draggability for elements with the 'drag' class
+//   $(".drag").draggable();
+// });
 
 
 

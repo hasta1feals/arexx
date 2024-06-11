@@ -3,17 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="navbar.css" />
-
     <link rel="stylesheet" href="overzicht.css" />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link
-      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -22,35 +14,27 @@
     <!-- Main Content -->
     <div class="maincontent">
       <div class="container">
-        
-
-        <div id="loading-indicator">Loading...</div>
-
+        <div id="loading-indicator" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</div>
         <table id="myTable">
           <thead>
             <tr>
-              <th>Sensor</th>
-              <th>Value</th>
-              <th>Type</th>
-              <th>Timestamp</th>
-              <th>Nickname</th>
+              <th data-translate data-eng="Sensor" data-fr="Capteur" data-de="Sensor" data-nl="Sensor">Sensor</th>
+              <th data-translate data-eng="Value" data-fr="Valeur" data-de="Wert" data-nl="Waarde">Value</th>
+              <th data-translate data-eng="Type" data-fr="Type" data-de="Typ" data-nl="Type">Type</th>
+              <th data-translate data-eng="Timestamp" data-fr="Horodatage" data-de="Zeitstempel" data-nl="Tijdstempel">Timestamp</th>
+              <th data-translate data-eng="Nickname" data-fr="Surnom" data-de="Spitzname" data-nl="Bijnaam">Nickname</th>
               <!-- Add more headers if needed -->
             </tr>
           </thead>
           <tbody>
-          
             <!-- Rows will be added here -->
           </tbody>
         </table>
-
-       
-        </div>
       </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
       $(function () {
         // Load the HTML content into the "nav-placeholder" element
