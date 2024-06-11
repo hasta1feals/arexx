@@ -266,7 +266,6 @@ app.get('/getUniqueIDsFromDatabase', (req, res) => {
 
 
 
-app.post
 
 app.get('/getDataFromDatabase', (req, res) => {
   const { id, type } = req.query; // Get the ID and type from the query parameters
@@ -326,6 +325,18 @@ app.get('/getUniqueTypesForIDFromDatabase', (req, res) => {
 });
 
 
+app.get('/getUniqueTypesFromDatabase', (req, res) => {
+
+
+  // Fetch unique types for the provided ID from the database
+  db.all('SELECT DISTINCT Type FROM mqtt_messages   ',  (err, rows) => {
+    if (err) {
+      return res.status(500).send({ error: 'Error fetching unique types' });
+    }
+    res.send(rows);
+  });
+});
+
 
 app.get('/getVOLT', (req, res) => {
   db.all('SELECT * FROM mqtt_messages where type = "Volt"', (err, rows) => {
@@ -359,6 +370,18 @@ app.get('/getAlarm', (req, res) => {
   });
 });
 
+
+
+app.get('/getOffset', (req, res) => {
+  db.all('SELECT * FROM offset', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching alarm settings' });
+    } else {
+      res.send({ message: 'Success', rows });
+    }
+  });
+});
+
 app.delete('/deleteAlarm/:id?', (req, res) => {
   const { id } = req.params;
 
@@ -368,6 +391,28 @@ app.delete('/deleteAlarm/:id?', (req, res) => {
   }
 
   db.run('DELETE  FROM alert_settings WHERE id_alert = ?', id, function(err) {
+    if (err) {
+      res.status(500).send({ error: 'Error deleting alarm settings' });
+    } else {
+      if (this.changes === 0) {
+        res.status(404).send({ error: 'Alarm settings not found' });
+      } else {
+        res.send({ message: 'Alarm settings deleted successfully' });
+      }
+    }
+  });
+});
+
+
+app.delete('/deleteOffset/:id?', (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).send({ error: 'No ID provided' });
+    return;
+  }
+
+  db.run('DELETE  FROM Offset WHERE id = ?', id, function(err) {
     if (err) {
       res.status(500).send({ error: 'Error deleting alarm settings' });
     } else {
@@ -537,6 +582,24 @@ app.post('/setAlert', (req, res) => {
   });
 });
 
+
+app.post('/setOffset', (req, res) => {
+  const {  offset, value } = req.body;
+
+  // Check if all required parameters are provided
+  if (!offset || !value ) {
+    return res.status(400).send({ error: 'ID, threshold, comparisonOperator, and type parameters are required' });
+  }
+
+  // You can execute an SQL query to insert or update the values
+  db.run('INSERT OR REPLACE INTO offset ( offset,value) VALUES (?, ?)', [ offset, value], (err) => {
+    if (err) {
+      console.error('Error saving alert parameters:', err);
+      return res.status(500).send({ error: 'Error saving alert parameters' });
+    }
+    res.status(200).send({ message: 'Alert offset set successfully' });
+  });
+});
 
 
 

@@ -1,3 +1,77 @@
+document.addEventListener('DOMContentLoaded', function () {
+  function setActiveTab(tabName) {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", tabName);
+    // Update the active tab visually
+    openTab(tabName);
+  }
+
+  var activeTabName = localStorage.getItem("activeTab");
+  if (activeTabName) {
+    openTab(activeTabName);
+    console.log("Active tab:", activeTabName);
+  }
+
+
+  // Function to open a tab
+  function openTab(tabName) {
+    // Hide all tab content
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Remove active class from all tab buttons
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab and add active class to the button
+    document.getElementById(tabName).style.display = "block";
+    document.querySelector("[data-tab='" + tabName + "']").className += " active";
+  }
+
+  var modalOffset = document.getElementById('addProductModal34');
+  
+  // Add event listener to the "Notes" button
+  var modalAdmin = document.getElementById('addproductnotes');
+  var buttontab200000 = document.getElementById("modaltab4442");
+  var buttontab2 = document.getElementById("modaltab5552");
+  var buttontab27 = document.getElementById("modaltab27");
+  var buttontab47 = document.getElementById("modaltab47");
+
+  function closeModal(modal) {
+    console.log("Closing modal:", modal.id);
+    modal.style.display = "none";
+    // Remove the modal state from localStorage
+    localStorage.removeItem(modal.id);
+    localStorage.removeItem("activeTab");
+  }
+
+
+
+ 
+  if (localStorage.getItem(modalOffset.id) === "open") {
+    openModal(modalOffset);
+  }
+
+
+
+  document.getElementById('offsetModalOpen').addEventListener('click', function () {
+    console.log('hello');
+    openModal(modalOffset);
+  });
+
+  function openModal(modal) {
+    console.log("Opening modal:", modal.id);
+    modal.style.display = "block";
+    localStorage.setItem(modal.id, "open");
+  }
+});
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const savedLanguage = localStorage.getItem('language') || 'en';
   applyTranslation(savedLanguage);
@@ -221,14 +295,15 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector("[data-tab='" + tabName + "']").className += " active";
   }
 
-
+  var modalOffset = document.getElementById('addProductModal34');
   
   // Add event listener to the "Notes" button
-  var modalAdmin =  document.getElementById('addproductnotes');
+  var modalAdmin = document.getElementById('addproductnotes');
   var buttontab200000 = document.getElementById("modaltab4442");
   var buttontab2 = document.getElementById("modaltab5552");
+  var buttontab27 = document.getElementById("modaltab27");
+  var buttontab47 = document.getElementById("modaltab47");
 
-  var closemodalbuttn444 = document.getElementById("closeNotesModal2")
   function closeModal(modal) {
     console.log("Closing modal:", modal.id);
     modal.style.display = "none";
@@ -236,6 +311,18 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.removeItem(modal.id);
     localStorage.removeItem("activeTab");
   }
+
+
+  function closeModal2(modal,e) {
+    e.preventDefault();
+    console.log("Closing modal:", modal.id);
+    modal.style.display = "none";
+    // Remove the modal state from localStorage
+    localStorage.removeItem(modal.id);
+    localStorage.removeItem("activeTab");
+  }
+
+
   buttontab200000.onclick = function () {
     setActiveTab("tab50002");
   };
@@ -247,17 +334,115 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('closeNotesModal22').addEventListener('click', function () {
     console.log('hello');
-closeModal(modalAdmin);  });
+    closeModal(modalAdmin);
+  });
+
+  document.getElementById('closeThis').addEventListener('click', function () {
+    console.log('hello');
+    closeModal(modalOffset);
+  });
+
+  document.getElementById('close-button3').addEventListener('click', function () {
+    console.log('hello');
+    closeModal(modalOffset);
+  });
+
+  
 
 
   if (localStorage.getItem(modalAdmin.id) === "open") {
     openModal(modalAdmin);
   }
 
+
+
   document.getElementById('adminModalOpen').addEventListener('click', function () {
     console.log('hello');
-      openModal(modalAdmin);
+    openModal(modalAdmin);
   });
+
+
+
+  function openModal(modal) {
+    console.log("Opening modal:", modal.id);
+    modal.style.display = "block";
+    localStorage.setItem(modal.id, "open");
+  }
+});
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  function setActiveTab(tabName) {
+    // Store the active tab state in localStorage
+    localStorage.setItem("activeTab", tabName);
+    // Update the active tab visually
+    openTab(tabName);
+  }
+
+  var activeTabName = localStorage.getItem("activeTab");
+  if (activeTabName) {
+    openTab(activeTabName);
+    console.log("Active tab:", activeTabName);
+  }
+
+  // Function to open a tab
+  function openTab(tabName) {
+    // Hide all tab content
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Remove active class from all tab buttons
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab and add active class to the button
+    document.getElementById(tabName).style.display = "block";
+    document.querySelector("[data-tab='" + tabName + "']").className += " active";
+  }
+
+  var modalOffset = document.getElementById('addProductModal34');
+  
+  // Add event listener to the "Notes" button
+  var modalAdmin = document.getElementById('addproductnotes');
+  var buttontab200000 = document.getElementById("modaltab4442");
+  var buttontab2 = document.getElementById("modaltab5552");
+  var buttontab27 = document.getElementById("modaltab27");
+  var buttontab47 = document.getElementById("modaltab47");
+
+  function closeModal(modal) {
+    console.log("Closing modal:", modal.id);
+    modal.style.display = "none";
+    // Remove the modal state from localStorage
+    localStorage.removeItem(modal.id);
+    localStorage.removeItem("activeTab");
+  }
+
+
+
+ 
+  if (localStorage.getItem(modalOffset.id) === "open") {
+    openModal(modalOffset);
+  }
+
+
+
+  document.getElementById('offsetModalOpen').addEventListener('click', function () {
+    console.log('hello');
+    openModal(modalOffset);
+  });
+
+  function openModal(modal) {
+    console.log("Opening modal:", modal.id);
+    modal.style.display = "block";
+    localStorage.setItem(modal.id, "open");
+  }
 });
 
 function adminLogin(){
@@ -637,6 +822,56 @@ try {
   }
 
 
+  
+// Declare selectedChoice2 in the global scope if it needs to be used elsewhere
+var selectedChoice2 = null;
+
+function populateDropdown3() {
+  console.log("Initiating API request to fetch unique types...");
+
+  // Simulated API response data
+  const data = [
+    { "Type": "" },  // Empty option for placeholder or default
+    { "Type": "RH" },
+    { "Type": "Volt" },
+    { "Type": "Unknown" },
+    { "Type": "Temp" }
+  ];
+
+  // Proceed with the existing logic using the simulated data
+  var select = document.getElementById("dropdown3");
+  console.log("Received data:", data);
+
+  // Clear previous options
+  select.innerHTML = '';
+
+  // Check if the response is an array
+  if (Array.isArray(data)) {
+    // Iterate over the data and add options to the dropdown
+    data.forEach(function(row) {
+      if (row.Type !== undefined) {  // Check if Type is defined
+        var option = document.createElement("option");
+        option.value = row.Type;
+        option.textContent = row.Type;
+        select.appendChild(option);
+      } else {
+        console.warn("Skipping row with undefined Type:", row);
+      }
+    });
+  } else {
+    console.error("Response is not an array:", data);
+  }
+
+  // Attach event listener to the dropdown
+  select.addEventListener("change", function(event) {
+    // Update the selected value variable
+    selectedChoice2 = event.target.value;
+    console.log("Selected choice in dropdown 3:", selectedChoice2); // Log the selected value
+  });
+}
+
+// Call the function to populate the dropdown
+populateDropdown3();
 
 
 
@@ -956,6 +1191,11 @@ try {
         console.error('Error setting alert parameters:', error);
       });
   }
+
+
+ 
+  
+  
 var modal200 = document.getElementById('addProductModal3')
   // Call the function to set alert parameters when needed
   // For example, when a button is clicked
@@ -975,11 +1215,12 @@ var modal200 = document.getElementById('addProductModal3')
     // Call the setAlertParameters function
     setAlertParameters();
   });
+
+
+  
 } catch (error) {
   // Handle the error as needed, or simply log it
 }
-
-
 
 
 
@@ -1029,6 +1270,27 @@ document.addEventListener('DOMContentLoaded', function() {
   const showGraphListBtn = document.querySelector('#myBtn4');
   populateDropdown1();
   populateDropdown2();
+  populateDropdown3();
+  var xyz = document.getElementById('addProductModal34');
+
+  document.getElementById('create-Offset').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default behavior
+
+    function closeModal(modal) {
+      console.log("Closing modal:", modal.id);
+      modal.style.display = "none";
+      // Remove the modal state from localStorage
+      localStorage.removeItem(modal.id);
+      localStorage.removeItem("activeTab");
+    }
+
+    closeModal(xyz);
+    // Log before calling the function
+    console.log('Calling setOffsetParameters3');
+    // Call the setAlertParameters function
+    setOffsetParameters3();
+  });
+
   if (minimizeBtn && graphList && showGraphListBtn) {
     minimizeBtn.addEventListener('click', function() {
       graphList.style.display = 'none';
@@ -1040,8 +1302,94 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+function setOffsetParameters3() {
+  console.log('Inside setOffsetParameters3');
 
+  // Get values from global variables
+  const offset = selectedChoice2;
+  const value = document.getElementById('setOffsetParameters').value; // Assuming inputBox1 is the ID for the value input box
 
+  // Check if all required parameters are available
+  if (!offset || !value) {
+    console.error('Missing required parameters');
+    return;
+  }
+
+  // Log the values before making the API call
+  console.log('Offset:', offset);
+  console.log('Value:', value);
+
+  // Prepare data for the POST request
+  const data = {
+    offset: offset,
+    value: value,
+  };
+
+  // Make the POST request using the api function
+  api('/setOffset', 'POST', data)
+    .then(response => {
+      console.log('Alert parameters set successfully:', response);
+    })
+    .catch(error => {
+      console.error('Error setting alert parameters:', error);
+    });
+}
+function createDynamicLabel2() {
+  api("/getOffset", "GET")
+    .then((res) => {
+      console.log("Response from API:", res);
+      if (res.message === "Success" && Array.isArray(res.rows)) {
+        var container = document.getElementById("hallo1013");
+        container.innerHTML = ''; // Clear existing labels
+
+        res.rows.forEach((offset) => {
+          // Create label element
+          var label = document.createElement("label");
+          label.textContent = `Offset: ${offset.offset}  Value: ${offset.value}`;
+          label.style.display = "block";
+          label.style.marginBottom = "10px";
+          label.style.padding = "10px";
+          label.style.border = "1px solid #ccc";
+          label.style.borderRadius = "5px";
+          label.style.backgroundColor = "#f9f9f9";
+
+          // Create delete button
+          var deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.style.backgroundColor = "#ff5252";
+          deleteButton.style.color = "white";
+          deleteButton.style.border = "none";
+          deleteButton.style.padding = "5px 10px";
+          deleteButton.style.marginRight = "200px"; // Increase the margin to shift the button more to the right
+          deleteButton.style.borderRadius = "5px";
+          deleteButton.style.cursor = "pointer";
+
+          // Add event listener to delete button
+          deleteButton.addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent default behavior
+            event.preventDefault(); // Prevent default behavior
+
+            var offsetID = offset.id; // Assuming offset has an id_alert property
+            deleteOffset(offsetID);
+            label.remove();
+          });
+
+          // Append delete button to label
+          label.appendChild(deleteButton);
+
+          // Append label to hallo1013 div
+          container.appendChild(label);
+        });
+      } else {
+        console.error("Error: Invalid response format - expected a 'Success' message and an array of 'rows'.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching offsets:", error);
+    });
+}
+
+createDynamicLabel2();
 // Retrieve data from local storag
 // Retrieve data from local storage
 const graphData = Object.entries(localStorage).filter(([key, value]) => key.startsWith("combinedData_"));
@@ -1914,6 +2262,23 @@ function deleteAlarm(id) {
       console.error("Error deleting alarm:", error);
     });
 }
+
+
+
+function deleteOffset(id) {
+  api(`/deleteOffset/${id}`, "DELETE")
+    .then((res) => {
+      console.log("Response from delete API:", res);
+      if (res.message === "Alarm settings deleted successfully") {
+        console.log("Alarm deleted successfully");
+      } else {
+        console.error("Error deleting alarm:", res.error);
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting alarm:", error);
+    });
+}
 function callOpenAndListenSerialPort() {
   // Call the openAndListenSerialPort API using your custom api() function
   api('/openAndListenSerialPort', "POST")
@@ -1955,7 +2320,10 @@ document.addEventListener("DOMContentLoaded", function () {
       connectButton("myButton", getHomepage);
       connectButton("usb-choice", callOpenAndListenSerialPort);
       connectButton("admin-login", adminLogin);
+      
       createDynamicLabel();
+      createDynamicLabel2();
+
   } catch (error) {
       // Catch block left intentionally empty
   }
@@ -2418,6 +2786,11 @@ function createCombinedChartFromLocalStorage() {
 
             // Color picker label
             const colorPickerLabel = document.createElement('label');
+            colorPickerLabel.setAttribute('data-translate', '');
+            colorPickerLabel.setAttribute('data-eng', 'Line Color: ');
+            colorPickerLabel.setAttribute('data-fr', 'Couleur de la ligne: ');
+            colorPickerLabel.setAttribute('data-de', 'Linienfarbe: ');
+            colorPickerLabel.setAttribute('data-nl', 'Lijnkleur: ');
             colorPickerLabel.textContent = 'Line Color: ';
             colorForm.appendChild(colorPickerLabel);
 
@@ -2440,6 +2813,11 @@ function createCombinedChartFromLocalStorage() {
 
             // Line style label
             const lineStyleLabel = document.createElement('label');
+            lineStyleLabel.setAttribute('data-translate', '');
+            lineStyleLabel.setAttribute('data-eng', 'Line Style: ');
+            lineStyleLabel.setAttribute('data-fr', 'Style de ligne: ');
+            lineStyleLabel.setAttribute('data-de', 'Linienstil: ');
+            lineStyleLabel.setAttribute('data-nl', 'Lijnstijl: ');
             lineStyleLabel.textContent = 'Line Style: ';
             colorForm.appendChild(lineStyleLabel);
 
@@ -2473,6 +2851,11 @@ function createCombinedChartFromLocalStorage() {
 
             // Line thickness label
             const lineThicknessLabel = document.createElement('label');
+            lineThicknessLabel.setAttribute('data-translate', '');
+            lineThicknessLabel.setAttribute('data-eng', 'Line Thickness (1-9): ');
+            lineThicknessLabel.setAttribute('data-fr', 'Épaisseur de la ligne (1-9): ');
+            lineThicknessLabel.setAttribute('data-de', 'Linienstärke (1-9): ');
+            lineThicknessLabel.setAttribute('data-nl', 'Lijndikte (1-9): ');
             lineThicknessLabel.textContent = 'Line Thickness (1-9): ';
             colorForm.appendChild(lineThicknessLabel);
 
@@ -2484,7 +2867,6 @@ function createCombinedChartFromLocalStorage() {
             lineThicknessInput.setAttribute('min', '1');
             lineThicknessInput.setAttribute('max', '9');
             lineThicknessInput.setAttribute('value', lineThickness);
-            
 
             lineThicknessInput.addEventListener('change', (function (data) {
               return function (event) {
@@ -2496,7 +2878,6 @@ function createCombinedChartFromLocalStorage() {
                 createCombinedChartFromLocalStorage();
               };
             })(data));
-            
 
             colorForm.appendChild(lineThicknessInput);
             colorForm.appendChild(document.createElement('br'));
@@ -2505,12 +2886,22 @@ function createCombinedChartFromLocalStorage() {
             colorForm.appendChild(document.createElement('br'));
 
             const dateRangeLabel = document.createElement('label');
+            dateRangeLabel.setAttribute('data-translate', '');
+            dateRangeLabel.setAttribute('data-eng', 'Date Range: ');
+            dateRangeLabel.setAttribute('data-fr', 'Plage de dates: ');
+            dateRangeLabel.setAttribute('data-de', 'Datumsbereich: ');
+            dateRangeLabel.setAttribute('data-nl', 'Datumbereik: ');
             dateRangeLabel.textContent = 'Date Range: ';
             colorForm.appendChild(dateRangeLabel);
             colorForm.appendChild(document.createElement('br'));
 
             // Start date input
             const startDateLabel = document.createElement('label');
+            startDateLabel.setAttribute('data-translate', '');
+            startDateLabel.setAttribute('data-eng', 'Start Date:');
+            startDateLabel.setAttribute('data-fr', 'Date de début:');
+            startDateLabel.setAttribute('data-de', 'Anfangsdatum:');
+            startDateLabel.setAttribute('data-nl', 'Begindatum:');
             startDateLabel.textContent = 'Start Date:';
             colorForm.appendChild(startDateLabel);
 
@@ -2523,6 +2914,11 @@ function createCombinedChartFromLocalStorage() {
 
             // End date input
             const endDateLabel = document.createElement('label');
+            endDateLabel.setAttribute('data-translate', '');
+            endDateLabel.setAttribute('data-eng', 'End Date:');
+            endDateLabel.setAttribute('data-fr', 'Date de fin:');
+            endDateLabel.setAttribute('data-de', 'Enddatum:');
+            endDateLabel.setAttribute('data-nl', 'Einddatum:');
             endDateLabel.textContent = 'End Date:';
             colorForm.appendChild(endDateLabel);
 
@@ -2535,6 +2931,11 @@ function createCombinedChartFromLocalStorage() {
 
             const applyFilterButton = document.createElement('button');
             applyFilterButton.setAttribute('type', 'button');
+            applyFilterButton.setAttribute('data-translate', '');
+            applyFilterButton.setAttribute('data-eng', 'Apply Filter');
+            applyFilterButton.setAttribute('data-fr', 'Appliquer le filtre');
+            applyFilterButton.setAttribute('data-de', 'Filter anwenden');
+            applyFilterButton.setAttribute('data-nl', 'Filter toepassen');
             applyFilterButton.textContent = 'Apply Filter';
             applyFilterButton.style.padding = '5px 10px';
             applyFilterButton.style.marginTop = '10px';
@@ -2557,6 +2958,11 @@ function createCombinedChartFromLocalStorage() {
 
             const resetFilterButton = document.createElement('button');
             resetFilterButton.setAttribute('type', 'button');
+            resetFilterButton.setAttribute('data-translate', '');
+            resetFilterButton.setAttribute('data-eng', 'Reset Filter');
+            resetFilterButton.setAttribute('data-fr', 'Réinitialiser le filtre');
+            resetFilterButton.setAttribute('data-de', 'Filter zurücksetzen');
+            resetFilterButton.setAttribute('data-nl', 'Filter resetten');
             resetFilterButton.textContent = 'Reset Filter';
             resetFilterButton.style.padding = '5px 10px';
             resetFilterButton.style.marginTop = '10px';
@@ -2634,6 +3040,11 @@ function createCombinedChartFromLocalStorage() {
 
           const openOptions = document.createElement('button');
           openOptions.classList.add('open-options');
+          openOptions.setAttribute('data-translate', '');
+          openOptions.setAttribute('data-eng', 'Open Options');
+          openOptions.setAttribute('data-fr', 'Ouvrir les options');
+          openOptions.setAttribute('data-de', 'Optionen öffnen');
+          openOptions.setAttribute('data-nl', 'Opties openen');
           openOptions.innerHTML = '<i class="fas fa-cog"></i>';
           openOptions.addEventListener('click', function () {
             // Hide all color pickers first

@@ -151,6 +151,8 @@
     font-weight: bold;
     margin-bottom: 1000px;
   }
+
+  
   .form-group {
     display: flex;
     flex-direction: column; /* Changed from space-between to column */
@@ -578,11 +580,17 @@
     color: #ffffff;
     border: none;
   }
+
+
+
+  
   .combine-graph {
     background-color: #f82a12;
     color: #ffffff;
     border: none;
   }
+  
+
   
   .delete-monitor {
     background-color: #ff0000;
