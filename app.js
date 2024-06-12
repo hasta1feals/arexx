@@ -891,7 +891,7 @@ app.post('/openAndListenSerialPort', async (req, res) => {
         // Define criteria to find the desired serial port
         const criteria = {
           //voor mac zonder hoofletter A en windows met hoofletter A dus maak 2 pkg.json files een voor mac en een voor windows=
-          vendorId: '1a86',
+          vendorId: '1A86',
           productId: '7523'
         };
 
@@ -1134,10 +1134,9 @@ app.get('/scan-wifi', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
- 
 
   // Use child_process.exec to open the default web browser
-  const url = `http://localhost:5500/arexx/public/`;
+  const url = `http://localhost:${PORT}/`;
   console.log(`Open ${url} in your browser`);
   switch (process.platform) {
     case 'darwin':

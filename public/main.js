@@ -335,6 +335,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('closeNotesModal22').addEventListener('click', function () {
     console.log('hello');
     closeModal(modalAdmin);
+    window.location.reload();
+
   });
 
   document.getElementById('closeThis').addEventListener('click', function () {
@@ -453,7 +455,7 @@ function adminLogin(){
   api('/login', 'POST', { username, password })
       .then(data => {
           if (data.success) {
-            window.location.href = '/arexx/public/admin.html';          } else {
+            window.location.href = 'admin.html';          } else {
               alert(data.error);
           }
       })
@@ -826,52 +828,52 @@ try {
 // Declare selectedChoice2 in the global scope if it needs to be used elsewhere
 var selectedChoice2 = null;
 
-function populateDropdown3() {
-  console.log("Initiating API request to fetch unique types...");
+// function populateDropdown444() {
+//   console.log("Initiating API request to fetch unique types...");
 
-  // Simulated API response data
-  const data = [
-    { "Type": "" },  // Empty option for placeholder or default
-    { "Type": "RH" },
-    { "Type": "Volt" },
-    { "Type": "Unknown" },
-    { "Type": "Temp" }
-  ];
+//   // Simulated API response data
+//   const data = [
+//     { "Type": "" },  // Empty option for placeholder or default
+//     { "Type": "RH" },
+//     { "Type": "Volt" },
+//     { "Type": "Unknown" },
+//     { "Type": "Temp" }
+//   ];
 
-  // Proceed with the existing logic using the simulated data
-  var select = document.getElementById("dropdown3");
-  console.log("Received data:", data);
+//   // Proceed with the existing logic using the simulated data
+//   var select = document.getElementById("dropdown5");
+//   console.log("Received data:", data);
 
-  // Clear previous options
-  select.innerHTML = '';
+//   // Clear previous options
+//   select.innerHTML = '';
 
-  // Check if the response is an array
-  if (Array.isArray(data)) {
-    // Iterate over the data and add options to the dropdown
-    data.forEach(function(row) {
-      if (row.Type !== undefined) {  // Check if Type is defined
-        var option = document.createElement("option");
-        option.value = row.Type;
-        option.textContent = row.Type;
-        select.appendChild(option);
-      } else {
-        console.warn("Skipping row with undefined Type:", row);
-      }
-    });
-  } else {
-    console.error("Response is not an array:", data);
-  }
+//   // Check if the response is an array
+//   if (Array.isArray(data)) {
+//     // Iterate over the data and add options to the dropdown
+//     data.forEach(function(row) {
+//       if (row.Type !== undefined) {  // Check if Type is defined
+//         var option34 = document.createElement("option");
+//         option34.value = row.Type;
+//         option34.textContent = row.Type;
+//         select.appendChild(option);
+//       } else {
+//         console.warn("Skipping row with undefined Type:", row);
+//       }
+//     });
+//   } else {
+//     console.error("Response is not an array:", data);
+//   }
 
-  // Attach event listener to the dropdown
-  select.addEventListener("change", function(event) {
-    // Update the selected value variable
-    selectedChoice2 = event.target.value;
-    console.log("Selected choice in dropdown 3:", selectedChoice2); // Log the selected value
-  });
-}
+//   // Attach event listener to the dropdown
+//   select.addEventListener("change", function(event) {
+//     // Update the selected value variable
+//     selectedChoice2 = event.target.value;
+//     console.log("Selected choice in dropdown 3:", selectedChoice2); // Log the selected value
+//   });
+// }
 
 // Call the function to populate the dropdown
-populateDropdown3();
+// populateDropdown444();
 
 
 
@@ -1036,7 +1038,15 @@ populateDropdown3();
   
       document.getElementById("noteTitle").addEventListener("input", saveAdminDraft);
       document.getElementById("noteContent").addEventListener("input", saveAdminDraft);
-      document.getElementById("saveNoteAdmin").onclick = saveAdminNote;
+      document.getElementById("saveNoteAdmin").onclick = function() {
+        saveAdminNote();
+    
+        setTimeout(function() {
+            document.getElementById("noteTitle").value = "";
+            document.getElementById("noteContent").value = "";
+        }, 1000); // 1000 milliseconds = 1 second
+    };
+    
   
       // Expose deleteAdminNote function to global scope
       window.deleteAdminNote = deleteAdminNote;
@@ -1214,6 +1224,8 @@ var modal200 = document.getElementById('addProductModal3')
     closeModal(modal200);
     // Call the setAlertParameters function
     setAlertParameters();
+
+    window.location.reload();
   });
 
 
@@ -1270,7 +1282,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const showGraphListBtn = document.querySelector('#myBtn4');
   populateDropdown1();
   populateDropdown2();
-  populateDropdown3();
+  // populateDropdown444();
   var xyz = document.getElementById('addProductModal34');
 
   document.getElementById('create-Offset').addEventListener('click', function(event) {
@@ -1289,6 +1301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Calling setOffsetParameters3');
     // Call the setAlertParameters function
     setOffsetParameters3();
+    window.location.reload();
   });
 
   if (minimizeBtn && graphList && showGraphListBtn) {
@@ -1304,9 +1317,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setOffsetParameters3() {
   console.log('Inside setOffsetParameters3');
-
+  var dropdown = document.getElementById("dropdown5");
+  var selectedValue = dropdown.value;
   // Get values from global variables
-  const offset = selectedChoice2;
+  const offset = selectedValue;
   const value = document.getElementById('setOffsetParameters').value; // Assuming inputBox1 is the ID for the value input box
 
   // Check if all required parameters are available
@@ -2023,10 +2037,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('newDataReceived', newDataReceived.toString()); // Persist the flag in localStorage
 
         // Reset the newDataReceived flag after 10 seconds (adjust the time as needed)
-        setTimeout(() => {
-          newDataReceived = false;
-          localStorage.setItem('newDataReceived', 'false'); // Update localStorage
-        }, 10000); // 10 seconds in milliseconds
+       // 10 seconds in milliseconds
       })
       .catch((error) => {
         console.error("Error fetching items:", error);

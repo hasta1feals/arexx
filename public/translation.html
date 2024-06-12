@@ -1,61 +1,101 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link rel="stylesheet" href="choice.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .emoji-buttons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="navbar.css" />
-  <link rel="stylesheet" href="choice.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-  <style>
-    .emoji-buttons {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+      .emoji-button {
+        font-size: 50px;
+        cursor: pointer;
+        margin: 0 10px;
+        padding: 40px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        transition: transform 0.2s, background-color 0.2s;
+      }
 
-    .emoji-button {
-      font-size: 50px;
-      cursor: pointer;
-      margin: 0 10px;
-      padding: 40px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      transition: transform 0.2s, background-color 0.2s;
-    }
+      .emoji-button:hover {
+        transform: scale(1.2);
+        background-color: #f0f0f0;
+      }
 
-    .emoji-button:hover {
-      transform: scale(1.2);
-      background-color: #f0f0f0;
-    }
+      .translation-text {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
 
-    .translation-text {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-  </style>
-</head>
+  <body>
+    <!-- Navbar Import -->
+    <div id="nav-placeholder"></div>
 
-<body>
-  <!-- Navbar Import -->
-  <div id="nav-placeholder"></div>
-
-  <div class="maincontent">
-    <div class="container1">
-      <div class="emoji-buttons">
-        <div class="emoji-button" id="translate-fr" title="French" data-lang="fr">🇫🇷</div>
-        <div class="emoji-button" id="translate-de" title="German" data-lang="de">🇩🇪</div>
-        <div class="emoji-button" id="translate-nl" title="Dutch" data-lang="nl">🇳🇱</div>
-        <div class="emoji-button" id="translate-en" title="English" data-lang="en">🇬🇧</div>
+    <div class="maincontent">
+      <div
+        id="loading-indicator"
+        data-translate
+        data-eng="Loading..."
+        data-fr="Chargement..."
+        data-de="Wird geladen..."
+        data-nl="Bezig met laden..."
+      >
+        Loading...
+      </div>
+      <div class="container1">
+        <div class="emoji-buttons">
+          <div
+            class="emoji-button"
+            id="translate-fr"
+            title="French"
+            data-lang="fr"
+          >
+            🇫🇷
+          </div>
+          <div
+            class="emoji-button"
+            id="translate-de"
+            title="German"
+            data-lang="de"
+          >
+            🇩🇪
+          </div>
+          <div
+            class="emoji-button"
+            id="translate-nl"
+            title="Dutch"
+            data-lang="nl"
+          >
+            🇳🇱
+          </div>
+          <div
+            class="emoji-button"
+            id="translate-en"
+            title="English"
+            data-lang="en"
+          >
+            🇬🇧
+          </div>
+        </div>
       </div>
     </div>
-    <div data-translate data-en="Hello" data-fr="Bonjour" data-de="Hallo" data-nl="Hallo">Hello</div>
 
-  </div>
-
-  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="main.js"></script>
-</body>
-
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="main.js"></script>
+  </body>
 </html>

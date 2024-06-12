@@ -1,132 +1,263 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="navbar.css" />
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-</head>
+  <body>
+    <!-- Navbar Import -->
+    <div id="nav-placeholder"></div>
+    <div class="maincontent">
+      <div id="error-message" style="display: none; color: red"></div>
 
-<body>
+      <div class="container1">
+        <!-- Graph Card -->
+        <div
+          id="loading-indicator"
+          data-translate
+          data-eng="Loading..."
+          data-fr="Chargement..."
+          data-de="Wird geladen..."
+          data-nl="Bezig met laden..."
+        >
+          Loading...
+        </div>
 
-  <!-- Navbar Import -->
-  <div id="nav-placeholder"></div>
-  <div class="maincontent">
+        <a id="adminModalOpen" class="item item-1">
+          <p
+            class="leters"
+            data-translate
+            data-eng="Create Note"
+            data-fr="Créer une note"
+            data-de="Notiz erstellen"
+            data-nl="Notitie maken"
+          ></p>
+          <i class="bx bx-notepad larger-icon"></i>
+        </a>
+        <a id="offsetModalOpen" class="item item-1">
+          <p
+            class="leters"
+            data-translate
+            data-eng="Adjust Settings"
+            data-fr="Ajuster les paramètres"
+            data-de="Einstellungen anpassen"
+            data-nl="Instellingen aanpassen"
+          ></p>
+          <i class="bx bxs-adjust larger-icon"></i>
+        </a>
 
-    <div id="error-message" style="display: none; color: red;"></div>
+        <!-- Optional: Add title or additional information -->
 
-    <div class="container1">
-
-      <!-- Graph Card -->
-      <div id="loading-indicator" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</div>
-
-      <a id="adminModalOpen" class="item item-1">
-        <p class="leters" data-translate data-eng="Create Note" data-fr="Créer une note" data-de="Notiz erstellen" data-nl="Notitie maken"></p><i class='bx bx-notepad larger-icon'></i>
-      </a>
-      <a id="offsetModalOpen" class="item item-1">
-        <p class="leters" data-translate data-eng="Adjust Settings" data-fr="Ajuster les paramètres" data-de="Einstellungen anpassen" data-nl="Instellingen aanpassen"></p><i class='bx bxs-adjust larger-icon'></i>
-      </a>
-
-      <!-- Optional: Add title or additional information -->
-
-      <div id="addproductnotes" class="modal">
-        <!-- Modal content -->
-        <div class="modal-content">
-          <span id="closeNotesModal22" class="close close5">&times;</span>
-          <!-- Tab links -->
-          <div class="tab">
-            <button id="modaltab4442" class="tablinks" data-tab="tab50002" data-translate data-eng="Create Note" data-fr="Créer une note" data-de="Notiz erstellen" data-nl="Notitie maken">Create Note</button>
-            <button id="modaltab5552" class="tablinks" data-tab="tab60002" data-translate data-eng="All Notes" data-fr="Toutes les notes" data-de="Alle Notizen" data-nl="Alle notities">All Notes</button>
-          </div>
-
-          <!-- Tab content -->
-          <div id="tab50002" class="tabcontent">
-            <div class="container">
-              <div class="form-group3">
-                <label for="noteTitle" data-translate data-eng="Title" data-fr="Titre" data-de="Titel" data-nl="Titel">Title</label>
-                <input type="text" id="noteTitle" placeholder="Enter note title" />
-              </div>
-              <div class="form-group3">
-                <label for="noteContent" data-translate data-eng="Content" data-fr="Contenu" data-de="Inhalt" data-nl="Inhoud">Content</label>
-                <textarea id="noteContent" placeholder="Enter note content"></textarea>
-              </div>
-              <button id="saveNoteAdmin" class="mbtn" data-translate data-eng="Save" data-fr="Enregistrer" data-de="Speichern" data-nl="Opslaan">Save</button>
-              <p id="noteMessage"></p>
+        <div id="addproductnotes" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span id="closeNotesModal22" class="close close5">&times;</span>
+            <!-- Tab links -->
+            <div class="tab">
+              <button
+                id="modaltab4442"
+                class="tablinks"
+                data-tab="tab50002"
+                data-translate
+                data-eng="Create Note"
+                data-fr="Créer une note"
+                data-de="Notiz erstellen"
+                data-nl="Notitie maken"
+              >
+                Create Note
+              </button>
+              <button
+                id="modaltab5552"
+                class="tablinks"
+                data-tab="tab60002"
+                data-translate
+                data-eng="All Notes"
+                data-fr="Toutes les notes"
+                data-de="Alle Notizen"
+                data-nl="Alle notities"
+              >
+                All Notes
+              </button>
             </div>
-          </div>
 
-          <div id="tab60002" class="tabcontent">
-            <div id="notesList" class="container">
-              <!-- Notes will be displayed here -->
+            <!-- Tab content -->
+            <div id="tab50002" class="tabcontent">
+              <div class="container">
+                <div class="form-group3">
+                  <label
+                    for="noteTitle"
+                    data-translate
+                    data-eng="Title"
+                    data-fr="Titre"
+                    data-de="Titel"
+                    data-nl="Titel"
+                    >Title</label
+                  >
+                  <input
+                    type="text"
+                    id="noteTitle"
+                    placeholder="Enter note title"
+                  />
+                </div>
+                <div class="form-group3">
+                  <label
+                    for="noteContent"
+                    data-translate
+                    data-eng="Content"
+                    data-fr="Contenu"
+                    data-de="Inhalt"
+                    data-nl="Inhoud"
+                    >Content</label
+                  >
+                  <textarea
+                    id="noteContent"
+                    placeholder="Enter note content"
+                  ></textarea>
+                </div>
+                <button
+                  id="saveNoteAdmin"
+                  class="mbtn"
+                  data-translate
+                  data-eng="Save"
+                  data-fr="Enregistrer"
+                  data-de="Speichern"
+                  data-nl="Opslaan"
+                >
+                  Save
+                </button>
+                <p id="noteMessage"></p>
+              </div>
+            </div>
+
+            <div id="tab60002" class="tabcontent">
+              <div id="notesList" class="container">
+                <!-- Notes will be displayed here -->
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-
-      <div id="addProductModal34" class="modal">
-        <div class="modal-content">
-          <span id="closeThis" class="close close5">&times;</span>
-          <div class="tab">
-            <button id="modaltab27" class="tablinks" onclick="openTab(event, 'tab270')" data-translate data-eng="Set an Offset" data-fr="Définir un Décalage" data-de="Versatz Einstellen" data-nl="Offset Instellen">
-              Set an Offset
-            </button>
-            <button id="modaltab47" class="tablinks" onclick="openTab(event, 'tab470')" data-translate data-eng="Active Offsets" data-fr="Décalages Actifs" data-de="Aktive Versätze" data-nl="Actieve Offsets">
-              Active Offsets
-            </button>
-          </div>
-          <div id="tab270" class="tabcontent">
-            <div class="container">
-              <div class="form-group">
-                <label for="dropdown3" data-translate data-eng="Type" data-fr="Type" data-de="Typ" data-nl="Type">Type</label>
-                <select id="dropdown3">
+        <div id="addProductModal34" class="modal">
+          <div class="modal-content">
+            <span id="closeThis" class="close close5">&times;</span>
+            <div class="tab">
+              <button
+                id="modaltab27"
+                class="tablinks"
+                onclick="openTab(event, 'tab270')"
+                data-translate
+                data-eng="Set an Offset"
+                data-fr="Définir un Décalage"
+                data-de="Versatz Einstellen"
+                data-nl="Offset Instellen"
+              >
+                Set an Offset
+              </button>
+              <button
+                id="modaltab47"
+                class="tablinks"
+                onclick="openTab(event, 'tab470')"
+                data-translate
+                data-eng="Active Offsets"
+                data-fr="Décalages Actifs"
+                data-de="Aktive Versätze"
+                data-nl="Actieve Offsets"
+              >
+                Active Offsets
+              </button>
+            </div>
+            <div id="tab270" class="tabcontent">
+              <div class="container">
+                <div class="form-group">
+                  <label
+                    for="dropdown5"
+                    data-translate
+                    data-eng="Type"
+                    data-fr="Type"
+                    data-de="Typ"
+                    data-nl="Type"
+                    >Type</label
+                  >
+                  <select id="dropdown5">
                     <option value=""></option>
-                  <option value="RH">RH</option>
-                  <option value="Volt">Volt</option>
-                  <option value="Unknown">Unknown</option>
-                  <option value="Temp">Temp</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="inputBox1" data-translate data-eng="Value" data-fr="Valeur" data-de="Wert" data-nl="Waarde">Value</label>
-                <input type="text" id="setOffsetParameters" placeholder="Enter text" />
+                    <option value="RH">RH</option>
+                    <option value="Volt">Volt</option>
+                    <option value="Unknown">Unknown</option>
+                    <option value="Temp">Temp</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label
+                    for="inputBox1"
+                    data-translate
+                    data-eng="Value"
+                    data-fr="Valeur"
+                    data-de="Wert"
+                    data-nl="Waarde"
+                    >Value</label
+                  >
+                  <input
+                    type="text"
+                    id="setOffsetParameters"
+                    placeholder="Enter text"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div id="tab470" class="tabcontent">
-            <div id="hallo1013"></div>
-          </div>
-          <form class="formChangeRegion">
-            <div class="form-group"></div>
-            <div class="modalbtn">
-              <button id="close-button3" class="mbtn export" data-translate data-eng="Discard" data-fr="Annuler" data-de="Verwerfen" data-nl="Weggooien">Discard</button>
-              <button id="create-Offset" class="mbtn combine-graph" data-translate data-eng="Create Offset" data-fr="Créer un Décalage" data-de="Versatz erstellen" data-nl="Offset maken">Create Offset</button>
+            <div id="tab470" class="tabcontent">
+              <div id="hallo1013"></div>
             </div>
-          </form>
+            <form class="formChangeRegion">
+              <div class="form-group"></div>
+              <div class="modalbtn">
+                <button
+                  id="close-button3"
+                  class="mbtn export"
+                  data-translate
+                  data-eng="Discard"
+                  data-fr="Annuler"
+                  data-de="Verwerfen"
+                  data-nl="Weggooien"
+                >
+                  Discard
+                </button>
+                <button
+                  id="create-Offset"
+                  class="mbtn combine-graph"
+                  data-translate
+                  data-eng="Create Offset"
+                  data-fr="Créer un Décalage"
+                  data-de="Versatz erstellen"
+                  data-nl="Offset maken"
+                >
+                  Create Offset
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      
-
-
-
-
-
     </div>
-  </div>
 
-  <script src="main.js"></script>
-  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="main.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script>
-    $(function () {
-      // Load the HTML content into the "nav-placeholder" element
-      $("#nav-placeholder").load("navbar.html");
-    });
-  </script>
-
-</body>
-
+    <script>
+      $(function () {
+        // Load the HTML content into the "nav-placeholder" element
+        $("#nav-placeholder").load("navbar.html");
+      });
+    </script>
+  </body>
 </html>
