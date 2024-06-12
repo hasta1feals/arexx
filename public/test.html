@@ -42,7 +42,6 @@
   </head>
 
   <body>
-    <!-- Navbar Import -->
     <!-- Nav bar -->
     <div class="sidebar">
       <div class="logo-details">
@@ -63,20 +62,20 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Connection Choice"
-              data-fr="Choix de Connexion"
+              data-en="Connection Choice"
+              data-fr="Choix de connexion"
               data-de="Verbindungswahl"
-              data-nl="Verbindingskeuze"
+              data-nl="Keuze verbinding"
               >Connection Choice</span
             >
           </a>
           <span
             class="tooltip"
             data-translate
-            data-eng="Connection Choice"
-            data-fr="Choix de Connexion"
+            data-en="Connection Choice"
+            data-fr="Choix de connexion"
             data-de="Verbindungswahl"
-            data-nl="Verbindingskeuze"
+            data-nl="Keuze verbinding"
             >Connection Choice</span
           >
           <input type="file" id="databaseInput" style="display: none" />
@@ -87,8 +86,8 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Dashboard"
-              data-fr="Tableau de Bord"
+              data-en="Dashboard"
+              data-fr="Tableau de bord"
               data-de="Instrumententafel"
               data-nl="Dashboard"
               >Dashboard</span
@@ -97,8 +96,8 @@
           <span
             class="tooltip"
             data-translate
-            data-eng="Dashboard"
-            data-fr="Tableau de Bord"
+            data-en="Dashboard"
+            data-fr="Tableau de bord"
             data-de="Instrumententafel"
             data-nl="Dashboard"
             >Dashboard</span
@@ -110,7 +109,7 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Sensor"
+              data-en="Sensor"
               data-fr="Capteur"
               data-de="Sensor"
               data-nl="Sensor"
@@ -120,7 +119,7 @@
           <span
             class="tooltip"
             data-translate
-            data-eng="Sensor"
+            data-en="Sensor"
             data-fr="Capteur"
             data-de="Sensor"
             data-nl="Sensor"
@@ -133,20 +132,20 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Complete Overview"
-              data-fr="Vue d'ensemble complète"
-              data-de="Komplette Übersicht"
-              data-nl="Volledig Overzicht"
+              data-en="Complete Overview"
+              data-fr="Aperçu complet"
+              data-de="Komplettübersicht"
+              data-nl="Volledig overzicht"
               >Complete Overview</span
             >
           </a>
           <span
             class="tooltip"
             data-translate
-            data-eng="Complete Overview"
-            data-fr="Vue d'ensemble complète"
-            data-de="Komplette Übersicht"
-            data-nl="Volledig Overzicht"
+            data-en="Complete Overview"
+            data-fr="Aperçu complet"
+            data-de="Komplettübersicht"
+            data-nl="Volledig overzicht"
             >Complete Overview</span
           >
         </li>
@@ -156,7 +155,7 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Admin"
+              data-en="Admin"
               data-fr="Administrateur"
               data-de="Administrator"
               data-nl="Beheerder"
@@ -166,7 +165,7 @@
           <span
             class="tooltip"
             data-translate
-            data-eng="Admin"
+            data-en="Admin"
             data-fr="Administrateur"
             data-de="Administrator"
             data-nl="Beheerder"
@@ -179,7 +178,7 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Setting"
+              data-en="Setting"
               data-fr="Réglage"
               data-de="Einstellung"
               data-nl="Instelling"
@@ -189,7 +188,7 @@
           <span
             class="tooltip"
             data-translate
-            data-eng="Setting"
+            data-en="Setting"
             data-fr="Réglage"
             data-de="Einstellung"
             data-nl="Instelling"
@@ -202,7 +201,7 @@
             <span
               class="links_name"
               data-translate
-              data-eng="Language"
+              data-en="Language"
               data-fr="Langue"
               data-de="Sprache"
               data-nl="Taal"
@@ -212,45 +211,21 @@
           <span
             class="tooltip"
             data-translate
-            data-eng="Language"
+            data-en="Language"
             data-fr="Langue"
             data-de="Sprache"
             data-nl="Taal"
             >Language</span
           >
         </li>
-        <a hallo id="logoutLink" href=""><i></i></a>
       </ul>
-    </div>
-
-    <div class="maincontent">
-      <div class="topbar">
-        <div class="topbar-items">
-          <div class="searchbox">
-            <i class="bx bx-search"></i>
-            <input
-              id="searchInput"
-              onkeyup="handleKeyupEvent()"
-              type="search"
-              name="search"
-              placeholder=""
-              data-translate
-              data-eng="Search Sensors"
-              data-fr="Rechercher des capteurs"
-              data-de="Sensoren suchen"
-              data-nl="Sensoren zoeken"
-            />
-            <img id="img-cc" src="img/no_connection.svg" alt="no CC" />
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="maincontent">
       <div
         id="loading-indicator"
         data-translate
-        data-eng="Loading..."
+        data-en="Loading..."
         data-fr="Chargement..."
         data-de="Wird geladen..."
         data-nl="Bezig met laden..."
@@ -295,8 +270,61 @@
       </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <!-- Place the script at the end of the body tag -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedLanguage = localStorage.getItem("language") || "en";
+        applyTranslation(savedLanguage);
+
+        document.querySelectorAll(".emoji-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            const language = button.getAttribute("data-lang");
+            setLanguage(language);
+          });
+        });
+
+        // Sidebar toggle functionality
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+
+        closeBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          menuBtnChange();
+
+          // Add or remove the search icon inside the input based on sidebar state
+          if (sidebar.classList.contains("open")) {
+            document.querySelector(".searchbox i.bx").style.display = "block";
+          } else {
+            document.querySelector(".searchbox i.bx").style.display = "none";
+          }
+        });
+
+        function menuBtnChange() {
+          if (sidebar.classList.contains("open")) {
+            closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
+        }
+      });
+
+      function setLanguage(language) {
+        localStorage.setItem("language", language);
+        applyTranslation(language);
+      }
+
+      function applyTranslation(language) {
+        const elements = document.querySelectorAll("[data-translate]");
+        elements.forEach((element) => {
+          const translation = element.getAttribute(`data-${language}`);
+          if (translation) {
+            element.innerText = translation;
+          }
+        });
+      }
+    </script>
   </body>
 </html>

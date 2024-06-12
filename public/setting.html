@@ -1,91 +1,501 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link rel="stylesheet" href="setting.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="navbar.css" />
-  <link rel="stylesheet" href="setting.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <body>
+    <!-- Nav bar -->
+    <div class="sidebar">
+      <div class="logo-details">
+        <div class="logo_name">
+          <img
+            src="img/Arexx-logo (1).png"
+            position="absolute"
+            width="60%"
+            height="30%"
+          />
+        </div>
+        <i class="bx bx-menu" id="btn"></i>
+      </div>
+      <ul class="nav-list">
+        <li>
+          <a class="nav-link" href="choice.html" id="uploadDatabaseBtn">
+            <i class="bx bx-refresh"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Connection Choice"
+              data-fr="Choix de Connexion"
+              data-de="Verbindungswahl"
+              data-nl="Verbindingskeuze"
+              >Connection Choice</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Connection Choice"
+            data-fr="Choix de Connexion"
+            data-de="Verbindungswahl"
+            data-nl="Verbindingskeuze"
+            >Connection Choice</span
+          >
+          <input type="file" id="databaseInput" style="display: none" />
+        </li>
+        <li>
+          <a class="nav-link" href="homepage.html">
+            <i class="bx bxs-dashboard"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Dashboard"
+              data-fr="Tableau de Bord"
+              data-de="Instrumententafel"
+              data-nl="Dashboard"
+              >Dashboard</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Dashboard"
+            data-fr="Tableau de Bord"
+            data-de="Instrumententafel"
+            data-nl="Dashboard"
+            >Dashboard</span
+          >
+        </li>
+        <li>
+          <a class="nav-link" href="overzicht.html">
+            <i class="bx bxs-chart"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Sensor"
+              data-fr="Capteur"
+              data-de="Sensor"
+              data-nl="Sensor"
+              >Sensor</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Sensor"
+            data-fr="Capteur"
+            data-de="Sensor"
+            data-nl="Sensor"
+            >Sensor</span
+          >
+        </li>
+        <li>
+          <a id="notepad-logo" class="nav-link" href="overview.html">
+            <i class="bx bx-notepad"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Complete Overview"
+              data-fr="Vue d'ensemble complète"
+              data-de="Komplette Übersicht"
+              data-nl="Volledig Overzicht"
+              >Complete Overview</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Complete Overview"
+            data-fr="Vue d'ensemble complète"
+            data-de="Komplette Übersicht"
+            data-nl="Volledig Overzicht"
+            >Complete Overview</span
+          >
+        </li>
+        <li>
+          <a id="admin-logo" class="nav-link" href="adminLogin.html">
+            <i class="bx bxs-user"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Admin"
+              data-fr="Administrateur"
+              data-de="Administrator"
+              data-nl="Beheerder"
+              >Admin</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Admin"
+            data-fr="Administrateur"
+            data-de="Administrator"
+            data-nl="Beheerder"
+            >Admin</span
+          >
+        </li>
+        <li>
+          <a id="setting-logo" class="nav-link">
+            <i class="bx bx-cog"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Setting"
+              data-fr="Réglage"
+              data-de="Einstellung"
+              data-nl="Instelling"
+              >Setting</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Setting"
+            data-fr="Réglage"
+            data-de="Einstellung"
+            data-nl="Instelling"
+            >Setting</span
+          >
+        </li>
+        <li>
+          <a class="nav-link" href="translation.html">
+            <i class="bx bxs-flag"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Language"
+              data-fr="Langue"
+              data-de="Sprache"
+              data-nl="Taal"
+              >Language</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Language"
+            data-fr="Langue"
+            data-de="Sprache"
+            data-nl="Taal"
+            >Language</span
+          >
+        </li>
+        <a hallo id="logoutLink" href=""><i></i></a>
+      </ul>
+    </div>
 
-</head>
+    <div class="maincontent">
+      <div class="topbar">
+        <div class="topbar-items">
+          <div class="searchbox">
+            <i class="bx bx-search"></i>
+            <input
+              id="searchInput"
+              onkeyup="handleKeyupEvent()"
+              type="search"
+              name="search"
+              placeholder=""
+              data-translate
+              data-eng="Search Sensors"
+              data-fr="Rechercher des capteurs"
+              data-de="Sensoren suchen"
+              data-nl="Sensoren zoeken"
+            />
+            <img id="img-cc" src="img/no_connection.svg" alt="no CC" />
+          </div>
+        </div>
+      </div>
+    </div>
 
-<body>
-    <div id="nav-placeholder"></div>
     <div class="container">
-        <h1 data-translate data-eng="Settings" data-fr="Paramètres" data-de="Einstellungen" data-nl="Instellingen">Settings</h1>
-        <div class="tabs">
-            <button class="tablink" onclick="openTab(event, 'NetworkSettings')" data-translate data-eng="Network Settings" data-fr="Paramètres Réseau" data-de="Netzwerkeinstellungen" data-nl="Netwerkinstellingen">Network Settings</button>
-            <button id="cn" class="tablink" onclick="openTab(event, 'CurrentNetwork')" data-translate data-eng="Current Network" data-fr="Réseau Actuel" data-de="Aktuelles Netzwerk" data-nl="Huidig Netwerk">Current Network</button>
-            <button class="tablink" onclick="openTab(event, 'MQTTSettings')" data-translate data-eng="MQTT Settings" data-fr="Paramètres MQTT" data-de="MQTT-Einstellungen" data-nl="MQTT-instellingen">MQTT Settings</button>
-            <button id="cn-mqtt" class="tablink" onclick="openTab(event, 'CurrentMQTT')" data-translate data-eng="Current MQTT Settings" data-fr="Paramètres MQTT Actuels" data-de="Aktuelle MQTT-Einstellungen" data-nl="Huidige MQTT-instellingen">Current MQTT Settings</button>
-        </div>
+      <h1
+        data-translate
+        data-eng="Settings"
+        data-fr="Paramètres"
+        data-de="Einstellungen"
+        data-nl="Instellingen"
+      >
+        Settings
+      </h1>
+      <div class="tabs">
+        <button
+          class="tablink"
+          onclick="openTab(event, 'NetworkSettings')"
+          data-translate
+          data-eng="Network Settings"
+          data-fr="Paramètres Réseau"
+          data-de="Netzwerkeinstellungen"
+          data-nl="Netwerkinstellingen"
+        >
+          Network Settings
+        </button>
+        <button
+          id="cn"
+          class="tablink"
+          onclick="openTab(event, 'CurrentNetwork')"
+          data-translate
+          data-eng="Current Network"
+          data-fr="Réseau Actuel"
+          data-de="Aktuelles Netzwerk"
+          data-nl="Huidig Netwerk"
+        >
+          Current Network
+        </button>
+        <button
+          class="tablink"
+          onclick="openTab(event, 'MQTTSettings')"
+          data-translate
+          data-eng="MQTT Settings"
+          data-fr="Paramètres MQTT"
+          data-de="MQTT-Einstellungen"
+          data-nl="MQTT-instellingen"
+        >
+          MQTT Settings
+        </button>
+        <button
+          id="cn-mqtt"
+          class="tablink"
+          onclick="openTab(event, 'CurrentMQTT')"
+          data-translate
+          data-eng="Current MQTT Settings"
+          data-fr="Paramètres MQTT Actuels"
+          data-de="Aktuelle MQTT-Einstellungen"
+          data-nl="Huidige MQTT-instellingen"
+        >
+          Current MQTT Settings
+        </button>
+      </div>
 
-        <div id="NetworkSettings" class="tabcontent">
-            <h2 data-translate data-eng="Configure Wi-Fi" data-fr="Configurer le Wi-Fi" data-de="Wi-Fi Konfigurieren" data-nl="Wi-Fi Configureren">Configure Wi-Fi</h2>
-            <form id="wifi-form">
-                <div class="form-group1">
-                    <label for="ssid" data-translate data-eng="SSID" data-fr="SSID" data-de="SSID" data-nl="SSID">SSID:</label>
-                    <input type="text" id="ssid" name="ssid" required>
-                </div>
-                <div class="form-group1">
-                    <label for="password" data-translate data-eng="Password" data-fr="Mot de Passe" data-de="Passwort" data-nl="Wachtwoord">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button id="sendWifibtn" data-translate data-eng="Submit" data-fr="Soumettre" data-de="Einreichen" data-nl="Indienen">Submit</button>
-            </form>
-            <div id="statusMessage"></div>
-        </div>
+      <div id="NetworkSettings" class="tabcontent">
+        <h2
+          data-translate
+          data-eng="Configure Wi-Fi"
+          data-fr="Configurer le Wi-Fi"
+          data-de="Wi-Fi Konfigurieren"
+          data-nl="Wi-Fi Configureren"
+        >
+          Configure Wi-Fi
+        </h2>
+        <form id="wifi-form">
+          <div class="form-group1">
+            <label
+              for="ssid"
+              data-translate
+              data-eng="SSID"
+              data-fr="SSID"
+              data-de="SSID"
+              data-nl="SSID"
+              >SSID:</label
+            >
+            <input type="text" id="ssid" name="ssid" required />
+          </div>
+          <div class="form-group1">
+            <label
+              for="password"
+              data-translate
+              data-eng="Password"
+              data-fr="Mot de Passe"
+              data-de="Passwort"
+              data-nl="Wachtwoord"
+              >Password:</label
+            >
+            <input type="password" id="password" name="password" required />
+          </div>
+          <button
+            id="sendWifibtn"
+            data-translate
+            data-eng="Submit"
+            data-fr="Soumettre"
+            data-de="Einreichen"
+            data-nl="Indienen"
+          >
+            Submit
+          </button>
+        </form>
+        <div id="statusMessage"></div>
+      </div>
 
-        <div id="CurrentNetwork" class="tabcontent">
-            <h2 data-translate data-eng="Currently Connected Network" data-fr="Réseau Actuellement Connecté" data-de="Derzeit Verbundenes Netzwerk" data-nl="Huidig Verbonden Netwerk">Currently Connected Network</h2>
-            <p id="current" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</p>
-        </div>
+      <div id="CurrentNetwork" class="tabcontent">
+        <h2
+          data-translate
+          data-eng="Currently Connected Network"
+          data-fr="Réseau Actuellement Connecté"
+          data-de="Derzeit Verbundenes Netzwerk"
+          data-nl="Huidig Verbonden Netwerk"
+        >
+          Currently Connected Network
+        </h2>
+        <p
+          id="current"
+          data-translate
+          data-eng="Loading..."
+          data-fr="Chargement..."
+          data-de="Wird geladen..."
+          data-nl="Bezig met laden..."
+        >
+          Loading...
+        </p>
+      </div>
 
-        <div id="MQTTSettings" class="tabcontent">
-            <h2 data-translate data-eng="MQTT Settings" data-fr="Paramètres MQTT" data-de="MQTT-Einstellungen" data-nl="MQTT-instellingen">MQTT Settings</h2>
-            <form id="mqtt-form">
-                <div class="form-group1">
-                    <label for="broker" data-translate data-eng="Broker" data-fr="Courtier" data-de="Makler" data-nl="Makelaarskantoor">Broker:</label>
-                    <input type="text" id="broker" name="broker" value="185.107.90.149" required>
-                </div>
-                <div class="form-group1">
-                    <label for="port" data-translate data-eng="Port" data-fr="Port" data-de="Hafen" data-nl="Haven">Port:</label>
-                    <input type="text" id="port" name="port" value="1883" required>
-                </div>
-                <div class="form-group1">
-                    <label for="username" data-translate data-eng="Username" data-fr="Nom d'utilisateur" data-de="Benutzername" data-nl="Gebruikersnaam">Username:</label>
-                    <input type="text" id="username" name="username" value="public" required>
-                </div>
-                <div class="form-group1">
-                    <label for="password" data-translate data-eng="Password" data-fr="Mot de Passe" data-de="Passwort" data-nl="Wachtwoord">Password:</label>
-                    <input type="password" id="mqtt-password" name="mqtt-password" value="public" required>
-                </div>
-                <div class="form-group1">
-                    <label for="topic" data-translate data-eng="Topic" data-fr="Sujet" data-de="Thema" data-nl="Onderwerp">Topic:</label>
-                    <input type="text" id="topic" name="topic" value="hallo" required>
-                </div>
-                <div class="form-group1">
-                    <label for="admin-key" data-translate data-eng="Admin Key" data-fr="Clé Admin" data-de="Admin-Schlüssel" data-nl="Beheerderssleutel">Admin Key:</label>
-                    <input type="password" id="admin-key" name="admin-key" value="admin" required>
-                </div>
-                <button id="sendMQTTbtn" data-translate data-eng="Submit" data-fr="Soumettre" data-de="Einreichen" data-nl="Indienen">Submit</button>
-            </form>
-            <div id="mqttStatusMessage"></div>
-        </div>
+      <div id="MQTTSettings" class="tabcontent">
+        <h2
+          data-translate
+          data-eng="MQTT Settings"
+          data-fr="Paramètres MQTT"
+          data-de="MQTT-Einstellungen"
+          data-nl="MQTT-instellingen"
+        >
+          MQTT Settings
+        </h2>
+        <form id="mqtt-form">
+          <div class="form-group1">
+            <label
+              for="broker"
+              data-translate
+              data-eng="Broker"
+              data-fr="Courtier"
+              data-de="Makler"
+              data-nl="Makelaarskantoor"
+              >Broker:</label
+            >
+            <input
+              type="text"
+              id="broker"
+              name="broker"
+              value="185.107.90.149"
+              required
+            />
+          </div>
+          <div class="form-group1">
+            <label
+              for="port"
+              data-translate
+              data-eng="Port"
+              data-fr="Port"
+              data-de="Hafen"
+              data-nl="Haven"
+              >Port:</label
+            >
+            <input type="text" id="port" name="port" value="1883" required />
+          </div>
+          <div class="form-group1">
+            <label
+              for="username"
+              data-translate
+              data-eng="Username"
+              data-fr="Nom d'utilisateur"
+              data-de="Benutzername"
+              data-nl="Gebruikersnaam"
+              >Username:</label
+            >
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value="public"
+              required
+            />
+          </div>
+          <div class="form-group1">
+            <label
+              for="password"
+              data-translate
+              data-eng="Password"
+              data-fr="Mot de Passe"
+              data-de="Passwort"
+              data-nl="Wachtwoord"
+              >Password:</label
+            >
+            <input
+              type="password"
+              id="mqtt-password"
+              name="mqtt-password"
+              value="public"
+              required
+            />
+          </div>
+          <div class="form-group1">
+            <label
+              for="topic"
+              data-translate
+              data-eng="Topic"
+              data-fr="Sujet"
+              data-de="Thema"
+              data-nl="Onderwerp"
+              >Topic:</label
+            >
+            <input type="text" id="topic" name="topic" value="hallo" required />
+          </div>
+          <div class="form-group1">
+            <label
+              for="admin-key"
+              data-translate
+              data-eng="Admin Key"
+              data-fr="Clé Admin"
+              data-de="Admin-Schlüssel"
+              data-nl="Beheerderssleutel"
+              >Admin Key:</label
+            >
+            <input
+              type="password"
+              id="admin-key"
+              name="admin-key"
+              value="admin"
+              required
+            />
+          </div>
+          <button
+            id="sendMQTTbtn"
+            data-translate
+            data-eng="Submit"
+            data-fr="Soumettre"
+            data-de="Einreichen"
+            data-nl="Indienen"
+          >
+            Submit
+          </button>
+        </form>
+        <div id="mqttStatusMessage"></div>
+      </div>
 
-        <div id="CurrentMQTT" class="tabcontent">
-            <h2 data-translate data-eng="Current MQTT Settings" data-fr="Paramètres MQTT Actuels" data-de="Aktuelle MQTT-Einstellungen" data-nl="Huidige MQTT-instellingen">Current MQTT Settings</h2>
-            <p id="current-mqtt" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</p>
-        </div>
+      <div id="CurrentMQTT" class="tabcontent">
+        <h2
+          data-translate
+          data-eng="Current MQTT Settings"
+          data-fr="Paramètres MQTT Actuels"
+          data-de="Aktuelle MQTT-Einstellungen"
+          data-nl="Huidige MQTT-instellingen"
+        >
+          Current MQTT Settings
+        </h2>
+        <p
+          id="current-mqtt"
+          data-translate
+          data-eng="Loading..."
+          data-fr="Chargement..."
+          data-de="Wird geladen..."
+          data-nl="Bezig met laden..."
+        >
+          Loading...
+        </p>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="main.js"></script>
-
-</body>
-
+  </body>
 </html>

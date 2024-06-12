@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="navbar.css" />
-  <link rel="stylesheet" href="AdminLogin.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-  <style>
-    .page-container {
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link rel="stylesheet" href="AdminLogin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .page-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         height: 100vh;
         background-color: #f0f0f0;
         margin: 0;
-    }
-    .container2 {
+      }
+      .container2 {
         background-color: white;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         text-align: center;
         margin-top: 20px;
-    }
-    .container2 h2 {
+      }
+      .container2 h2 {
         margin-bottom: 20px;
         font-size: 24px;
         font-weight: bold;
-    }
-    .container2 input[type="text"],
-    .container2 input[type="password"] {
+      }
+      .container2 input[type="text"],
+      .container2 input[type="password"] {
         width: 100%;
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 16px;
-    }
-    .container2 button {
+      }
+      .container2 button {
         width: 100%;
         padding: 10px;
         background-color: #007bff;
@@ -47,32 +52,267 @@
         color: white;
         font-size: 16px;
         cursor: pointer;
-    }
-    .container2 button:hover {
+      }
+      .container2 button:hover {
         background-color: #0056b3;
-    }
-  </style>
-</head>
-<body>
-  <div id="nav-placeholder"></div>
-  <div class="page-container">
-    <div class="container2">
-      <div id="loading-indicator" data-translate data-eng="Loading..." data-fr="Chargement..." data-de="Wird geladen..." data-nl="Bezig met laden...">Loading...</div>
-        <h2 data-translate data-eng="Login" data-fr="Connexion" data-de="Anmeldung" data-nl="Inloggen">Login</h2>
-        <input id="admin-u" type="text" placeholder="Username" required data-translate data-eng="Username" data-fr="Nom d'utilisateur" data-de="Benutzername" data-nl="Gebruikersnaam">
-        <input id="admin-p" type="password" placeholder="Password" required data-translate data-eng="Password" data-fr="Mot de passe" data-de="Passwort" data-nl="Wachtwoord">
-        <button id="admin-login" data-translate data-eng="Login" data-fr="Connexion" data-de="Anmeldung" data-nl="Inloggen">Login</button>
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo-details">
+        <div class="logo_name">
+          <img
+            src="img/Arexx-logo (1).png"
+            position="absolute"
+            width="60%"
+            height="30%"
+          />
+        </div>
+        <i class="bx bx-menu" id="btn"></i>
+      </div>
+      <ul class="nav-list">
+        <li>
+          <a class="nav-link" href="choice.html" id="uploadDatabaseBtn">
+            <i class="bx bx-refresh"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Connection Choice"
+              data-fr="Choix de Connexion"
+              data-de="Verbindungswahl"
+              data-nl="Verbindingskeuze"
+              >Connection Choice</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Connection Choice"
+            data-fr="Choix de Connexion"
+            data-de="Verbindungswahl"
+            data-nl="Verbindingskeuze"
+            >Connection Choice</span
+          >
+          <input type="file" id="databaseInput" style="display: none" />
+        </li>
+        <li>
+          <a class="nav-link" href="homepage.html">
+            <i class="bx bxs-dashboard"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Dashboard"
+              data-fr="Tableau de Bord"
+              data-de="Instrumententafel"
+              data-nl="Dashboard"
+              >Dashboard</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Dashboard"
+            data-fr="Tableau de Bord"
+            data-de="Instrumententafel"
+            data-nl="Dashboard"
+            >Dashboard</span
+          >
+        </li>
+        <li>
+          <a class="nav-link" href="overzicht.html">
+            <i class="bx bxs-chart"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Sensor"
+              data-fr="Capteur"
+              data-de="Sensor"
+              data-nl="Sensor"
+              >Sensor</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Sensor"
+            data-fr="Capteur"
+            data-de="Sensor"
+            data-nl="Sensor"
+            >Sensor</span
+          >
+        </li>
+        <li>
+          <a id="notepad-logo" class="nav-link" href="overview.html">
+            <i class="bx bx-notepad"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Complete Overview"
+              data-fr="Vue d'ensemble complète"
+              data-de="Komplette Übersicht"
+              data-nl="Volledig Overzicht"
+              >Complete Overview</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Complete Overview"
+            data-fr="Vue d'ensemble complète"
+            data-de="Komplette Übersicht"
+            data-nl="Volledig Overzicht"
+            >Complete Overview</span
+          >
+        </li>
+        <li>
+          <a id="admin-logo" class="nav-link" href="adminLogin.html">
+            <i class="bx bxs-user"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Admin"
+              data-fr="Administrateur"
+              data-de="Administrator"
+              data-nl="Beheerder"
+              >Admin</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Admin"
+            data-fr="Administrateur"
+            data-de="Administrator"
+            data-nl="Beheerder"
+            >Admin</span
+          >
+        </li>
+        <li>
+          <a id="setting-logo" class="nav-link">
+            <i class="bx bx-cog"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Setting"
+              data-fr="Réglage"
+              data-de="Einstellung"
+              data-nl="Instelling"
+              >Setting</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Setting"
+            data-fr="Réglage"
+            data-de="Einstellung"
+            data-nl="Instelling"
+            >Setting</span
+          >
+        </li>
+        <li>
+          <a class="nav-link" href="translation.html">
+            <i class="bx bxs-flag"></i>
+            <span
+              class="links_name"
+              data-translate
+              data-eng="Language"
+              data-fr="Langue"
+              data-de="Sprache"
+              data-nl="Taal"
+              >Language</span
+            >
+          </a>
+          <span
+            class="tooltip"
+            data-translate
+            data-eng="Language"
+            data-fr="Langue"
+            data-de="Sprache"
+            data-nl="Taal"
+            >Language</span
+          >
+        </li>
+        <a hallo id="logoutLink" href=""><i></i></a>
+      </ul>
     </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  <script>
-    $(function () {
-      // Load the HTML content into the "nav-placeholder" element
-      $("#nav-placeholder").load("navbar.html");
-    });
-  </script>
-  <script src="main.js"></script>
-</body>
+    <div class="maincontent">
+      <div class="topbar">
+        <div class="topbar-items">
+          <div class="searchbox">
+            <i class="bx bx-search"></i>
+            <input
+              id="searchInput"
+              onkeyup="handleKeyupEvent()"
+              type="search"
+              name="search"
+              placeholder=""
+              data-translate
+              data-eng="Search Sensors"
+              data-fr="Rechercher des capteurs"
+              data-de="Sensoren suchen"
+              data-nl="Sensoren zoeken"
+            />
+            <img id="img-cc" src="img/no_connection.svg" alt="no CC" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-container">
+      <div class="container2">
+        <h2
+          data-translate
+          data-eng="Login"
+          data-fr="Connexion"
+          data-de="Anmeldung"
+          data-nl="Inloggen"
+        >
+          Login
+        </h2>
+        <input
+          id="admin-u"
+          type="text"
+          placeholder="Username"
+          required
+          data-translate
+          data-eng="Username"
+          data-fr="Nom d'utilisateur"
+          data-de="Benutzername"
+          data-nl="Gebruikersnaam"
+        />
+        <input
+          id="admin-p"
+          type="password"
+          placeholder="Password"
+          required
+          data-translate
+          data-eng="Password"
+          data-fr="Mot de passe"
+          data-de="Passwort"
+          data-nl="Wachtwoord"
+        />
+        <button
+          id="admin-login"
+          data-translate
+          data-eng="Login"
+          data-fr="Connexion"
+          data-de="Anmeldung"
+          data-nl="Inloggen"
+        >
+          Login
+        </button>
+      </div>
+    </div>
 
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script>
+      $(function () {
+        // Load the HTML content into the "nav-placeholder" element
+        $("#nav-placeholder").load("navbar.html");
+      });
+    </script>
+    <script src="main.js"></script>
+  </body>
 </html>
