@@ -383,6 +383,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+
+
+
+  async function fillSelectID() {
+    try {
+      const data = await api('/getUniqueIDsFromDatabase', 'GET');
+      const selectID = document.getElementById('select-id');
+
+      // Clear existing options
+      selectID.innerHTML = '';
+
+      // Populate new options
+      data.forEach(id => {
+
+        const option = document.createElement('option');
+        option.value = id.Id;
+        option.textContent = id.Id;
+        console.log(id.Id);
+        selectID.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error fetching unique IDs:', error);
+    }
+  }
+
+
+  async function fillSelectID2() {
+    try {
+      const data = await api('/getUniqueIDsFromDatabase', 'GET');
+      const selectID2 = document.getElementById('select-id2');
+
+      // Clear existing options
+      selectID.innerHTML = '';
+
+      // Populate new options
+      data.forEach(id => {
+
+        const option = document.createElement('option');
+        option.value = id.Id;
+        option.textContent = id.Id;
+        console.log(id.Id);
+        selectID.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error fetching unique IDs:', error);
+    }
+  }
+
+
+
+
+  async function fillSelectType() {
+    try {
+      const data = await api('/getUniqueTypeFromDatabase', 'GET');
+      const selectType = document.getElementById('select-type');
+
+      // Clear existing options
+      selectType.innerHTML = '';
+
+      // Populate new options
+      data.forEach(id => {
+
+        const option = document.createElement('option');
+        option.value = id.Type;
+        option.textContent = id.Type;
+        console.log(id.Id);
+        selectType.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error fetching unique IDs:', error);
+    }
+  }
+  fillSelectID();
+  fillSelectType();
+  fillSelectID2()
+
+
   function setActiveTab(tabName) {
     // Store the active tab state in localStorage
     localStorage.setItem("activeTab", tabName);

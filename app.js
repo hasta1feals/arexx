@@ -265,7 +265,15 @@ app.get('/getUniqueIDsFromDatabase', (req, res) => {
 });
 
 
-
+app.get('/getUniqueTypeFromDatabase', (req, res) => {
+  db.all('SELECT DISTINCT Type FROM mqtt_messages', (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: 'Error fetching users' });
+    } else {
+      res.send(rows);
+    }
+  });
+});
 
 app.get('/getDataFromDatabase', (req, res) => {
   const { id, type } = req.query; // Get the ID and type from the query parameters
@@ -286,23 +294,38 @@ app.get('/getDataFromDatabase', (req, res) => {
 
 
 app.get('/getDate', (req, res) => {
-  const { startDate, endDate } = req.query; // Get startDate and endDate from the query parameters
+  const { startDate, endDate, ids, type } = req.query; // Get startDate, endDate, ids, and type from the query parameters
 
   // Check if both startDate and endDate are provided
   if (!startDate || !endDate) {
     return res.status(400).send({ error: 'startDate and endDate parameters are required' });
   }
 
-  // Optional: You can add further validation for date format here if necessary
+  // Construct the SQL query with optional filters for ids and type
+  let sql = 'SELECT mqtt_messages.Id, mqtt_messages.Value, mqtt_messages.Type, mqtt_messages.Unit, mqtt_messages.TimeStamp, mqtt_messages.Nickname FROM mqtt_messages WHERE mqtt_messages.TimeStamp BETWEEN ? AND ?';
+  const params = [startDate, endDate];
 
-  // Fetch data from the database for the provided startDate and endDate
-  db.all('SELECT mqtt_messages.Id, mqtt_messages.Value, mqtt_messages.Type, mqtt_messages.Unit, mqtt_messages.TimeStamp, mqtt_messages.Nickname FROM mqtt_messages WHERE mqtt_messages.TimeStamp BETWEEN ? AND ?', [startDate, endDate], (err, rows) => {
+  if (ids) {
+    const idsArray = ids.split(',');
+    const placeholders = idsArray.map(() => '?').join(',');
+    sql += ` AND mqtt_messages.Id IN (${placeholders})`;
+    params.push(...idsArray);
+  }
+
+  if (type) {
+    sql += ' AND mqtt_messages.Type = ?';
+    params.push(type);
+  }
+
+  // Fetch data from the database with the constructed query and parameters
+  db.all(sql, params, (err, rows) => {
     if (err) {
       return res.status(500).send({ error: 'Error fetching data from the database' });
     }
     res.send(rows);
   });
 });
+
 
 
 

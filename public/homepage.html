@@ -736,6 +736,7 @@
             id="modaltab2000"
             class="tablinks"
             onclick="openTab(event, 'tab20000')"
+            
             data-translate
             data-eng="Excel"
             data-fr="Excel"
@@ -754,8 +755,7 @@
               data-fr="Date de Début"
               data-de="Startdatum"
               data-nl="Begindatum"
-              >Start Date:</label
-            >
+            >Start Date:</label>
             <input type="date" id="start-date" class="form-control" />
           </div>
           <div class="form-group">
@@ -766,9 +766,40 @@
               data-fr="Date de Fin"
               data-de="Enddatum"
               data-nl="Einddatum"
-              >End Date:</label
-            >
+            >End Date:</label>
             <input type="date" id="end-date" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label
+              for="select-id"
+              data-translate
+              data-eng="Select ID"
+              data-fr="Sélectionner ID"
+              data-de="ID Auswählen"
+              data-nl="Selecteer ID"
+            >Select ID:</label>
+            <select id="select-id" class="form-control">
+              <option value="id1">ID 1</option>
+              <option value="id2">ID 2</option>
+              <option value="id3">ID 3</option>
+              <!-- Add more options as needed -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label
+              for="select-type"
+              data-translate
+              data-eng="Select Type"
+              data-fr="Sélectionner Type"
+              data-de="Typ Auswählen"
+              data-nl="Selecteer Type"
+            >Select Type:</label>
+            <select id="select-type" class="form-control">
+              <option value="type1">Type 1</option>
+              <option value="type2">Type 2</option>
+              <option value="type3">Type 3</option>
+              <!-- Add more options as needed -->
+            </select>
           </div>
           <form class="formChangeRegion">
             <div class="form-group"></div>
@@ -802,6 +833,7 @@
         </div>
       </div>
     </div>
+    
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
