@@ -73,6 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+
+
+  
+
   const savedLanguage = localStorage.getItem('language') || 'en';
   applyTranslation(savedLanguage);
 
@@ -111,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setLanguage(language) {
   localStorage.setItem('language', language);
   applyTranslation(language);
+  window.location.reload();
 }
 
 function applyTranslation(language) {
@@ -119,6 +124,7 @@ function applyTranslation(language) {
     const translation = element.getAttribute(`data-${language}`);
     if (translation) {
       element.innerText = translation;
+      
     }
   });
 }
@@ -878,29 +884,45 @@ var selectedChoice2 = null;
 
 
 
-  function sendmail() {
-    var email = document.getElementById("inputBox100").value;
-   
-  
-    if (!email) {
-      console.error("Email is required");
-      return;
-    }
-  
-    var data = {
-      email: email,
-    };
-  
-    api("/update-email", "POST", data)
-      .then(function(response) {
-        console.log("Email updated successfully:", response);
-      })
-      .catch(function(error) {
-        console.error("Error updating email:", error);
-      });
-  
+function sendmail() {
+  var email = document.getElementById("inputBox100").value;
 
+  if (!email) {
+    console.error("Email is required");
+    return;
   }
+
+  var data = {
+    email: email,
+  };
+
+  api("/update-email", "POST", data)
+    .then(function(response) {
+      console.log("Raw response:", response); // Log the raw response
+      try {
+        var contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          // If response is JSON, parse it
+          return response.json().then(function(jsonResponse) {
+            console.log("Email updated successfully:", jsonResponse);
+          });
+        } else {
+          // If response is not JSON, handle it as text
+          return response.text().then(function(textResponse) {
+            console.log("Non-JSON response:", textResponse);
+          });
+        }
+      } catch (e) {
+        console.error("Failed to parse response:", e);
+        console.log("Response:", response);
+      }
+    })
+    .catch(function(error) {
+      console.error("Error updating email:", error);
+      console.log(data);
+    });
+}
+
   document.addEventListener("DOMContentLoaded", function () {
     try {
       let notes = JSON.parse(localStorage.getItem("notes")) || [];
@@ -1062,7 +1084,7 @@ var selectedChoice2 = null;
   
 
   document.getElementById('send-email').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default behavior
+    
     var modal2000 = document.getElementById('addProductModal3')
 
     function closeModal(modal) {

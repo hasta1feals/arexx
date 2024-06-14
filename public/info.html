@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        .maincontent3 {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container3 {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .container3 h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .container3 p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    
+  </head>
+
+  <body>
+    <!-- Navbar Import -->
+    <div class="sidebar">
+        <div class="logo-details">
+          <div class="logo_name">
+            <img
+              src="img/Arexx-logo (1).png"
+              position="absolute"
+              width="60%"
+              height="30%"
+            />
+          </div>
+          <i class="bx bx-menu" id="btn"></i>
+        </div>
+        <ul class="nav-list">
+          <li>
+            <a class="nav-link" href="choice.html" id="uploadDatabaseBtn">
+              <i class="bx bx-refresh"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Connection Choice"
+                data-fr="Choix de Connexion"
+                data-de="Verbindungswahl"
+                data-nl="Verbindingskeuze"
+                >Connection Choice</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Connection Choice"
+              data-fr="Choix de Connexion"
+              data-de="Verbindungswahl"
+              data-nl="Verbindingskeuze"
+              >Connection Choice</span
+            >
+            <input type="file" id="databaseInput" style="display: none" />
+          </li>
+          <li>
+            <a class="nav-link" href="homepage.html">
+              <i class="bx bxs-dashboard"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Dashboard"
+                data-fr="Tableau de Bord"
+                data-de="Instrumententafel"
+                data-nl="Dashboard"
+                >Dashboard</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Dashboard"
+              data-fr="Tableau de Bord"
+              data-de="Instrumententafel"
+              data-nl="Dashboard"
+              >Dashboard</span
+            >
+          </li>
+          <li>
+            <a class="nav-link" href="overzicht.html">
+              <i class="bx bxs-chart"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Sensor"
+                data-fr="Capteur"
+                data-de="Sensor"
+                data-nl="Sensor"
+                >Sensor</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Sensor"
+              data-fr="Capteur"
+              data-de="Sensor"
+              data-nl="Sensor"
+              >Sensor</span
+            >
+          </li>
+          <li>
+            <a id="notepad-logo" class="nav-link" href="overview.html">
+              <i class="bx bx-notepad"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Complete Overview"
+                data-fr="Vue d'ensemble complète"
+                data-de="Komplette Übersicht"
+                data-nl="Volledig Overzicht"
+                >Complete Overview</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Complete Overview"
+              data-fr="Vue d'ensemble complète"
+              data-de="Komplette Übersicht"
+              data-nl="Volledig Overzicht"
+              >Complete Overview</span
+            >
+          </li>
+          <li>
+            <a id="admin-logo" class="nav-link" href="adminLogin.html">
+              <i class="bx bxs-user"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Admin"
+                data-fr="Administrateur"
+                data-de="Administrator"
+                data-nl="Beheerder"
+                >Admin</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Admin"
+              data-fr="Administrateur"
+              data-de="Administrator"
+              data-nl="Beheerder"
+              >Admin</span
+            >
+          </li>
+          <li>
+            <a id="setting-logo" class="nav-link">
+              <i class="bx bx-cog"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Setting"
+                data-fr="Réglage"
+                data-de="Einstellung"
+                data-nl="Instelling"
+                >Setting</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Setting"
+              data-fr="Réglage"
+              data-de="Einstellung"
+              data-nl="Instelling"
+              >Setting</span
+            >
+          </li>
+          <li>
+            <a class="nav-link" href="translation.html">
+              <i class="bx bxs-flag"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Language"
+                data-fr="Langue"
+                data-de="Sprache"
+                data-nl="Taal"
+                >Language</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Language"
+              data-fr="Langue"
+              data-de="Sprache"
+              data-nl="Taal"
+              >Language</span
+            >
+          </li>
+          <li>
+            <a class="nav-link" href="help.html">
+              <i class="bx bx-help-circle help-icon"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Help"
+                data-fr="Aide"
+                data-de="Hilfe"
+                data-nl="Hulp"
+                >Help</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Help"
+              data-fr="Aide"
+              data-de="Hilfe"
+              data-nl="Hulp"
+              >Help</span
+            >
+          </li>
+          <li>
+            <a class="nav-link" href="info.html">
+              <i class="bx bx-info-circle info-icon"></i>
+              <span
+                class="links_name"
+                data-translate
+                data-eng="Info"
+                data-fr="Infos"
+                data-de="Informationen"
+                data-nl="Informatie"
+                >Info</span
+              >
+            </a>
+            <span
+              class="tooltip"
+              data-translate
+              data-eng="Info"
+              data-fr="Infos"
+              data-de="Informationen"
+              data-nl="Informatie"
+              >Info</span
+            >
+          </li>
+  
+          <a hallo id="logoutLink" href=""><i></i></a>
+        </ul>
+      </div>
+  
+      <div class="maincontent">
+        <div class="topbar">
+          <div class="topbar-items">
+            <div class="searchbox">
+              <i class="bx bx-search"></i>
+              <input
+                id="searchInput"
+                onkeyup="handleKeyupEvent()"
+                type="search"
+                name="search"
+                placeholder=""
+                data-translate
+                data-eng="Search Sensors"
+                data-fr="Rechercher des capteurs"
+                data-de="Sensoren suchen"
+                data-nl="Sensoren zoeken"
+              />
+              <img id="img-cc" src="img/no_connection.svg" alt="no CC" />
+            </div>
+          </div>
+        </div>
+      </div>
+  
+
+
+      <div class="container3">
+        <h1>AREXX MULTILOGGER SOFTWARE</h1>
+        <p>
+          Arexx website:
+          <a href="https://arexx.nl/" target="_blank">https://arexx.nl/</a>
+        </p>
+        <p>
+          MQTT SITE:
+          <a href="http://mqtt.schoollab.site/" target="_blank"
+            >mqtt.schoollab.site/</a
+          >
+        </p>
+        <p>Versie 3</p>
+        <p>12/06/2024</p>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      $(function () {
+        $("#nav-placeholder").load("navbar.html");
+      });
+    </script>
+    <script src="main.js"></script>
+  </body>
+</html>
